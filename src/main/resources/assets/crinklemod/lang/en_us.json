@@ -1,0 +1,8 @@
+{
+  "command.crinklemod.metabolism.reset.target.success": "Your metabolism has been reset.",
+  "command.crinklemod.metabolism.reset.self.success": "You reset your metabolism.",
+  "command.crinklemod.metabolism.reset.instigator.success": "You reset %s's metabolism.",
+  "command.crinklemod.metabolism.set.target.success": "You feel your metabolism changing...",
+  "command.crinklemod.metabolism.set.self.success": "You set your %s to %2.2f.",
+  "command.crinklemod.metabolism.set.instigator.success": "You set %s's %s to %2.2f."
+}
