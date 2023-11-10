@@ -4,6 +4,7 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import ninja.crinkle.mod.metabolism.client.MetabolismManager;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * An event handler that is used to handle forge and Minecraft events.
@@ -17,20 +18,22 @@ public class ClientEventHandler {
      * @param event The event
      */
     @SubscribeEvent
-    public void onLivingEntityUseItem(LivingEntityUseItemEvent.Finish event) {
+    public void onLivingEntityUseItem(LivingEntityUseItemEvent.@NotNull Finish event) {
+        if (!event.getEntity().level().isClientSide) return;
         if (!event.getItem().isEdible()) return;
         MetabolismManager.INSTANCE.consume(event.getItem());
     }
 
     /**
      * Hook on when a player ticks. This is used to tick the metabolism of a player.
-     * It only ticks the metabolism every 20 ticks, or 1 second.
+     * It only ticks the metabolism every 120 ticks, or 6 seconds.
      * @see TickEvent.PlayerTickEvent
      * @param event The event
      */
     @SubscribeEvent
-    public void onPlayerTick(TickEvent.PlayerTickEvent event) {
-        if (event.phase == TickEvent.Phase.END && event.player.tickCount % 20 == 0) {
+    public void onPlayerTick(TickEvent.@NotNull PlayerTickEvent event) {
+        if (!event.side.isClient()) return;
+        if (event.phase == TickEvent.Phase.END && event.player.tickCount % 120 == 0) {
             MetabolismManager.INSTANCE.tick();
         }
     }

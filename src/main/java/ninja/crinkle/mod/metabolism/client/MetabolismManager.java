@@ -4,6 +4,8 @@ import com.mojang.logging.LogUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.DistExecutor;
 import ninja.crinkle.mod.CrinkleMod;
 import ninja.crinkle.mod.metabolism.client.events.AccidentEvent;
 import ninja.crinkle.mod.metabolism.client.events.DesperationEvent;
@@ -16,6 +18,12 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
 import java.util.Optional;
+
+class PlayerProvider {
+    public static Player getPlayer() {
+        return Minecraft.getInstance().player;
+    }
+}
 
 public class MetabolismManager {
     public static final MetabolismManager INSTANCE = new MetabolismManager();
@@ -30,7 +38,7 @@ public class MetabolismManager {
      * Get the player's metabolism capability.
      */
     private Optional<IMetabolism> getMetabolism() {
-        Player player = Minecraft.getInstance().player;
+        Player player = DistExecutor.safeCallWhenOn(Dist.CLIENT, () -> PlayerProvider::getPlayer);
         if (player == null) {
             return Optional.empty();
         }
@@ -75,14 +83,6 @@ public class MetabolismManager {
 
     private double getLiquidsRate() {
         return getMetabolism().map(IMetabolism::getLiquidsRate).orElse(0d);
-    }
-
-    private double getMaxSolids() {
-        return getMetabolism().map(IMetabolism::getMaxSolids).orElse(0d);
-    }
-
-    private double getMaxLiquids() {
-        return getMetabolism().map(IMetabolism::getMaxLiquids).orElse(0d);
     }
 
     private double getBladderContinence() {
@@ -259,6 +259,14 @@ public class MetabolismManager {
         }
     }
 
+    private void sync(boolean force) {
+        if (isDirty || force) {
+            LOGGER.debug("Sending sync to server");
+            getMetabolism().ifPresent(m -> MetabolismChannel.INSTANCE.sendToServer(new UpdateMessage(m)));
+            isDirty = false;
+        }
+    }
+
     /**
      * Consume an item.
      * This method is called when an item is consumed by a player.
@@ -266,17 +274,17 @@ public class MetabolismManager {
      * @param item The item to consume
      */
     public void consume(@NotNull ItemStack item) {
+        if (!item.isEdible()) return;
         if (ConsumableConfig.consumables.containsKey(item.getItem())) {
             modifyLiquids(ConsumableConfig.consumables.get(item.getItem()).liquids);
             modifySolids(ConsumableConfig.consumables.get(item.getItem()).solids);
         } else {
             Optional.ofNullable(item.getFoodProperties(Minecraft.getInstance().player)).ifPresent(foodProperties -> {
-                if (item.isEdible()) {
-                    modifySolids(foodProperties.getNutrition());
-                    modifyLiquids(foodProperties.getNutrition() / 4f);
-                }
+                modifySolids(foodProperties.getNutrition());
+                modifyLiquids(foodProperties.getNutrition() / 4f);
             });
         }
+        sync(true);
     }
 
     /**
@@ -291,10 +299,6 @@ public class MetabolismManager {
         checkForBowelAccident();
         checkForBladderDesperationEvent();
         checkForBowelsDesperationEvent();
-        if (isDirty) {
-            LOGGER.debug("Sending sync to server");
-            getMetabolism().ifPresent(m -> MetabolismChannel.INSTANCE.sendToServer(new UpdateMessage(m)));
-            isDirty = false;
-        }
+        sync(false);
     }
 }

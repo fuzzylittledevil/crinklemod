@@ -17,6 +17,7 @@ import java.util.function.Supplier;
 
 /**
  * A message that is used to sync the metabolism of a player to the client or server.
+ *
  * @see MetabolismImpl
  */
 public class UpdateMessage {
@@ -38,8 +39,9 @@ public class UpdateMessage {
 
     /**
      * Create a new update message from a metabolism
-     * @see IMetabolism
+     *
      * @param metabolism The metabolism to create the message from
+     * @see IMetabolism
      */
     public UpdateMessage(@NotNull IMetabolism metabolism) {
         this.liquids = metabolism.getLiquids();
@@ -60,8 +62,9 @@ public class UpdateMessage {
 
     /**
      * Create a new update message from a buffer
-     * @see FriendlyByteBuf
+     *
      * @param buffer The buffer to create the message from
+     * @see FriendlyByteBuf
      */
     public UpdateMessage(@NotNull FriendlyByteBuf buffer) {
         this.liquids = buffer.readDouble();
@@ -82,6 +85,7 @@ public class UpdateMessage {
 
     /**
      * Decode a message from a buffer
+     *
      * @param buffer The buffer to decode the message from
      * @return The decoded message
      */
@@ -92,8 +96,9 @@ public class UpdateMessage {
 
     /**
      * Encode a message to a buffer
-     * @implSpec The order of the encoded values must match the order of the decoded values found in the constructor
+     *
      * @param buffer The buffer to encode the message to
+     * @implSpec The order of the encoded values must match the order of the decoded values found in the constructor
      */
     public void encoder(@NotNull FriendlyByteBuf buffer) {
         buffer.writeDouble(liquids);
@@ -114,29 +119,29 @@ public class UpdateMessage {
 
     /**
      * Consume a message and update the player's metabolism capability
+     *
      * @param ctx The context of the message
      */
     public void messageConsumer(@NotNull Supplier<NetworkEvent.Context> ctx) {
         Player player = Optional.ofNullable((Player) ctx.get().getSender()).orElse(Minecraft.getInstance().player);
-        Optional.ofNullable(player).ifPresent(p -> {
-                    p.getCapability(Capabilities.METABOLISM).ifPresent(m -> {
-                        m.setLiquids(liquids);
-                        m.setSolids(solids);
-                        m.setBladder(bladder);
-                        m.setBowels(bowels);
-                        m.setBladderDesperation(bladderDesperation);
-                        m.setBowelDesperation(bowelDesperation);
-                        m.setBladderCapacity(bladderCapacity);
-                        m.setBowelCapacity(bowelCapacity);
-                        m.setSolidsRate(solidsRate);
-                        m.setLiquidsRate(liquidsRate);
-                        m.setMaxSolids(solidsFullAmount);
-                        m.setMaxLiquids(liquidsFullAmount);
-                        m.setBladderContinence(bladderContinence);
-                        m.setBowelContinence(bowelContinence);
-                        LOGGER.debug("Updated metabolism of player {}: {}", p.getDisplayName().getString(), m);
-                    });
-                }
+        Optional.ofNullable(player).ifPresent(p ->
+                p.getCapability(Capabilities.METABOLISM).ifPresent(m -> {
+                    m.setLiquids(liquids);
+                    m.setSolids(solids);
+                    m.setBladder(bladder);
+                    m.setBowels(bowels);
+                    m.setBladderDesperation(bladderDesperation);
+                    m.setBowelDesperation(bowelDesperation);
+                    m.setBladderCapacity(bladderCapacity);
+                    m.setBowelCapacity(bowelCapacity);
+                    m.setSolidsRate(solidsRate);
+                    m.setLiquidsRate(liquidsRate);
+                    m.setMaxSolids(solidsFullAmount);
+                    m.setMaxLiquids(liquidsFullAmount);
+                    m.setBladderContinence(bladderContinence);
+                    m.setBowelContinence(bowelContinence);
+                    LOGGER.debug("Updated metabolism of player {}: {}", p.getDisplayName().getString(), m);
+                })
         );
     }
 }

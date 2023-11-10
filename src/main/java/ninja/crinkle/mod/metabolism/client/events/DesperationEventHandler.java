@@ -13,8 +13,6 @@ import org.slf4j.Logger;
  * @see MetabolismImpl
  */
 public class DesperationEventHandler {
-    private static final Logger LOGGER = LogUtils.getLogger();
-
     @SubscribeEvent
     public void onBladderDesperation(DesperationEvent.Bladder event) {
         event.getPlayer().displayClientMessage(Component.literal("You feel the pressure in your bladder grow!"), true);

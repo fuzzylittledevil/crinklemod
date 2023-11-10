@@ -59,20 +59,20 @@ enum SetType {
                                         getPlayer(c, "target"), DoubleArgumentType.getDouble(c, "value")))));
     }
 
-    private boolean isInRange(double value, double min, double max) {
-        return value >= min && value <= max;
+    private boolean isInRange(double value, double max) {
+        return value >= 0 && value <= max;
     }
 
-    @Contract(value = "_, _, _ -> new", pure = true)
-    private @NotNull Component getOutOfRangeMessage(double value, double min, double max) {
-        return Component.translatable("command.crinklemod.metabolism.set.instigator.failure.out_of_range", value, min, max);
+    @Contract(value = "_, _ -> new", pure = true)
+    private @NotNull Component getOutOfRangeMessage(double value, double max) {
+        return Component.translatable("command.crinklemod.metabolism.set.instigator.failure.out_of_range", value, 0, max);
     }
 
     private int setValue(CommandSourceStack source, ServerPlayer instigator, @NotNull ServerPlayer target, double value) {
         IMetabolism metabolism = target.getCapability(Capabilities.METABOLISM)
                 .orElseThrow(() -> new IllegalStateException("No metabolism for player " + target.getDisplayName().getString()));
-        if (!isInRange(value, 0, maxGetter.apply(metabolism))) {
-            source.sendFailure(getOutOfRangeMessage(value, 0, maxGetter.apply(metabolism)));
+        if (!isInRange(value, maxGetter.apply(metabolism))) {
+            source.sendFailure(getOutOfRangeMessage(value, maxGetter.apply(metabolism)));
             return 0;
         }
         setter.apply(metabolism, value);
@@ -112,7 +112,7 @@ public class MetabolismCommand {
         dispatcher.register(literal("met").redirect(node));
     }
 
-    private int resetData(@NotNull CommandSourceStack source, ServerPlayer instigator, @NotNull ServerPlayer target) throws CommandSyntaxException {
+    private int resetData(@NotNull CommandSourceStack source, ServerPlayer instigator, @NotNull ServerPlayer target) {
         target.getCapability(Capabilities.METABOLISM).ifPresent(m -> {
             m.setBowels(0);
             m.setBladder(0);
@@ -129,17 +129,17 @@ public class MetabolismCommand {
         return Command.SINGLE_SUCCESS;
     }
 
-    private int status(CommandSourceStack source, ServerPlayer instigator, @NotNull Player target) throws CommandSyntaxException {
+    private int status(CommandSourceStack source, ServerPlayer instigator, @NotNull Player target) {
         target.getCapability(Capabilities.METABOLISM).ifPresent(m -> {
             List<Component> components = new ArrayList<>();
             components.add(Component.literal(String.format("Solids: %.2f / %.2f", m.getSolids(), m.getMaxSolids())));
             components.add(Component.literal(String.format("Liquids: %.2f / %.2f", m.getLiquids(), m.getMaxLiquids())));
             components.add(Component.literal(String.format("Bladder: %.2f / %.2f", m.getBladder(), m.getBladderCapacity())));
             components.add(Component.literal(String.format("Bowels: %.2f / %.2f", m.getBowels(), m.getBowelCapacity())));
-            components.add(Component.literal(String.format("Bladder Desperation: %f", m.getBladderDesperation())));
-            components.add(Component.literal(String.format("Bladder Continence: %f", m.getBladderContinence())));
-            components.add(Component.literal(String.format("Bowel Desperation: %f", m.getBowelDesperation())));
-            components.add(Component.literal(String.format("Bowel Continence: %f", m.getBowelContinence())));
+            components.add(Component.literal(String.format("Bladder Desperation: %.4f", m.getBladderDesperation())));
+            components.add(Component.literal(String.format("Bowel Desperation: %.4f", m.getBowelDesperation())));
+            components.add(Component.literal(String.format("Bladder Continence: %.4f", m.getBladderContinence())));
+            components.add(Component.literal(String.format("Bowel Continence: %.4f", m.getBowelContinence())));
             source.sendSuccess(() -> Component.literal(target.getDisplayName().getString()), false);
             components.forEach(instigator::sendSystemMessage);
         });
