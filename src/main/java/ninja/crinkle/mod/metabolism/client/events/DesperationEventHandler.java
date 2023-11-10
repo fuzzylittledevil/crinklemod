@@ -1,10 +1,8 @@
 package ninja.crinkle.mod.metabolism.client.events;
 
-import com.mojang.logging.LogUtils;
 import net.minecraft.network.chat.Component;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import ninja.crinkle.mod.metabolism.common.capabilities.MetabolismImpl;
-import org.slf4j.Logger;
 
 /**
  * An event handler that is used to inform the player when a player has a change in desperation.
