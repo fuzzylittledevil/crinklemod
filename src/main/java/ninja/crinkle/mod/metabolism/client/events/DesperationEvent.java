@@ -1,13 +1,14 @@
-package ninja.crinkle.mod.metabolism.events;
+package ninja.crinkle.mod.metabolism.client.events;
 
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.eventbus.api.Event;
+import ninja.crinkle.mod.metabolism.common.capabilities.MetabolismImpl;
 
 /**
  * A desperation event that is fired when a player's desperation changes.
  * This event is fired on a metabolism tick if a player's desperation changes.
  * @see net.minecraftforge.eventbus.api.Event
- * @see ninja.crinkle.mod.metabolism.capabilities.MetabolismImpl
+ * @see MetabolismImpl
  */
 public abstract class DesperationEvent extends Event {
     private final Player player;

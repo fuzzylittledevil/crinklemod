@@ -1,13 +1,14 @@
-package ninja.crinkle.mod.metabolism.events;
+package ninja.crinkle.mod.metabolism.client.events;
 
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.eventbus.api.Event;
+import ninja.crinkle.mod.metabolism.common.capabilities.MetabolismImpl;
 
 /**
  * An accident event that is fired when a player has an accident.
  * @author Galen
  * @see net.minecraftforge.eventbus.api.Event
- * @see ninja.crinkle.mod.metabolism.capabilities.MetabolismImpl
+ * @see MetabolismImpl
  */
 public abstract class AccidentEvent extends Event {
     private final double amount;

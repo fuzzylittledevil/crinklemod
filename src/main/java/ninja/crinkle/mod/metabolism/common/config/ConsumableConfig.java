@@ -1,4 +1,4 @@
-package ninja.crinkle.mod.metabolism.config;
+package ninja.crinkle.mod.metabolism.common.config;
 
 import com.electronwill.nightconfig.core.Config;
 import net.minecraft.resources.ResourceLocation;
@@ -7,10 +7,13 @@ import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.config.ModConfigEvent;
 import net.minecraftforge.registries.ForgeRegistries;
 import ninja.crinkle.mod.CrinkleMod;
+import ninja.crinkle.mod.metabolism.server.ServerRegistration;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -65,7 +68,7 @@ public class ConsumableConfig {
             );
     private static final ForgeConfigSpec SPEC = BUILDER.build();
 
-    public static Map<Item, ConsumableData> consumables;
+    public static Map<Item, ConsumableData> consumables = new HashMap<>();
 
     /**
      * Ensure the item name is loaded in the registry and valid.
@@ -78,10 +81,10 @@ public class ConsumableConfig {
 
     /**
      * Register the config
-     * @see ninja.crinkle.mod.metabolism.MetabolismRegistration
+     * @see ServerRegistration
      */
     public static void register() {
-        ModLoadingContext.get().registerConfig(net.minecraftforge.fml.config.ModConfig.Type.COMMON, SPEC, CONFIG_FILE_NAME);
+        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, SPEC, CONFIG_FILE_NAME);
     }
 
     /**

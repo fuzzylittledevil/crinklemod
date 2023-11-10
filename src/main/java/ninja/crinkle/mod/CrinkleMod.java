@@ -3,7 +3,9 @@ package ninja.crinkle.mod;
 import net.minecraftforge.eventbus.api.BusBuilder;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
-import ninja.crinkle.mod.metabolism.MetabolismRegistration;
+import ninja.crinkle.mod.metabolism.client.ClientRegistration;
+import ninja.crinkle.mod.metabolism.common.CommonRegistration;
+import ninja.crinkle.mod.metabolism.server.ServerRegistration;
 
 /**
  * The main class of the mod.
@@ -21,6 +23,8 @@ public class CrinkleMod {
     public static final IEventBus EVENT_BUS = BusBuilder.builder().build();
 
     public CrinkleMod() {
-        MetabolismRegistration.register();
+        CommonRegistration.register();
+        ClientRegistration.register();
+        ServerRegistration.register();
     }
 }

@@ -1,13 +1,14 @@
-package ninja.crinkle.mod.metabolism.events;
+package ninja.crinkle.mod.metabolism.client.events;
 
 import net.minecraft.network.chat.Component;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import ninja.crinkle.mod.metabolism.common.capabilities.MetabolismImpl;
 
 /**
  * An event handler that is used to display messages when a player has an accident.
  * @see AccidentEvent
  * @see ninja.crinkle.mod.CrinkleMod#EVENT_BUS
- * @see ninja.crinkle.mod.metabolism.capabilities.MetabolismImpl
+ * @see MetabolismImpl
  */
 public class AccidentEventHandler {
     @SubscribeEvent
