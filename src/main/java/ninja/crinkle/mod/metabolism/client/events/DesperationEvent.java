@@ -7,6 +7,7 @@ import ninja.crinkle.mod.metabolism.common.capabilities.MetabolismImpl;
 /**
  * A desperation event that is fired when a player's desperation changes.
  * This event is fired on a metabolism tick if a player's desperation changes.
+ *
  * @see net.minecraftforge.eventbus.api.Event
  * @see MetabolismImpl
  */
@@ -21,6 +22,7 @@ public abstract class DesperationEvent extends Event {
 
     /**
      * Get the player that had their desperation changed
+     *
      * @return The player that had their desperation changed
      */
     public Player getPlayer() {
@@ -29,6 +31,7 @@ public abstract class DesperationEvent extends Event {
 
     /**
      * Get the player's desperation
+     *
      * @return The player's desperation
      */
     public double getDesperation() {

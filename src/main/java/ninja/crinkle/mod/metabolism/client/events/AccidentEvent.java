@@ -6,6 +6,7 @@ import ninja.crinkle.mod.metabolism.common.capabilities.MetabolismImpl;
 
 /**
  * An accident event that is fired when a player has an accident.
+ *
  * @author Galen
  * @see net.minecraftforge.eventbus.api.Event
  * @see MetabolismImpl
@@ -21,6 +22,7 @@ public abstract class AccidentEvent extends Event {
 
     /**
      * Get the amount of liquids or solids that were lost
+     *
      * @return The amount of liquids or solids that were lost
      */
     public double getAmount() {
@@ -29,6 +31,7 @@ public abstract class AccidentEvent extends Event {
 
     /**
      * Get the player that lost the liquids or solids
+     *
      * @return The player that lost the liquids or solids
      */
     public Player getPlayer() {

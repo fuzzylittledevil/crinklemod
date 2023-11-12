@@ -10,6 +10,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.network.PacketDistributor;
+import ninja.crinkle.mod.metabolism.common.Metabolism;
 import ninja.crinkle.mod.metabolism.common.capabilities.Capabilities;
 import ninja.crinkle.mod.metabolism.common.capabilities.IMetabolism;
 import ninja.crinkle.mod.metabolism.common.network.MetabolismChannel;
@@ -35,6 +36,8 @@ enum SetType {
     LIQUIDS("liquids", IMetabolism::setLiquids, IMetabolism::getMaxLiquids),
     BLADDER("bladder", IMetabolism::setBladder, IMetabolism::getBladderCapacity),
     BOWELS("bowels", IMetabolism::setBowels, IMetabolism::getBowelCapacity),
+    SOLIDS_RATE("solids_rate", IMetabolism::setSolidsRate, m -> Double.MAX_VALUE),
+    LIQUIDS_RATE("liquids_rate", IMetabolism::setLiquidsRate, m -> Double.MAX_VALUE),
     BLADDER_CAPACITY("bladder_capacity", IMetabolism::setBladderCapacity, m -> Double.MAX_VALUE),
     BOWELS_CAPACITY("bowel_capacity", IMetabolism::setBowelCapacity, m -> Double.MAX_VALUE),
     BLADDER_CONTINENCE("bladder_continence", IMetabolism::setBladderContinence, m -> 1.0),
@@ -103,6 +106,8 @@ public class MetabolismCommand {
                         .then(SetType.LIQUIDS.getCommand())
                         .then(SetType.BLADDER.getCommand())
                         .then(SetType.BOWELS.getCommand())
+                        .then(SetType.SOLIDS_RATE.getCommand())
+                        .then(SetType.LIQUIDS_RATE.getCommand())
                         .then(SetType.BLADDER_CAPACITY.getCommand())
                         .then(SetType.BOWELS_CAPACITY.getCommand())
                         .then(SetType.BLADDER_CONTINENCE.getCommand())
@@ -117,8 +122,6 @@ public class MetabolismCommand {
             m.setBladder(0);
             m.setSolids(0);
             m.setLiquids(0);
-            m.setBladderDesperation(0);
-            m.setBowelDesperation(0);
             MetabolismChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> target), new UpdateMessage(m));
         });
         source.sendSuccess(() -> instigator.equals(target) ?
@@ -129,19 +132,18 @@ public class MetabolismCommand {
     }
 
     private int status(CommandSourceStack source, ServerPlayer instigator, @NotNull Player target) {
-        target.getCapability(Capabilities.METABOLISM).ifPresent(m -> {
-            List<Component> components = new ArrayList<>();
-            components.add(Component.literal(String.format("Solids: %.2f / %.2f", m.getSolids(), m.getMaxSolids())));
-            components.add(Component.literal(String.format("Liquids: %.2f / %.2f", m.getLiquids(), m.getMaxLiquids())));
-            components.add(Component.literal(String.format("Bladder: %.2f / %.2f", m.getBladder(), m.getBladderCapacity())));
-            components.add(Component.literal(String.format("Bowels: %.2f / %.2f", m.getBowels(), m.getBowelCapacity())));
-            components.add(Component.literal(String.format("Bladder Desperation: %.4f", m.getBladderDesperation())));
-            components.add(Component.literal(String.format("Bowel Desperation: %.4f", m.getBowelDesperation())));
-            components.add(Component.literal(String.format("Bladder Continence: %.4f", m.getBladderContinence())));
-            components.add(Component.literal(String.format("Bowel Continence: %.4f", m.getBowelContinence())));
-            source.sendSuccess(() -> Component.literal(target.getDisplayName().getString()), false);
-            components.forEach(instigator::sendSystemMessage);
-        });
+        Metabolism m = Metabolism.of(target);
+        List<Component> components = new ArrayList<>();
+        components.add(Component.literal(String.format("Liquids: %.2f / %.2f (Rate: %.4f)", m.getLiquids(),
+                m.getMaxLiquids(), m.getLiquidsRate())));
+        components.add(Component.literal(String.format("Solids: %.2f / %.2f (Rate: %.4f)", m.getSolids(),
+                m.getMaxSolids(), m.getSolidsRate())));
+        components.add(Component.literal(String.format("Bladder: %.2f / %.2f (Desp: %.4f) (Cont: %.4f)",
+                m.getBladder(), m.getBladderCapacity(), m.getBladderDesperation(), m.getBladderContinence())));
+        components.add(Component.literal(String.format("Bowels: %.2f / %.2f (Desp: %.4f) (Cont: %.4f)",
+                m.getBowels(), m.getBowelCapacity(), m.getBowelDesperation(), m.getBowelContinence())));
+        source.sendSuccess(() -> Component.literal(target.getDisplayName().getString()), false);
+        components.forEach(instigator::sendSystemMessage);
         return Command.SINGLE_SUCCESS;
     }
 }

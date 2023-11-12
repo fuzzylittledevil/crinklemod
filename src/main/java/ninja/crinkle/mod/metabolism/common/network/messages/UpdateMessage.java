@@ -26,8 +26,6 @@ public class UpdateMessage {
     private final double solids;
     private final double bladder;
     private final double bowels;
-    private final double bladderDesperation;
-    private final double bowelDesperation;
     private final double bladderCapacity;
     private final double bowelCapacity;
     private final double solidsRate;
@@ -48,8 +46,6 @@ public class UpdateMessage {
         this.solids = metabolism.getSolids();
         this.bladder = metabolism.getBladder();
         this.bowels = metabolism.getBowels();
-        this.bladderDesperation = metabolism.getBladderDesperation();
-        this.bowelDesperation = metabolism.getBowelDesperation();
         this.bladderCapacity = metabolism.getBladderCapacity();
         this.bowelCapacity = metabolism.getBowelCapacity();
         this.solidsRate = metabolism.getSolidsRate();
@@ -71,8 +67,6 @@ public class UpdateMessage {
         this.solids = buffer.readDouble();
         this.bladder = buffer.readDouble();
         this.bowels = buffer.readDouble();
-        this.bladderDesperation = buffer.readDouble();
-        this.bowelDesperation = buffer.readDouble();
         this.bladderCapacity = buffer.readDouble();
         this.bowelCapacity = buffer.readDouble();
         this.solidsRate = buffer.readDouble();
@@ -105,8 +99,6 @@ public class UpdateMessage {
         buffer.writeDouble(solids);
         buffer.writeDouble(bladder);
         buffer.writeDouble(bowels);
-        buffer.writeDouble(bladderDesperation);
-        buffer.writeDouble(bowelDesperation);
         buffer.writeDouble(bladderCapacity);
         buffer.writeDouble(bowelCapacity);
         buffer.writeDouble(solidsRate);
@@ -130,8 +122,6 @@ public class UpdateMessage {
                     m.setSolids(solids);
                     m.setBladder(bladder);
                     m.setBowels(bowels);
-                    m.setBladderDesperation(bladderDesperation);
-                    m.setBowelDesperation(bowelDesperation);
                     m.setBladderCapacity(bladderCapacity);
                     m.setBowelCapacity(bowelCapacity);
                     m.setSolidsRate(solidsRate);

@@ -43,6 +43,7 @@ public class ConsumableConfig {
 
         /**
          * Convert the consumable data to a config object
+         *
          * @return The config object
          */
         public Config toConfig() {
@@ -72,6 +73,7 @@ public class ConsumableConfig {
 
     /**
      * Ensure the item name is loaded in the registry and valid.
+     *
      * @param obj The object to validate
      * @return Whether the object is valid
      */
@@ -81,6 +83,7 @@ public class ConsumableConfig {
 
     /**
      * Register the config
+     *
      * @see ServerRegistration
      */
     public static void register() {
@@ -89,8 +92,9 @@ public class ConsumableConfig {
 
     /**
      * Load the config
-     * @see ModConfigEvent
+     *
      * @param event The event
+     * @see ModConfigEvent
      */
     @SubscribeEvent
     static void onLoad(final ModConfigEvent event) {

@@ -7,6 +7,7 @@ import ninja.crinkle.mod.metabolism.client.events.ClientEventHandler;
 import ninja.crinkle.mod.metabolism.client.events.DesperationEventHandler;
 
 public class ClientRegistration {
+
     public static void register() {
         MinecraftForge.EVENT_BUS.register(new ClientEventHandler());
         CrinkleMod.EVENT_BUS.register(new AccidentEventHandler());

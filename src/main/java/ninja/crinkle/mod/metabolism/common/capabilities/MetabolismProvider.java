@@ -16,6 +16,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Metabolism provider class.
  * This class is used to provide the metabolism capability to an entity.
+ *
  * @see IMetabolism
  * @see net.minecraftforge.common.capabilities.ICapabilityProvider
  * @see net.minecraftforge.common.util.INBTSerializable
@@ -28,11 +29,12 @@ public class MetabolismProvider implements ICapabilityProvider, INBTSerializable
 
     /**
      * Get the capability of an entity.
-     * @param cap The capability to check
+     *
+     * @param cap  The capability to check
      * @param side The Side to check from,
-     *   <strong>CAN BE NULL</strong>. Null is defined to represent 'internal' or 'self'
+     *             <strong>CAN BE NULL</strong>. Null is defined to represent 'internal' or 'self'
+     * @param <T>  The type of the capability
      * @return The capability if it exists, or an empty optional if it does not
-     * @param <T> The type of the capability
      */
     @NotNull
     @Override
@@ -42,6 +44,7 @@ public class MetabolismProvider implements ICapabilityProvider, INBTSerializable
 
     /**
      * Serialize the capability to NBT.
+     *
      * @return The serialized capability
      */
     @Override
@@ -51,6 +54,7 @@ public class MetabolismProvider implements ICapabilityProvider, INBTSerializable
 
     /**
      * Deserialize the capability from NBT.
+     *
      * @param nbt The serialized capability
      */
     @Override
@@ -60,6 +64,7 @@ public class MetabolismProvider implements ICapabilityProvider, INBTSerializable
 
     /**
      * Attach the metabolism capability to an entity.
+     *
      * @param event The event that is fired when an entity is created and ready for attachment.
      * @see net.minecraftforge.event.AttachCapabilitiesEvent
      */

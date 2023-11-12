@@ -6,6 +6,7 @@ import ninja.crinkle.mod.metabolism.common.capabilities.MetabolismImpl;
 
 /**
  * An event handler that is used to inform the player when a player has a change in desperation.
+ *
  * @see DesperationEvent
  * @see ninja.crinkle.mod.CrinkleMod#EVENT_BUS
  * @see MetabolismImpl

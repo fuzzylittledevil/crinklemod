@@ -6,6 +6,7 @@ import ninja.crinkle.mod.metabolism.common.capabilities.MetabolismImpl;
 
 /**
  * An event handler that is used to display messages when a player has an accident.
+ *
  * @see AccidentEvent
  * @see ninja.crinkle.mod.CrinkleMod#EVENT_BUS
  * @see MetabolismImpl
@@ -13,11 +14,13 @@ import ninja.crinkle.mod.metabolism.common.capabilities.MetabolismImpl;
 public class AccidentEventHandler {
     @SubscribeEvent
     public void onBladderAccident(AccidentEvent.Bladder event) {
-        event.getPlayer().displayClientMessage(Component.literal("You wet yourself!"), true);
+        String amount = event.getAmount() < 50 ? "a little" : "a lot";
+        event.getPlayer().displayClientMessage(Component.literal("You wet yourself " + amount + "!"), true);
     }
 
     @SubscribeEvent
     public void onBowelsAccident(AccidentEvent.Bowels event) {
-        event.getPlayer().displayClientMessage(Component.literal("You pooped yourself!"), true);
+        String amount = event.getAmount() < 50 ? "a little" : "a lot";
+        event.getPlayer().displayClientMessage(Component.literal("You pooped yourself " + amount + "!"), true);
     }
 }

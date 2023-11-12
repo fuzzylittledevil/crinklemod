@@ -13,14 +13,16 @@ import ninja.crinkle.mod.metabolism.server.commands.MetabolismCommand;
 
 /**
  * An event handler that is used to handle forge and Minecraft events.
+ *
  * @author Galen
  * @see net.minecraftforge.eventbus.api.Event
  */
 public class ServerEventHandler {
     /**
      * Hook on when commands are registered. This is used to register the metabolism command.
-     * @see RegisterCommandsEvent
+     *
      * @param event The event
+     * @see RegisterCommandsEvent
      */
     @SubscribeEvent
     public void onCommandsRegister(RegisterCommandsEvent event) {
@@ -30,8 +32,9 @@ public class ServerEventHandler {
 
     /**
      * Hook on when a player logs in. This is used to sync the metabolism of a player to the client.
-     * @see PlayerEvent.PlayerLoggedInEvent
+     *
      * @param event The event
+     * @see PlayerEvent.PlayerLoggedInEvent
      */
     @SubscribeEvent
     public void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {

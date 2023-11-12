@@ -8,6 +8,7 @@ import ninja.crinkle.mod.metabolism.common.network.messages.UpdateMessage;
 
 /**
  * A network channel that is used to sync the metabolism of a player to the client or server.
+ *
  * @see UpdateMessage
  * @see net.minecraftforge.network.simple.SimpleChannel
  */

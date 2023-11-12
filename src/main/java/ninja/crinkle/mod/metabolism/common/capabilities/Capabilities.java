@@ -5,5 +5,6 @@ import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.capabilities.CapabilityToken;
 
 public class Capabilities {
-    public static final Capability<IMetabolism> METABOLISM = CapabilityManager.get(new CapabilityToken<>() {});
+    public static final Capability<IMetabolism> METABOLISM = CapabilityManager.get(new CapabilityToken<>() {
+    });
 }
