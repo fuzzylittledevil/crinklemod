@@ -1,4 +1,4 @@
-package ninja.crinkle.mod.metabolism.client.ui.screens.menus;
+package ninja.crinkle.mod.lib.client.ui.menus;
 
 import net.minecraft.network.chat.Component;
 
@@ -35,7 +35,8 @@ public class ConfigMenuEntry {
         private final Component label;
         private Component tooltip;
         private Supplier<Double> valueSupplier = () -> null;
-        private Consumer<Double> valueSetter = (value) -> {};
+        private Consumer<Double> valueSetter = (value) -> {
+        };
         private Supplier<Double> defaultSupplier = () -> null;
 
         public Builder(int lineNumber, Component label) {

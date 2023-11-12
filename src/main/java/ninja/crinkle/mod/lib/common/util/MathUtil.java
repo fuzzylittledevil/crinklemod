@@ -1,4 +1,4 @@
-package ninja.crinkle.mod.util;
+package ninja.crinkle.mod.lib.common.util;
 
 public class MathUtil {
     public static double clamp(double value, double min, double max) {

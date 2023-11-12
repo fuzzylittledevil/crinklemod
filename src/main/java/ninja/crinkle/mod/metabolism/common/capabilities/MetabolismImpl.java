@@ -4,8 +4,8 @@ import net.minecraft.nbt.CompoundTag;
 import ninja.crinkle.mod.metabolism.common.config.MetabolismConfig;
 import org.jetbrains.annotations.NotNull;
 
-import static ninja.crinkle.mod.util.MathUtil.clamp;
-import static ninja.crinkle.mod.util.MathUtil.round;
+import static ninja.crinkle.mod.lib.common.util.MathUtil.clamp;
+import static ninja.crinkle.mod.lib.common.util.MathUtil.round;
 
 /**
  * Metabolism capability implementation.

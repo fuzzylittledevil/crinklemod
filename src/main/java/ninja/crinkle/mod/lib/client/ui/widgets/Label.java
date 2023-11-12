@@ -1,4 +1,4 @@
-package ninja.crinkle.mod.metabolism.client.ui.widgets;
+package ninja.crinkle.mod.lib.client.ui.widgets;
 
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;

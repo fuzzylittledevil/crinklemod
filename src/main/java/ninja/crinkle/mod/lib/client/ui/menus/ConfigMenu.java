@@ -1,4 +1,4 @@
-package ninja.crinkle.mod.metabolism.client.ui.screens.menus;
+package ninja.crinkle.mod.lib.client.ui.menus;
 
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.AbstractWidget;
@@ -6,7 +6,7 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.network.chat.Component;
-import ninja.crinkle.mod.metabolism.client.ui.widgets.Label;
+import ninja.crinkle.mod.lib.client.ui.widgets.Label;
 import ninja.crinkle.mod.metabolism.common.Metabolism;
 
 import java.util.*;
@@ -122,15 +122,13 @@ public class ConfigMenu extends AbstractMenu {
                             unsavedDataLabel_2.visible = true;
                             label.setColor(CHANGED_TEXT_COLOR);
                             editBox.setTextColor(CHANGED_TEXT_COLOR);
-                        }
-                        else {
+                        } else {
                             unsavedDataLabel_1.visible = false;
                             unsavedDataLabel_2.visible = false;
                             label.setColor(Label.DEFAULT_COLOR);
                             editBox.setTextColor(0xffffffff);
                         }
-                    }
-                    catch (NumberFormatException e) {
+                    } catch (NumberFormatException e) {
                         unsavedDataLabel_1.visible = false;
                         unsavedDataLabel_2.visible = false;
                         label.setColor(Label.DEFAULT_COLOR);
@@ -180,7 +178,8 @@ public class ConfigMenu extends AbstractMenu {
         public int lineSpacing;
         private boolean visible;
         private Supplier<Metabolism> metabolismSupplier = () -> null;
-        private Consumer<AbstractMenu> onClose = w -> {};
+        private Consumer<AbstractMenu> onClose = w -> {
+        };
         private final Font font;
         private final List<ConfigMenuEntry> configMenuEntries = new ArrayList<>();
 

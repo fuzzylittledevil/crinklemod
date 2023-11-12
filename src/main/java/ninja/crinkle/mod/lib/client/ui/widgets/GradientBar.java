@@ -1,10 +1,10 @@
-package ninja.crinkle.mod.metabolism.client.ui.widgets;
+package ninja.crinkle.mod.lib.client.ui.widgets;
 
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.network.chat.Component;
-import ninja.crinkle.mod.metabolism.client.ui.elements.Text;
+import ninja.crinkle.mod.lib.client.ui.elements.Text;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Supplier;
@@ -160,8 +160,7 @@ public class GradientBar extends AbstractWidget {
             if (hoverText != null) {
                 hoverText.draw(pGuiGraphics, getX() + (width - hoverText.getWidth()) / 2, getY() + height / 2 - hoverText.getFont().lineHeight / 2);
             }
-        }
-        else if (text != null)
+        } else if (text != null)
             text.draw(pGuiGraphics, getX() + (width - text.getWidth()) / 2, getY() + height / 2 - text.getFont().lineHeight / 2);
     }
 

@@ -10,7 +10,6 @@ import ninja.crinkle.mod.metabolism.client.events.DesperationEvent;
 import ninja.crinkle.mod.metabolism.common.capabilities.Capabilities;
 import ninja.crinkle.mod.metabolism.common.capabilities.IMetabolism;
 import ninja.crinkle.mod.metabolism.common.config.ConsumableConfig;
-import ninja.crinkle.mod.metabolism.common.config.MetabolismConfig;
 import ninja.crinkle.mod.metabolism.common.network.MetabolismChannel;
 import ninja.crinkle.mod.metabolism.common.network.messages.UpdateMessage;
 import org.jetbrains.annotations.NotNull;

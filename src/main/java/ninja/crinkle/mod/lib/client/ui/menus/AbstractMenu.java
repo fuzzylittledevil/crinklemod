@@ -1,4 +1,4 @@
-package ninja.crinkle.mod.metabolism.client.ui.screens.menus;
+package ninja.crinkle.mod.lib.client.ui.menus;
 
 import com.google.common.collect.Lists;
 import net.minecraft.client.gui.Font;
@@ -55,7 +55,8 @@ public abstract class AbstractMenu {
         return visible;
     }
 
-    public void tick() {}
+    public void tick() {
+    }
 
     public int getFontOffset() {
         return (getLineHeight() - getFont().lineHeight) / 2;

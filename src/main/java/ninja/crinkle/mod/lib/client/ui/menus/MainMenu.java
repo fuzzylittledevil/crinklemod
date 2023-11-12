@@ -1,11 +1,11 @@
-package ninja.crinkle.mod.metabolism.client.ui.screens.menus;
+package ninja.crinkle.mod.lib.client.ui.menus;
 
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
-import ninja.crinkle.mod.metabolism.client.ui.elements.Text;
-import ninja.crinkle.mod.metabolism.client.ui.widgets.GradientBar;
-import ninja.crinkle.mod.metabolism.client.ui.widgets.Label;
+import ninja.crinkle.mod.lib.client.ui.elements.Text;
+import ninja.crinkle.mod.lib.client.ui.widgets.GradientBar;
+import ninja.crinkle.mod.lib.client.ui.widgets.Label;
 import ninja.crinkle.mod.metabolism.common.Metabolism;
 
 import java.util.function.Consumer;
