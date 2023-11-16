@@ -1,36 +1,34 @@
-package ninja.crinkle.mod.metabolism.common.capabilities;
+package ninja.crinkle.mod.undergarment.common.capabilities;
 
-import com.mojang.logging.LogUtils;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import ninja.crinkle.mod.CrinkleMod;
-import ninja.crinkle.mod.metabolism.common.Metabolism;
+import ninja.crinkle.mod.metabolism.common.capabilities.MetabolismProvider;
+import ninja.crinkle.mod.undergarment.common.config.UndergarmentConfig;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.slf4j.Logger;
 
-/**
- * Metabolism provider class.
- * This class is used to provide the metabolism capability to an entity.
- *
- * @see IMetabolism
- * @see net.minecraftforge.common.capabilities.ICapabilityProvider
- * @see net.minecraftforge.common.util.INBTSerializable
- */
-public class MetabolismProvider implements ICapabilityProvider, INBTSerializable<CompoundTag> {
-    private static final Logger LOGGER = LogUtils.getLogger();
-    public static final String NAME = "metabolism";
+public class UndergarmentProvider implements ICapabilityProvider, INBTSerializable<CompoundTag> {
+    public static final String NAME = "undergarment";
     public static final ResourceLocation IDENTIFIER = new ResourceLocation(CrinkleMod.MODID, NAME);
-    private final IMetabolism storage = new MetabolismImpl();
-    private final LazyOptional<IMetabolism> instance = LazyOptional.of(() -> storage);
+    private final IUndergarment storage;
+    private final Item item;
+    private final LazyOptional<IUndergarment> instance;
+
+    private UndergarmentProvider(Item item) {
+        this.item = item;
+        storage = new UndergarmentImpl(item);
+        instance = LazyOptional.of(() -> storage);
+    }
 
     /**
      * Get the capability of an entity.
@@ -44,7 +42,10 @@ public class MetabolismProvider implements ICapabilityProvider, INBTSerializable
     @NotNull
     @Override
     public <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
-        return MetabolismCapabilities.METABOLISM.orEmpty(cap, instance);
+        if (!UndergarmentConfig.undergarments.containsKey(item)) {
+            return LazyOptional.empty();
+        }
+        return UndergarmentCapabilities.UNDERGARMENT.orEmpty(cap, instance);
     }
 
     /**
@@ -73,9 +74,10 @@ public class MetabolismProvider implements ICapabilityProvider, INBTSerializable
      * @param event The event that is fired when an entity is created and ready for attachment.
      * @see net.minecraftforge.event.AttachCapabilitiesEvent
      */
-    public static void attach(final @NotNull AttachCapabilitiesEvent<Entity> event) {
-        if(!(event.getObject() instanceof Player)) return;
-        LOGGER.debug("Attaching metabolism capability to player");
-        event.addCapability(IDENTIFIER, new MetabolismProvider());
+    public static void attach(final @NotNull AttachCapabilitiesEvent<ItemStack> event) {
+        if (!UndergarmentConfig.undergarments.containsKey(event.getObject().getItem())) {
+            return;
+        }
+        event.addCapability(IDENTIFIER, new UndergarmentProvider(event.getObject().getItem()));
     }
 }

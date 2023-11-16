@@ -3,18 +3,20 @@ package ninja.crinkle.mod.lib.client.ui.menus;
 import com.google.common.collect.Lists;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.AbstractWidget;
-import ninja.crinkle.mod.metabolism.common.Metabolism;
+import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.DistExecutor;
+import ninja.crinkle.mod.lib.client.ClientHooks;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 public abstract class AbstractMenu {
     private static final int DEFAULT_SPACER = 4;
     private static final int DEFAULT_MARGIN = 8;
     private static final int DEFAULT_LINE_HEIGHT = 15;
     private static final int DEFAULT_LINE_SPACING = 4;
-    private final Supplier<Metabolism> metabolismSupplier;
     private final Font font;
     private final List<AbstractWidget> children = Lists.newArrayList();
     private boolean visible;
@@ -26,7 +28,7 @@ public abstract class AbstractMenu {
     private final int lineSpacing;
 
     protected AbstractMenu(int leftPos, int topPos, int spacer, int lineSpacing, int margin, int lineHeight,
-                           boolean visible, Supplier<Metabolism> metabolismSupplier, Font font) {
+                           boolean visible, Font font) {
         this.visible = visible;
         this.leftPos = leftPos;
         this.topPos = topPos;
@@ -34,12 +36,15 @@ public abstract class AbstractMenu {
         this.lineSpacing = lineSpacing;
         this.margin = margin;
         this.lineHeight = lineHeight;
-        this.metabolismSupplier = metabolismSupplier;
         this.font = font;
     }
 
     public void add(AbstractWidget widget) {
         children.add(widget);
+    }
+
+    public void addAll(List<AbstractWidget> widgets) {
+        children.addAll(widgets);
     }
 
     public void visitChildren(Consumer<AbstractWidget> visitor) {
@@ -48,15 +53,14 @@ public abstract class AbstractMenu {
 
     public void setVisible(boolean visible) {
         this.visible = visible;
-        visitChildren(widget -> widget.visible = isVisible());
+        visitChildren(widget -> widget.visible = visible);
     }
 
     public boolean isVisible() {
         return visible;
     }
 
-    public void tick() {
-    }
+    public void tick() {}
 
     public int getFontOffset() {
         return (getLineHeight() - getFont().lineHeight) / 2;
@@ -91,15 +95,17 @@ public abstract class AbstractMenu {
         return lineHeight == 0 ? DEFAULT_LINE_HEIGHT : lineHeight;
     }
 
-    public Supplier<Metabolism> getMetabolismSupplier() {
-        return metabolismSupplier;
-    }
-
     public Font getFont() {
         return font;
     }
 
     public int getLineSpacing() {
         return lineSpacing == 0 ? DEFAULT_LINE_SPACING : lineSpacing;
+    }
+
+    public Player getPlayer() {
+        return Optional.ofNullable(DistExecutor.safeCallWhenOn(Dist.CLIENT, () -> ClientHooks::getMinecraft))
+                .map(m -> m.player)
+                .orElseThrow(() -> new IllegalStateException("Cannot create menu without a player"));
     }
 }

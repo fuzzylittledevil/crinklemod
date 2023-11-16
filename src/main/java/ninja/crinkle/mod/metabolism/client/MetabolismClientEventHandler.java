@@ -1,4 +1,4 @@
-package ninja.crinkle.mod.metabolism.client.events;
+package ninja.crinkle.mod.metabolism.client;
 
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.Minecraft;
@@ -7,10 +7,12 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.client.event.ScreenEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import ninja.crinkle.mod.metabolism.client.ui.screens.MetabolismScreen;
 import ninja.crinkle.mod.metabolism.common.Metabolism;
@@ -23,7 +25,7 @@ import org.slf4j.Logger;
  * @author Galen
  * @see net.minecraftforge.eventbus.api.Event
  */
-public class ClientEventHandler {
+public class MetabolismClientEventHandler {
     private static final Logger LOGGER = LogUtils.getLogger();
 
     /**
@@ -35,14 +37,13 @@ public class ClientEventHandler {
     @SubscribeEvent
     public void onLivingEntityUseItem(LivingEntityUseItemEvent.@NotNull Finish event) {
         if (!event.getEntity().level().isClientSide) return;
-        if (!event.getItem().isEdible()) return;
         if (event.getEntity() instanceof Player player)
             Metabolism.of(player).consume(event.getItem());
     }
 
     /**
      * Hook on when a player ticks. This is used to tick the metabolism of a player.
-     * It only ticks the metabolism every 120 ticks, or 6 seconds.
+     * It only ticks the metabolism every 100 ticks, or 5 seconds.
      *
      * @param event The event
      * @see TickEvent.PlayerTickEvent
@@ -50,7 +51,7 @@ public class ClientEventHandler {
     @SubscribeEvent
     public void onPlayerTick(TickEvent.@NotNull PlayerTickEvent event) {
         if (!event.side.isClient()) return;
-        if (event.phase == TickEvent.Phase.END && event.player.tickCount % 120 == 0) {
+        if (event.phase == TickEvent.Phase.END && event.player.tickCount % 100 == 0) {
             Metabolism.of(event.player).tick();
         }
     }

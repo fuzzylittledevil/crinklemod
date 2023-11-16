@@ -1,17 +1,22 @@
 package ninja.crinkle.mod.metabolism.common;
 
 import com.mojang.logging.LogUtils;
-import net.minecraft.client.Minecraft;
+
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.DistExecutor;
+import net.minecraftforge.network.PacketDistributor;
 import ninja.crinkle.mod.CrinkleMod;
-import ninja.crinkle.mod.metabolism.client.events.AccidentEvent;
-import ninja.crinkle.mod.metabolism.client.events.DesperationEvent;
-import ninja.crinkle.mod.metabolism.common.capabilities.Capabilities;
+import ninja.crinkle.mod.lib.client.ClientHooks;
+import ninja.crinkle.mod.lib.client.events.AccidentEvent;
+import ninja.crinkle.mod.lib.client.events.DesperationEvent;
 import ninja.crinkle.mod.metabolism.common.capabilities.IMetabolism;
+import ninja.crinkle.mod.metabolism.common.capabilities.MetabolismCapabilities;
 import ninja.crinkle.mod.metabolism.common.config.ConsumableConfig;
 import ninja.crinkle.mod.metabolism.common.network.MetabolismChannel;
-import ninja.crinkle.mod.metabolism.common.network.messages.UpdateMessage;
+import ninja.crinkle.mod.metabolism.common.network.messages.MetabolismUpdateMessage;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
@@ -20,10 +25,10 @@ import java.util.Optional;
 public class Metabolism {
     private static final Logger LOGGER = LogUtils.getLogger();
 
-    private static final double BLADDER_SMALL_ACCIDENT_THRESHOLD = 0.5;
-    private static final double BOWEL_SMALL_ACCIDENT_THRESHOLD = 0.5;
-    private static final double BLADDER_LARGE_ACCIDENT_THRESHOLD = 0.75;
-    private static final double BOWEL_LARGE_ACCIDENT_THRESHOLD = 0.75;
+    private static final double BLADDER_SMALL_ACCIDENT_THRESHOLD = 0.3;
+    private static final double BOWEL_SMALL_ACCIDENT_THRESHOLD = 0.3;
+    private static final double BLADDER_LARGE_ACCIDENT_THRESHOLD = 0.5;
+    private static final double BOWEL_LARGE_ACCIDENT_THRESHOLD = 0.5;
     private static final double BLADDER_LARGE_ACCIDENT_AMOUNT = 0.9;
     private static final double BOWEL_LARGE_ACCIDENT_AMOUNT = 0.9;
 
@@ -45,31 +50,36 @@ public class Metabolism {
      * Get the player's metabolism capability.
      */
     private Optional<IMetabolism> getMetabolism() {
-        return player.getCapability(Capabilities.METABOLISM).resolve();
+        Optional<IMetabolism> metabolism = player.getCapability(MetabolismCapabilities.METABOLISM).resolve();
+        if (metabolism.isEmpty())
+            LOGGER.warn("Player {} does not have a metabolism capability", player.getDisplayName().getString());
+        return metabolism;
     }
 
-    public double getSolids() {
-        return getMetabolism().map(IMetabolism::getSolids).orElse(0d);
+    public int getSolids() {
+        return getMetabolism().map(IMetabolism::getSolids).orElse(0);
     }
 
-    public double getLiquids() {
-        return getMetabolism().map(IMetabolism::getLiquids).orElse(0d);
+    public int getLiquids() {
+        return getMetabolism().map(IMetabolism::getLiquids).orElse(-1);
     }
 
-    public double getBladder() {
-        return getMetabolism().map(IMetabolism::getBladder).orElse(0d);
+    public int getBladder() {
+        return getMetabolism().map(IMetabolism::getBladder).orElse(0);
     }
 
     public double getBladderFullness() {
-        return getBladder() / getBladderCapacity();
+        int capacity = getBladderCapacity();
+        return capacity == 0.0 ? 0.0 : (double) getBladder() / getBladderCapacity();
     }
 
-    public double getBowels() {
-        return getMetabolism().map(IMetabolism::getBowels).orElse(0d);
+    public int getBowels() {
+        return getMetabolism().map(IMetabolism::getBowels).orElse(0);
     }
 
     public double getBowelFullness() {
-        return getBowels() / getBowelCapacity();
+        int capacity = getBowelCapacity();
+        return capacity == 0.0 ? 0.0 : (double) getBowels() / getBowelCapacity();
     }
 
     public double getBladderDesperation() {
@@ -80,20 +90,20 @@ public class Metabolism {
         return getBowelFullness() * (1 / getBowelContinence());
     }
 
-    public double getBladderCapacity() {
-        return getMetabolism().map(IMetabolism::getBladderCapacity).orElse(0d);
+    public int getBladderCapacity() {
+        return getMetabolism().map(IMetabolism::getBladderCapacity).orElse(0);
     }
 
-    public double getBowelCapacity() {
-        return getMetabolism().map(IMetabolism::getBowelCapacity).orElse(0d);
+    public int getBowelCapacity() {
+        return getMetabolism().map(IMetabolism::getBowelCapacity).orElse(0);
     }
 
-    public double getSolidsRate() {
-        return getMetabolism().map(IMetabolism::getSolidsRate).orElse(0d);
+    public int getSolidsRate() {
+        return getMetabolism().map(IMetabolism::getSolidsRate).orElse(0);
     }
 
-    public double getLiquidsRate() {
-        return getMetabolism().map(IMetabolism::getLiquidsRate).orElse(0d);
+    public int getLiquidsRate() {
+        return getMetabolism().map(IMetabolism::getLiquidsRate).orElse(0);
     }
 
     public double getBladderContinence() {
@@ -104,60 +114,60 @@ public class Metabolism {
         return Math.max(0.1, getMetabolism().map(IMetabolism::getBowelContinence).orElse(0d));
     }
 
-    public double getMaxLiquids() {
-        return getMetabolism().map(IMetabolism::getMaxLiquids).orElse(0d);
+    public int getMaxLiquids() {
+        return getMetabolism().map(IMetabolism::getMaxLiquids).orElse(0);
     }
 
-    public double getMaxSolids() {
-        return getMetabolism().map(IMetabolism::getMaxSolids).orElse(0d);
+    public int getMaxSolids() {
+        return getMetabolism().map(IMetabolism::getMaxSolids).orElse(0);
     }
 
-    public void setSolids(double value) {
+    public void setSolids(int value) {
         getMetabolism().ifPresent(m -> m.setSolids(value));
         isDirty = true;
     }
 
-    public void setLiquids(double value) {
+    public void setLiquids(int value) {
         getMetabolism().ifPresent(m -> m.setLiquids(value));
         isDirty = true;
     }
 
-    public void setBladder(double value) {
+    public void setBladder(int value) {
         getMetabolism().ifPresent(m -> m.setBladder(value));
         isDirty = true;
     }
 
-    public void setBowels(double value) {
+    public void setBowels(int value) {
         getMetabolism().ifPresent(m -> m.setBowels(value));
         isDirty = true;
     }
 
-    public void setMaxLiquids(double value) {
+    public void setMaxLiquids(int value) {
         getMetabolism().ifPresent(m -> m.setMaxLiquids(value));
         isDirty = true;
     }
 
-    public void setMaxSolids(double value) {
+    public void setMaxSolids(int value) {
         getMetabolism().ifPresent(m -> m.setMaxSolids(value));
         isDirty = true;
     }
 
-    public void setLiquidsRate(double value) {
+    public void setLiquidsRate(int value) {
         getMetabolism().ifPresent(m -> m.setLiquidsRate(value));
         isDirty = true;
     }
 
-    public void setSolidsRate(double value) {
+    public void setSolidsRate(int value) {
         getMetabolism().ifPresent(m -> m.setSolidsRate(value));
         isDirty = true;
     }
 
-    public void setBladderCapacity(double value) {
+    public void setBladderCapacity(int value) {
         getMetabolism().ifPresent(m -> m.setBladderCapacity(value));
         isDirty = true;
     }
 
-    public void setBowelCapacity(double value) {
+    public void setBowelCapacity(int value) {
         getMetabolism().ifPresent(m -> m.setBowelCapacity(value));
         isDirty = true;
     }
@@ -177,7 +187,7 @@ public class Metabolism {
      *
      * @param value The amount of liquids to add or remove. Negative values remove liquids.
      */
-    public void modifyLiquids(double value) {
+    public void modifyLiquids(int value) {
         setLiquids(getLiquids() + value);
     }
 
@@ -186,7 +196,7 @@ public class Metabolism {
      *
      * @param value The amount of solids to add or remove. Negative values remove solids.
      */
-    public void modifySolids(double value) {
+    public void modifySolids(int value) {
         setSolids(getSolids() + value);
     }
 
@@ -195,7 +205,7 @@ public class Metabolism {
      *
      * @param value The amount of liquids to add or remove. Negative values remove liquids.
      */
-    public void modifyBladder(double value) {
+    public void modifyBladder(int value) {
         setBladder(getBladder() + value);
     }
 
@@ -204,7 +214,7 @@ public class Metabolism {
      *
      * @param value The amount of solids to add or remove. Negative values remove solids.
      */
-    public void modifyBowels(double value) {
+    public void modifyBowels(int value) {
         setBowels(getBowels() + value);
     }
 
@@ -229,11 +239,11 @@ public class Metabolism {
         if (recentBladderAccident) return;
         double chance = (1 - getBladderContinence()) * getBladderFullness();
         if (Math.random() > chance) {
-            LOGGER.debug("Small bladder accident: chance={} desperation={} continence={}", chance, getBladderDesperation(), getBladderContinence());
             recentBladderAccident = true;
-            double amount = getBladder() * (1 - getBladderContinence());
+            int amount = (int) (getBladder() * (1 - getBladderContinence()));
+            LOGGER.debug("Small bladder accident: amount={} chance={} desperation={} continence={}", amount, chance, getBladderDesperation(), getBladderContinence());
             modifyBladder(-amount);
-            CrinkleMod.EVENT_BUS.post(new AccidentEvent.Bladder(Minecraft.getInstance().player, amount));
+            CrinkleMod.EVENT_BUS.post(new AccidentEvent.Bladder(player, amount));
         }
     }
 
@@ -242,11 +252,11 @@ public class Metabolism {
         if (recentBowelAccident) return;
         double chance = (1 - getBowelContinence()) * getBowelFullness();
         if (Math.random() > chance) {
-            LOGGER.debug("Small bowel accident: chance={} desperation={} continence={}", chance, getBowelDesperation(), getBowelContinence());
             recentBowelAccident = true;
-            double amount = getBowels() * (1 - getBowelContinence());
+            int amount = (int) (getBowels() * (1 - getBowelContinence()));
+            LOGGER.debug("Small bowel accident: amount={} chance={} desperation={} continence={}", amount, chance, getBowelDesperation(), getBowelContinence());
             modifyBowels(-amount);
-            CrinkleMod.EVENT_BUS.post(new AccidentEvent.Bowels(Minecraft.getInstance().player, amount));
+            CrinkleMod.EVENT_BUS.post(new AccidentEvent.Bowels(player, amount));
         }
     }
 
@@ -255,11 +265,11 @@ public class Metabolism {
         if (recentBladderAccident) return;
         double chance = (1 - getBladderContinence()) * getBladderFullness();
         if (Math.random() > chance) {
-            LOGGER.debug("Large bladder accident: chance={} desperation={} continence={}", chance, getBladderDesperation(), getBladderContinence());
             recentBladderAccident = true;
-            double amount = getBladder() * BLADDER_LARGE_ACCIDENT_AMOUNT;
+            int amount = (int) (getBladder() * BLADDER_LARGE_ACCIDENT_AMOUNT);
+            LOGGER.debug("Large bladder accident: amount={} chance={} desperation={} continence={}", amount, chance, getBladderDesperation(), getBladderContinence());
             modifyBladder(-amount);
-            CrinkleMod.EVENT_BUS.post(new AccidentEvent.Bladder(Minecraft.getInstance().player, amount));
+            CrinkleMod.EVENT_BUS.post(new AccidentEvent.Bladder(player, amount));
         }
     }
 
@@ -268,11 +278,11 @@ public class Metabolism {
         if (recentBowelAccident) return;
         double chance = (1 - getBowelContinence()) * getBowelFullness();
         if (Math.random() > chance) {
-            LOGGER.debug("Large bowel accident: chance={} desperation={} continence={}", chance, getBowelDesperation(), getBowelContinence());
             recentBowelAccident = true;
-            double amount = getBowels() * BOWEL_LARGE_ACCIDENT_AMOUNT;
+            int amount = (int) (getBowels() * BOWEL_LARGE_ACCIDENT_AMOUNT);
+            LOGGER.debug("Large bowel accident: amount={} chance={} desperation={} continence={}", amount, chance, getBowelDesperation(), getBowelContinence());
             modifyBowels(-amount);
-            CrinkleMod.EVENT_BUS.post(new AccidentEvent.Bowels(Minecraft.getInstance().player, amount));
+            CrinkleMod.EVENT_BUS.post(new AccidentEvent.Bowels(player, amount));
         }
     }
 
@@ -285,7 +295,7 @@ public class Metabolism {
      */
     private void checkForBladderDesperationEvent() {
         if (getBladderDesperation() > 0.5 && Math.random() < getBladderDesperation()) {
-            CrinkleMod.EVENT_BUS.post(new DesperationEvent.Bladder(Minecraft.getInstance().player, getBladderDesperation()));
+            CrinkleMod.EVENT_BUS.post(new DesperationEvent.Bladder(player, getBladderDesperation()));
         }
     }
 
@@ -298,15 +308,22 @@ public class Metabolism {
      */
     private void checkForBowelsDesperationEvent() {
         if (getBowelDesperation() > 0.5 && Math.random() < getBowelDesperation()) {
-            CrinkleMod.EVENT_BUS.post(new DesperationEvent.Bowels(Minecraft.getInstance().player, getBowelDesperation()));
+            CrinkleMod.EVENT_BUS.post(new DesperationEvent.Bowels(player, getBowelDesperation()));
         }
     }
 
-    public void sync(boolean force) {
+    public void syncServer(boolean force) {
         if (isDirty || force) {
-            LOGGER.debug("Sending sync to server");
-            getMetabolism().ifPresent(m -> MetabolismChannel.INSTANCE.sendToServer(new UpdateMessage(m)));
+            LOGGER.debug("Sending metabolism sync to server");
+            getMetabolism().ifPresent(m -> MetabolismChannel.INSTANCE.sendToServer(new MetabolismUpdateMessage(m)));
             isDirty = false;
+        }
+    }
+
+    public void syncClient() {
+        if (player instanceof ServerPlayer serverPlayer) {
+            LOGGER.debug("Sending metabolism sync to client");
+            getMetabolism().ifPresent(m -> MetabolismChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> serverPlayer), new MetabolismUpdateMessage(m)));
         }
     }
 
@@ -318,17 +335,16 @@ public class Metabolism {
      * @param item The item to consume
      */
     public void consume(@NotNull ItemStack item) {
-        if (!item.isEdible()) return;
         if (ConsumableConfig.consumables.containsKey(item.getItem())) {
             modifyLiquids(ConsumableConfig.consumables.get(item.getItem()).liquids);
             modifySolids(ConsumableConfig.consumables.get(item.getItem()).solids);
         } else {
-            Optional.ofNullable(item.getFoodProperties(Minecraft.getInstance().player)).ifPresent(foodProperties -> {
+            Optional.ofNullable(item.getFoodProperties(player)).ifPresent(foodProperties -> {
                 modifySolids(foodProperties.getNutrition());
-                modifyLiquids(foodProperties.getNutrition() / 4f);
+                modifyLiquids((int) (foodProperties.getNutrition() / 4f));
             });
         }
-        sync(true);
+        syncServer(true);
     }
 
     /**
@@ -346,6 +362,10 @@ public class Metabolism {
         checkForBowelLargeAccident();
         // checkForBladderDesperationEvent();
         // checkForBowelsDesperationEvent();
-        sync(false);
+        syncServer(false);
+    }
+
+    public static void fetch() {
+        DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> ClientHooks::fetchMetabolism);
     }
 }

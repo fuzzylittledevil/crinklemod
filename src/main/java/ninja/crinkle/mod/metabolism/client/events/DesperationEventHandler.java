@@ -2,6 +2,7 @@ package ninja.crinkle.mod.metabolism.client.events;
 
 import net.minecraft.network.chat.Component;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import ninja.crinkle.mod.lib.client.events.DesperationEvent;
 import ninja.crinkle.mod.metabolism.common.capabilities.MetabolismImpl;
 
 /**

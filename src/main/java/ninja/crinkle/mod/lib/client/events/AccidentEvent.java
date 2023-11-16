@@ -1,4 +1,4 @@
-package ninja.crinkle.mod.metabolism.client.events;
+package ninja.crinkle.mod.lib.client.events;
 
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.eventbus.api.Event;
@@ -12,10 +12,10 @@ import ninja.crinkle.mod.metabolism.common.capabilities.MetabolismImpl;
  * @see MetabolismImpl
  */
 public abstract class AccidentEvent extends Event {
-    private final double amount;
+    private final int amount;
     private final Player player;
 
-    public AccidentEvent(Player player, double amount) {
+    public AccidentEvent(Player player, int amount) {
         this.player = player;
         this.amount = amount;
     }
@@ -25,7 +25,7 @@ public abstract class AccidentEvent extends Event {
      *
      * @return The amount of liquids or solids that were lost
      */
-    public double getAmount() {
+    public int getAmount() {
         return amount;
     }
 
@@ -42,7 +42,7 @@ public abstract class AccidentEvent extends Event {
      * An accident event that is fired when a player has a bladder accident.
      */
     public static class Bladder extends AccidentEvent {
-        public Bladder(Player player, double amount) {
+        public Bladder(Player player, int amount) {
             super(player, amount);
         }
     }
@@ -51,8 +51,16 @@ public abstract class AccidentEvent extends Event {
      * An accident event that is fired when a player has a bowel accident.
      */
     public static class Bowels extends AccidentEvent {
-        public Bowels(Player player, double amount) {
+        public Bowels(Player player, int amount) {
             super(player, amount);
         }
+    }
+
+    @Override
+    public String toString() {
+        return "AccidentEvent{" +
+                "amount=" + amount +
+                ", player=" + player +
+                '}';
     }
 }

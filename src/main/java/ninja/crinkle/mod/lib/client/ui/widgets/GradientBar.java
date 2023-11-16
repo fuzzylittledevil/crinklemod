@@ -2,6 +2,7 @@ package ninja.crinkle.mod.lib.client.ui.widgets;
 
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.network.chat.Component;
 import ninja.crinkle.mod.lib.client.ui.elements.Text;
@@ -9,20 +10,18 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Supplier;
 
-@SuppressWarnings("unused")
 public class GradientBar extends AbstractWidget {
-    public static final int DEFAULT_TEXT_COLOR = 0xffffffff;
-    private final Supplier<Double> valueSupplier;
-    private final Supplier<Double> maxValueSupplier;
-    private int colorFrom;
-    private int colorTo;
-    private int backgroundColor;
+    private final Supplier<Number> valueSupplier;
+    private final Supplier<Number> maxValueSupplier;
+    private final int colorFrom;
+    private final int colorTo;
+    private final int backgroundColor;
     private final Text text;
     private final Text hoverText;
 
-    protected GradientBar(int pX, int pY, int pWidth, int pHeight, Component pMessage, Supplier<Double> pValueSupplier,
-                          Supplier<Double> pMaxValueSupplier, int colorFrom, int colorTo, int backgroundColor,
-                          Text text, Text hoverText) {
+    protected GradientBar(int pX, int pY, int pWidth, int pHeight, Component pMessage, Supplier<Number> pValueSupplier,
+                          Supplier<Number> pMaxValueSupplier, int colorFrom, int colorTo, int backgroundColor,
+                          Text text, Text hoverText, Tooltip tooltip) {
         super(pX, pY, pWidth, pHeight, pMessage);
         this.valueSupplier = pValueSupplier;
         this.maxValueSupplier = pMaxValueSupplier;
@@ -31,25 +30,13 @@ public class GradientBar extends AbstractWidget {
         this.colorFrom = colorFrom;
         this.colorTo = colorTo;
         this.backgroundColor = backgroundColor;
+        this.setTooltip(tooltip);
     }
 
     public static GradientBar.@NotNull Builder builder(Component message) {
         return new GradientBar.Builder(message);
     }
 
-    public void setColorFrom(int colorFrom) {
-        this.colorFrom = colorFrom;
-    }
-
-    public void setColorTo(int colorTo) {
-        this.colorTo = colorTo;
-    }
-
-    public void setBackgroundColor(int backgroundColor) {
-        this.backgroundColor = backgroundColor;
-    }
-
-    @SuppressWarnings("unused")
     public static class Builder {
         private int x;
         private int y;
@@ -59,10 +46,11 @@ public class GradientBar extends AbstractWidget {
         private int colorTo;
         private int backgroundColor;
         private final Component message;
-        private Supplier<Double> valueSupplier;
-        private Supplier<Double> maxValueSupplier;
+        private Supplier<Number> valueSupplier;
+        private Supplier<Number> maxValueSupplier;
         private Text text;
         private Text hoverText;
+        private Tooltip tooltip;
 
         public Builder(Component message) {
             this.message = message;
@@ -130,29 +118,34 @@ public class GradientBar extends AbstractWidget {
             return this;
         }
 
-        public Builder valueSupplier(Supplier<Double> valueSupplier) {
+        public Builder valueSupplier(Supplier<Number> valueSupplier) {
             this.valueSupplier = valueSupplier;
             return this;
         }
 
-        public Builder maxValueSupplier(Supplier<Double> maxValueSupplier) {
+        public Builder maxValueSupplier(Supplier<Number> maxValueSupplier) {
             this.maxValueSupplier = maxValueSupplier;
+            return this;
+        }
+
+        public Builder tooltip(Tooltip tooltip) {
+            this.tooltip = tooltip;
             return this;
         }
 
         public GradientBar build() {
             return new GradientBar(x, y, width, height, message, valueSupplier, maxValueSupplier, colorFrom, colorTo,
-                    backgroundColor, text, hoverText);
+                    backgroundColor, text, hoverText, tooltip);
         }
     }
 
     @Override
     protected void renderWidget(@NotNull GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
-        double value = valueSupplier.get();
-        double maxValue = maxValueSupplier.get();
-        double percentage = value / maxValue;
+        int value = valueSupplier.get().intValue();
+        int maxValue = maxValueSupplier.get().intValue();
+        double percentage = maxValue == 0 ? 0 : ((double) value / maxValue);
 
-        int offset = (int) (percentage * width);
+        int offset = (int) (width * percentage);
 
         pGuiGraphics.fillGradient(getX(), getY(), getX() + offset, getY() + height, colorFrom, colorTo);
         pGuiGraphics.fill(getX() + offset, getY(), getX() + width, getY() + height, backgroundColor);

@@ -5,7 +5,10 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.FormattedCharSequence;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 public class Label extends AbstractWidget {
     public static final int DEFAULT_COLOR = 0x404040;
@@ -13,9 +16,11 @@ public class Label extends AbstractWidget {
     private Font font;
     private int color;
     private boolean dropShadow;
+    private final int wrapWidth;
 
-    public Label(int pX, int pY, Component pMessage, Font font, int color, boolean dropShadow, boolean visible) {
+    public Label(int pX, int pY, Component pMessage, Font font, int color, boolean dropShadow, boolean visible, int wrapWidth) {
         super(pX, pY, font.width(pMessage), font.lineHeight, pMessage);
+        this.wrapWidth = wrapWidth;
         this.value = pMessage;
         this.font = font;
         this.color = color;
@@ -35,6 +40,7 @@ public class Label extends AbstractWidget {
         private int color = DEFAULT_COLOR;
         private boolean dropShadow;
         private boolean visible = true;
+        private int wrapWidth;
 
         public Builder(Font font, Component value) {
             this.font = font;
@@ -76,11 +82,16 @@ public class Label extends AbstractWidget {
         }
 
         public Label build() {
-            return new Label(x, y, value, font, color, dropShadow, visible);
+            return new Label(x, y, value, font, color, dropShadow, visible, wrapWidth);
         }
 
         public Builder visible(boolean value) {
             this.visible = value;
+            return this;
+        }
+
+        public Builder wrapWidth(int wrapWidth) {
+            this.wrapWidth = wrapWidth;
             return this;
         }
     }
@@ -119,7 +130,15 @@ public class Label extends AbstractWidget {
 
     @Override
     protected void renderWidget(@NotNull GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
-        pGuiGraphics.drawString(font, value, getX(), getY(), color, dropShadow);
+        if(!visible) return;
+        if (wrapWidth == 0) {
+            pGuiGraphics.drawString(font, value, getX(), getY(), color, dropShadow);
+            return;
+        }
+        List<FormattedCharSequence> lines = font.split(value, wrapWidth);
+        for(int i = 0; i < lines.size(); i++) {
+            pGuiGraphics.drawString(font, lines.get(i), getX(), getY() + (i * font.lineHeight), color, dropShadow);
+        }
     }
 
     @Override

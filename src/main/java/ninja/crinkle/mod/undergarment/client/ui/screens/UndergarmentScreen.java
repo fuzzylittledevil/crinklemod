@@ -1,4 +1,4 @@
-package ninja.crinkle.mod.metabolism.client.ui.screens;
+package ninja.crinkle.mod.undergarment.client.ui.screens;
 
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
@@ -12,18 +12,15 @@ import ninja.crinkle.mod.lib.client.ClientHooks;
 import ninja.crinkle.mod.lib.client.ui.menus.AbstractMenu;
 import ninja.crinkle.mod.lib.client.ui.menus.ConfigMenu;
 import ninja.crinkle.mod.lib.client.ui.menus.StatusMenu;
-import ninja.crinkle.mod.metabolism.common.MetabolismSettings;
+import ninja.crinkle.mod.undergarment.common.UndergarmentSettings;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
-public class MetabolismScreen extends Screen {
-    private static final Component TITLE = Component.translatable("gui.crinklemod.metabolism_screen.title");
-    private static final Component LIQUIDS_MENU_TITLE = Component.translatable("gui.crinklemod.metabolism_screen.liquids_menu.title");
-    private static final Component BLADDER_MENU_TITLE = Component.translatable("gui.crinklemod.metabolism_screen.bladder_menu.title");
-    private static final Component BOWEL_MENU_TITLE = Component.translatable("gui.crinklemod.metabolism_screen.bowel_menu.title");
-    private static final Component SOLIDS_MENU_TITLE = Component.translatable("gui.crinklemod.metabolism_screen.solids_menu.title");
-
+public class UndergarmentScreen extends Screen {
+    private static final Component TITLE = Component.translatable("gui.crinklemod.undergarment_screen.title");
+    private static final Component LIQUIDS_MENU_TITLE = Component.translatable("gui.crinklemod.undergarment_screen.liquids_menu.title");
+    private static final Component SOLIDS_MENU_TITLE = Component.translatable("gui.crinklemod.undergarment_screen.solids_menu.title");
     private static final ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation(CrinkleMod.MODID, "textures/gui/metabolism_configuration_background.png");
     private final int imageWidth;
     private final int imageHeight;
@@ -34,10 +31,8 @@ public class MetabolismScreen extends Screen {
     private AbstractMenu currentMenu;
     private ConfigMenu<Player> liquidsMenu;
     private ConfigMenu<Player> solidsMenu;
-    private ConfigMenu<Player> bladderMenu;
-    private ConfigMenu<Player> bowelMenu;
 
-    public MetabolismScreen() {
+    public UndergarmentScreen() {
         super(TITLE);
 
         this.imageWidth = 176;
@@ -76,32 +71,16 @@ public class MetabolismScreen extends Screen {
                             .spacer(4)
                             .entry(StatusMenu.Entry.intBuilder()
                                     .lineNumber(1)
-                                    .setting(MetabolismSettings.LIQUIDS)
+                                    .setting(UndergarmentSettings.LIQUIDS)
                                     .onPress((menu) -> setCurrentMenu(liquidsMenu))
-                                    .gradientStartColor(0xffe0ffff)
-                                    .gradientEndColor(0xffb9f2ff)
-                                    .gradientBackgroundColor(0xff008b8b)
-                                    .build())
-                            .entry(StatusMenu.Entry.intBuilder()
-                                    .lineNumber(2)
-                                    .setting(MetabolismSettings.SOLIDS)
-                                    .onPress((menu) -> setCurrentMenu(solidsMenu))
-                                    .gradientStartColor(0xff90ee90)
-                                    .gradientEndColor(0xff008000)
-                                    .gradientBackgroundColor(0xff006400)
-                                    .build())
-                            .entry(StatusMenu.Entry.intBuilder()
-                                    .lineNumber(3)
-                                    .setting(MetabolismSettings.BLADDER)
-                                    .onPress((menu) -> setCurrentMenu(bladderMenu))
                                     .gradientStartColor(0xffffef00)
                                     .gradientEndColor(0xffffdf00)
                                     .gradientBackgroundColor(0xfff5c71a)
                                     .build())
                             .entry(StatusMenu.Entry.intBuilder()
-                                    .lineNumber(4)
-                                    .setting(MetabolismSettings.BOWELS)
-                                    .onPress((menu) -> setCurrentMenu(bowelMenu))
+                                    .lineNumber(2)
+                                    .setting(UndergarmentSettings.SOLIDS)
+                                    .onPress((menu) -> setCurrentMenu(solidsMenu))
                                     .gradientStartColor(0xFF836953)
                                     .gradientEndColor(0xFF644117)
                                     .gradientBackgroundColor(0xFF321414)
@@ -112,50 +91,27 @@ public class MetabolismScreen extends Screen {
                     liquidsMenu = ConfigMenu.builder(font, LIQUIDS_MENU_TITLE, () -> (Player) minecraft.player)
                             .origin(leftPos, topPos)
                             .onClose(m -> setCurrentMenu(mainMenu))
-                            .entry(new ConfigMenu.Entry<>(1, 10, MetabolismSettings.MAX_LIQUIDS))
-                            .entry(new ConfigMenu.Entry<>(2, 10, MetabolismSettings.LIQUIDS_RATE))
+                            .entry(new ConfigMenu.Entry<>(1, 10, UndergarmentSettings.LIQUIDS))
+                            .entry(new ConfigMenu.Entry<>(2, 10, UndergarmentSettings.MAX_LIQUIDS))
                             .visible(false)
                             .build();
                     liquidsMenu.visitChildren(this::addRenderableWidget);
                     solidsMenu = ConfigMenu.builder(font, SOLIDS_MENU_TITLE, () -> (Player) minecraft.player)
                             .origin(leftPos, topPos)
                             .onClose(m -> setCurrentMenu(mainMenu))
-                            .entry(new ConfigMenu.Entry<>(1, 10, MetabolismSettings.MAX_SOLIDS))
-                            .entry(new ConfigMenu.Entry<>(2, 10, MetabolismSettings.SOLIDS_RATE))
+                            .entry(new ConfigMenu.Entry<>(1, 10, UndergarmentSettings.SOLIDS))
+                            .entry(new ConfigMenu.Entry<>(2, 10, UndergarmentSettings.MAX_SOLIDS))
                             .visible(false)
                             .build();
                     solidsMenu.visitChildren(this::addRenderableWidget);
-                    bladderMenu = ConfigMenu.builder(font, BLADDER_MENU_TITLE, () -> (Player) minecraft.player)
-                            .origin(leftPos, topPos)
-                            .onClose(m -> setCurrentMenu(mainMenu))
-                            .entry(new ConfigMenu.Entry<>(1, 10, MetabolismSettings.BLADDER_CAPACITY))
-                            .entry(new ConfigMenu.Entry<>(2, 10, MetabolismSettings.BLADDER_CONTINENCE))
-                            .visible(false)
-                            .build();
-                    bladderMenu.visitChildren(this::addRenderableWidget);
-                    bowelMenu = ConfigMenu.builder(font, BOWEL_MENU_TITLE, () -> (Player) minecraft.player)
-                            .origin(leftPos, topPos)
-                            .onClose(m -> setCurrentMenu(mainMenu))
-                            .entry(new ConfigMenu.Entry<>(1, 10, MetabolismSettings.BOWEL_CAPACITY))
-                            .entry(new ConfigMenu.Entry<>(2, 10, MetabolismSettings.BOWEL_CONTINENCE))
-                            .visible(false)
-                            .build();
-                    bowelMenu.visitChildren(this::addRenderableWidget);
                 });
     }
 
     @Override
     public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        // Background is typically rendered first
         this.renderBackground(guiGraphics);
-
-        // Render the background texture
         guiGraphics.blit(BACKGROUND_TEXTURE, leftPos, topPos, 0, 0, imageWidth, imageHeight);
-
-        // Then the widgets if this is a direct child of the Screen
         super.render(guiGraphics, mouseX, mouseY, partialTick);
-
-        // Render things after widgets (tooltips)
     }
 
     @Override

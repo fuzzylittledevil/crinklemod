@@ -1,6 +1,8 @@
 package ninja.crinkle.mod.metabolism.common.capabilities;
 
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
+import ninja.crinkle.mod.metabolism.common.MetabolismSettings;
 import ninja.crinkle.mod.metabolism.common.config.MetabolismConfig;
 import org.jetbrains.annotations.NotNull;
 
@@ -15,29 +17,16 @@ import static ninja.crinkle.mod.lib.common.util.MathUtil.round;
  * @see IMetabolism
  */
 public class MetabolismImpl implements IMetabolism {
-    private static final String NBT_KEY_LIQUIDS = "liquids";
-    private static final String NBT_KEY_SOLIDS = "solids";
-    private static final String NBT_KEY_BLADDER = "bladder";
-    private static final String NBT_KEY_BOWELS = "bowels";
-    private static final String NBT_KEY_BLADDER_CAPACITY = "bladderCapacity";
-    private static final String NBT_KEY_BOWEL_CAPACITY = "bowelCapacity";
-    private static final String NBT_KEY_SOLIDS_RATE = "solidsRate";
-    private static final String NBT_KEY_LIQUIDS_RATE = "liquidsRate";
-    private static final String NBT_KEY_MAX_LIQUIDS = "maxLiquids";
-    private static final String NBT_KEY_MAX_SOLIDS = "maxSolids";
-    private static final String NBT_KEY_BLADDER_CONTINENCE = "bladderContinence";
-    private static final String NBT_KEY_BOWEL_CONTINENCE = "bowelContinence";
-
-    private double liquids;
-    private double solids;
-    private double bladder;
-    private double bowels;
-    private double bladderCapacity;
-    private double bowelCapacity;
-    private double solidsRate;
-    private double liquidsRate;
-    private double maxSolids;
-    private double maxLiquids;
+    private int liquids;
+    private int solids;
+    private int bladder;
+    private int bowels;
+    private int bladderCapacity;
+    private int bowelCapacity;
+    private int solidsRate;
+    private int liquidsRate;
+    private int maxSolids;
+    private int maxLiquids;
     private double bladderContinence;
     private double bowelContinence;
 
@@ -61,18 +50,18 @@ public class MetabolismImpl implements IMetabolism {
     @Override
     public CompoundTag serializeNBT() {
         CompoundTag tag = new CompoundTag();
-        tag.putDouble(NBT_KEY_LIQUIDS, getLiquids());
-        tag.putDouble(NBT_KEY_SOLIDS, getSolids());
-        tag.putDouble(NBT_KEY_BLADDER, getBladder());
-        tag.putDouble(NBT_KEY_BOWELS, getBowels());
-        tag.putDouble(NBT_KEY_BLADDER_CAPACITY, getBladderCapacity());
-        tag.putDouble(NBT_KEY_BOWEL_CAPACITY, getBowelCapacity());
-        tag.putDouble(NBT_KEY_SOLIDS_RATE, getSolidsRate());
-        tag.putDouble(NBT_KEY_LIQUIDS_RATE, getLiquidsRate());
-        tag.putDouble(NBT_KEY_MAX_LIQUIDS, getMaxLiquids());
-        tag.putDouble(NBT_KEY_MAX_SOLIDS, getMaxSolids());
-        tag.putDouble(NBT_KEY_BLADDER_CONTINENCE, getBladderContinence());
-        tag.putDouble(NBT_KEY_BOWEL_CONTINENCE, getBowelContinence());
+        tag.putInt(MetabolismSettings.LIQUIDS.key(), getLiquids());
+        tag.putInt(MetabolismSettings.SOLIDS.key(), getSolids());
+        tag.putInt(MetabolismSettings.BLADDER.key(), getBladder());
+        tag.putInt(MetabolismSettings.BOWELS.key(), getBowels());
+        tag.putInt(MetabolismSettings.BLADDER_CAPACITY.key(), getBladderCapacity());
+        tag.putInt(MetabolismSettings.BOWEL_CAPACITY.key(), getBowelCapacity());
+        tag.putInt(MetabolismSettings.SOLIDS_RATE.key(), getSolidsRate());
+        tag.putInt(MetabolismSettings.LIQUIDS_RATE.key(), getLiquidsRate());
+        tag.putInt(MetabolismSettings.MAX_LIQUIDS.key(), getMaxLiquids());
+        tag.putInt(MetabolismSettings.MAX_SOLIDS.key(), getMaxSolids());
+        tag.putDouble(MetabolismSettings.BLADDER_CONTINENCE.key(), getBladderContinence());
+        tag.putDouble(MetabolismSettings.BOWEL_CONTINENCE.key(), getBowelContinence());
         return tag;
     }
 
@@ -83,18 +72,18 @@ public class MetabolismImpl implements IMetabolism {
      */
     @Override
     public void deserializeNBT(@NotNull CompoundTag nbt) {
-        setLiquids(nbt.getDouble(NBT_KEY_LIQUIDS));
-        setSolids(nbt.getDouble(NBT_KEY_SOLIDS));
-        setBladder(nbt.getDouble(NBT_KEY_BLADDER));
-        setBowels(nbt.getDouble(NBT_KEY_BOWELS));
-        setBladderCapacity(nbt.getDouble(NBT_KEY_BLADDER_CAPACITY));
-        setBowelCapacity(nbt.getDouble(NBT_KEY_BOWEL_CAPACITY));
-        setSolidsRate(nbt.getDouble(NBT_KEY_SOLIDS_RATE));
-        setLiquidsRate(nbt.getDouble(NBT_KEY_LIQUIDS_RATE));
-        setMaxLiquids(nbt.getDouble(NBT_KEY_MAX_LIQUIDS));
-        setMaxSolids(nbt.getDouble(NBT_KEY_MAX_SOLIDS));
-        setBladderContinence(nbt.getDouble(NBT_KEY_BLADDER_CONTINENCE));
-        setBowelContinence(nbt.getDouble(NBT_KEY_BOWEL_CONTINENCE));
+        setLiquids(nbt.getInt(MetabolismSettings.LIQUIDS.key()));
+        setSolids(nbt.getInt(MetabolismSettings.SOLIDS.key()));
+        setBladder(nbt.getInt(MetabolismSettings.BLADDER.key()));
+        setBowels(nbt.getInt(MetabolismSettings.BOWELS.key()));
+        setBladderCapacity(nbt.getInt(MetabolismSettings.BLADDER_CAPACITY.key()));
+        setBowelCapacity(nbt.getInt(MetabolismSettings.BOWEL_CAPACITY.key()));
+        setSolidsRate(nbt.getInt(MetabolismSettings.SOLIDS_RATE.key()));
+        setLiquidsRate(nbt.getInt(MetabolismSettings.LIQUIDS_RATE.key()));
+        setMaxLiquids(nbt.getInt(MetabolismSettings.MAX_LIQUIDS.key()));
+        setMaxSolids(nbt.getInt(MetabolismSettings.MAX_SOLIDS.key()));
+        setBladderContinence(nbt.getDouble(MetabolismSettings.BLADDER_CONTINENCE.key()));
+        setBowelContinence(nbt.getDouble(MetabolismSettings.BOWEL_CONTINENCE.key()));
     }
 
     /**
@@ -103,8 +92,8 @@ public class MetabolismImpl implements IMetabolism {
      * @return The amount of liquids in the player's stomach.
      */
     @Override
-    public double getLiquids() {
-        return round(liquids, 2);
+    public int getLiquids() {
+        return liquids;
     }
 
     /**
@@ -114,7 +103,7 @@ public class MetabolismImpl implements IMetabolism {
      * @param liquids The amount of liquids in the player's stomach
      */
     @Override
-    public void setLiquids(double liquids) {
+    public void setLiquids(int liquids) {
         this.liquids = clamp(liquids, 0, maxLiquids);
     }
 
@@ -124,8 +113,8 @@ public class MetabolismImpl implements IMetabolism {
      * @return The amount of solids in the player's stomach.
      */
     @Override
-    public double getSolids() {
-        return round(solids, 2);
+    public int getSolids() {
+        return solids;
     }
 
     /**
@@ -135,7 +124,7 @@ public class MetabolismImpl implements IMetabolism {
      * @param solids The amount of solids in the player's stomach
      */
     @Override
-    public void setSolids(double solids) {
+    public void setSolids(int solids) {
         this.solids = clamp(solids, 0, maxSolids);
     }
 
@@ -145,8 +134,8 @@ public class MetabolismImpl implements IMetabolism {
      * @return The amount of fluid in the player's bladder.
      */
     @Override
-    public double getBladder() {
-        return round(bladder, 2);
+    public int getBladder() {
+        return bladder;
     }
 
     /**
@@ -156,7 +145,7 @@ public class MetabolismImpl implements IMetabolism {
      * @param bladder The amount of fluid in the player's bladder
      */
     @Override
-    public void setBladder(double bladder) {
+    public void setBladder(int bladder) {
         this.bladder = clamp(bladder, 0, bladderCapacity);
     }
 
@@ -166,8 +155,8 @@ public class MetabolismImpl implements IMetabolism {
      * @return The amount of solids in the player's bowels.
      */
     @Override
-    public double getBowels() {
-        return round(bowels, 2);
+    public int getBowels() {
+        return bowels;
     }
 
     /**
@@ -177,66 +166,66 @@ public class MetabolismImpl implements IMetabolism {
      * @param bowels The amount of solids in the player's bowels
      */
     @Override
-    public void setBowels(double bowels) {
+    public void setBowels(int bowels) {
         this.bowels = clamp(bowels, 0, bowelCapacity);
     }
 
 
     @Override
-    public double getBladderCapacity() {
-        return round(bladderCapacity, 2);
+    public int getBladderCapacity() {
+        return bladderCapacity;
     }
 
     @Override
-    public void setBladderCapacity(double bladderCapacity) {
+    public void setBladderCapacity(int bladderCapacity) {
         this.bladderCapacity = clamp(bladderCapacity, 0, maxLiquids);
     }
 
     @Override
-    public double getBowelCapacity() {
-        return round(bowelCapacity, 2);
+    public int getBowelCapacity() {
+        return bowelCapacity;
     }
 
     @Override
-    public void setBowelCapacity(double bowelsCapacity) {
+    public void setBowelCapacity(int bowelsCapacity) {
         this.bowelCapacity = clamp(bowelsCapacity, 0, maxSolids);
     }
 
     @Override
-    public double getSolidsRate() {
-        return round(solidsRate, 4);
+    public int getSolidsRate() {
+        return solidsRate;
     }
 
     @Override
-    public void setSolidsRate(double solidsRate) {
+    public void setSolidsRate(int solidsRate) {
         this.solidsRate = solidsRate;
     }
 
     @Override
-    public double getLiquidsRate() {
-        return round(liquidsRate, 4);
+    public int getLiquidsRate() {
+        return liquidsRate;
     }
 
     @Override
-    public void setLiquidsRate(double liquidsRate) {
+    public void setLiquidsRate(int liquidsRate) {
         this.liquidsRate = liquidsRate;
     }
 
     @Override
-    public double getMaxSolids() {
-        return round(maxSolids, 2);
+    public int getMaxSolids() {
+        return maxSolids;
     }
 
-    public void setMaxSolids(double maxSolids) {
+    public void setMaxSolids(int maxSolids) {
         this.maxSolids = maxSolids;
     }
 
     @Override
-    public double getMaxLiquids() {
-        return round(maxLiquids, 2);
+    public int getMaxLiquids() {
+        return maxLiquids;
     }
 
-    public void setMaxLiquids(double maxLiquids) {
+    public void setMaxLiquids(int maxLiquids) {
         this.maxLiquids = maxLiquids;
     }
 
@@ -280,5 +269,37 @@ public class MetabolismImpl implements IMetabolism {
                 ", bladderContinence=" + getBladderContinence() +
                 ", bowelContinence=" + getBowelContinence() +
                 '}';
+    }
+
+    @Override
+    public void writeSpawnData(FriendlyByteBuf buffer) {
+        buffer.writeInt(getLiquids());
+        buffer.writeInt(getMaxLiquids());
+        buffer.writeInt(getLiquidsRate());
+        buffer.writeInt(getSolids());
+        buffer.writeInt(getMaxSolids());
+        buffer.writeInt(getSolidsRate());
+        buffer.writeInt(getBladder());
+        buffer.writeInt(getBladderCapacity());
+        buffer.writeDouble(getBladderContinence());
+        buffer.writeInt(getBowels());
+        buffer.writeInt(getBowelCapacity());
+        buffer.writeDouble(getBowelContinence());
+    }
+
+    @Override
+    public void readSpawnData(FriendlyByteBuf additionalData) {
+        setLiquids(additionalData.readInt());
+        setMaxLiquids(additionalData.readInt());
+        setLiquidsRate(additionalData.readInt());
+        setSolids(additionalData.readInt());
+        setMaxSolids(additionalData.readInt());
+        setSolidsRate(additionalData.readInt());
+        setBladder(additionalData.readInt());
+        setBladderCapacity(additionalData.readInt());
+        setBladderContinence(additionalData.readDouble());
+        setBowels(additionalData.readInt());
+        setBowelCapacity(additionalData.readInt());
+        setBowelContinence(additionalData.readDouble());
     }
 }

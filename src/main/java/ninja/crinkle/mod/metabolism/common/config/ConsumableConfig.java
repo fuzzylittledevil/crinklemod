@@ -11,7 +11,8 @@ import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.config.ModConfigEvent;
 import net.minecraftforge.registries.ForgeRegistries;
 import ninja.crinkle.mod.CrinkleMod;
-import ninja.crinkle.mod.metabolism.server.ServerRegistration;
+import ninja.crinkle.mod.lib.common.util.ConfigUtil;
+import ninja.crinkle.mod.metabolism.server.MetabolismServerRegistration;
 
 import java.util.HashMap;
 import java.util.List;
@@ -32,10 +33,10 @@ public class ConsumableConfig {
      */
     public static class ConsumableData {
         public String name;
-        public double solids;
-        public double liquids;
+        public int solids;
+        public int liquids;
 
-        public ConsumableData(String name, double solids, double liquids) {
+        public ConsumableData(String name, int solids, int liquids) {
             this.name = name;
             this.solids = solids;
             this.liquids = liquids;
@@ -61,30 +62,20 @@ public class ConsumableConfig {
             .comment("A list of consumables and their associated data.")
             .defineListAllowEmpty("consumable",
                     List.of(
-                            new ConsumableData("minecraft:potato", 2f, .25f).toConfig(),
-                            new ConsumableData("minecraft:apple", 1f, 1f).toConfig(),
-                            new ConsumableData("minecraft:milk_bucket", 1f, 1f).toConfig()
+                            new ConsumableData("minecraft:potato", 200, 25).toConfig(),
+                            new ConsumableData("minecraft:apple", 175, 50).toConfig(),
+                            new ConsumableData("minecraft:milk_bucket", 200, 800).toConfig()
                     ),
-                    ConsumableConfig::validateItemName
+                    ConfigUtil.getItemNameValidator("name")
             );
     private static final ForgeConfigSpec SPEC = BUILDER.build();
 
     public static Map<Item, ConsumableData> consumables = new HashMap<>();
 
     /**
-     * Ensure the item name is loaded in the registry and valid.
-     *
-     * @param obj The object to validate
-     * @return Whether the object is valid
-     */
-    private static boolean validateItemName(final Object obj) {
-        return obj instanceof final Config data && ForgeRegistries.ITEMS.containsKey(new ResourceLocation(data.get("name")));
-    }
-
-    /**
      * Register the config
      *
-     * @see ServerRegistration
+     * @see MetabolismServerRegistration
      */
     public static void register() {
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, SPEC, CONFIG_FILE_NAME);

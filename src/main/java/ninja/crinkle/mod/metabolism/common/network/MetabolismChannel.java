@@ -4,12 +4,13 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.simple.SimpleChannel;
 import ninja.crinkle.mod.CrinkleMod;
-import ninja.crinkle.mod.metabolism.common.network.messages.UpdateMessage;
+import ninja.crinkle.mod.metabolism.common.network.messages.MetabolismFetchMessage;
+import ninja.crinkle.mod.metabolism.common.network.messages.MetabolismUpdateMessage;
 
 /**
  * A network channel that is used to sync the metabolism of a player to the client or server.
  *
- * @see UpdateMessage
+ * @see MetabolismUpdateMessage
  * @see net.minecraftforge.network.simple.SimpleChannel
  */
 public class MetabolismChannel {
@@ -24,10 +25,15 @@ public class MetabolismChannel {
 
     public static void register() {
         int id = 0;
-        INSTANCE.messageBuilder(UpdateMessage.class, ++id)
-                .decoder(UpdateMessage::decoder)
-                .encoder(UpdateMessage::encoder)
-                .consumerMainThread(UpdateMessage::messageConsumer)
+        INSTANCE.messageBuilder(MetabolismUpdateMessage.class, ++id)
+                .decoder(MetabolismUpdateMessage::decoder)
+                .encoder(MetabolismUpdateMessage::encoder)
+                .consumerMainThread(MetabolismUpdateMessage::messageConsumer)
+                .add();
+        INSTANCE.messageBuilder(MetabolismFetchMessage.class, ++id)
+                .encoder(MetabolismFetchMessage::encoder)
+                .decoder(MetabolismFetchMessage::decoder)
+                .consumerNetworkThread(MetabolismFetchMessage::messageConsumer)
                 .add();
     }
 }

@@ -18,40 +18,40 @@ public class MetabolismConfig {
 
     private static final ForgeConfigSpec.DoubleValue BLADDER_CONTINENCE = BUILDER
             .comment("The bladder continence of the player. Higher values mean more continence.")
-            .defineInRange("bladderContinence", 0.8d, 0, 1d);
+            .defineInRange("bladderContinence", 0.9d, 0, 1d);
     private static final ForgeConfigSpec.DoubleValue BOWEL_CONTINENCE = BUILDER
             .comment("The bowel continence of the player. Higher values mean more continence.")
-            .defineInRange("bowelContinence", 0.8d, 0, 1d);
+            .defineInRange("bowelContinence", 0.9d, 0, 1d);
 
-    private static final ForgeConfigSpec.DoubleValue BLADDER_CAPACITY = BUILDER
-            .comment("The maximum amount of liquids the bladder can hold.")
-            .defineInRange("bladderCapacity", 100d, 1d, Double.MAX_VALUE);
-    private static final ForgeConfigSpec.DoubleValue BOWEL_CAPACITY = BUILDER
-            .comment("The maximum amount of solids the bowels can hold.")
-            .defineInRange("bowelCapacity", 100d, 1d, Double.MAX_VALUE);
-    private static final ForgeConfigSpec.DoubleValue SOLIDS_RATE = BUILDER
-            .comment("The rate at which solids are digested.")
-            .defineInRange("solidsRate", 0.1d, 0d, Double.MAX_VALUE);
-    private static final ForgeConfigSpec.DoubleValue LIQUIDS_RATE = BUILDER
-            .comment("The rate at which liquids are digested.")
-            .defineInRange("liquidsRate", 0.1d, 0d, Double.MAX_VALUE);
-    private static final ForgeConfigSpec.DoubleValue MAX_LIQUIDS = BUILDER
-            .comment("The maximum amount of liquids the stomach can hold.")
-            .defineInRange("maxLiquids", 100d, 1d, Double.MAX_VALUE);
-    private static final ForgeConfigSpec.DoubleValue MAX_SOLIDS = BUILDER
-            .comment("The maximum amount of solids the stomach can hold.")
-            .defineInRange("maxSolids", 100d, 1d, Double.MAX_VALUE);
+    private static final ForgeConfigSpec.IntValue BLADDER_CAPACITY = BUILDER
+            .comment("The maximum amount of liquids the bladder can hold in mB.")
+            .defineInRange("bladderCapacity", 500, 1, Integer.MAX_VALUE);
+    private static final ForgeConfigSpec.IntValue BOWEL_CAPACITY = BUILDER
+            .comment("The maximum amount of solids the bowels can hold in mB.")
+            .defineInRange("bowelCapacity", 400, 1, Integer.MAX_VALUE);
+    private static final ForgeConfigSpec.IntValue SOLIDS_RATE = BUILDER
+            .comment("The rate at which solids are digested in mB.")
+            .defineInRange("solidsRate", 3, 0, Integer.MAX_VALUE);
+    private static final ForgeConfigSpec.IntValue LIQUIDS_RATE = BUILDER
+            .comment("The rate at which liquids are digested in mB.")
+            .defineInRange("liquidsRate", 3, 0, Integer.MAX_VALUE);
+    private static final ForgeConfigSpec.IntValue MAX_LIQUIDS = BUILDER
+            .comment("The maximum amount of liquids the stomach can hold in mB.")
+            .defineInRange("maxLiquids", 475, 1, Integer.MAX_VALUE);
+    private static final ForgeConfigSpec.IntValue MAX_SOLIDS = BUILDER
+            .comment("The maximum amount of solids the stomach can hold in mB.")
+            .defineInRange("maxSolids", 475, 1, Integer.MAX_VALUE);
 
     private static final ForgeConfigSpec SPEC = BUILDER.build();
 
     public static double bladderContinence;
     public static double bowelContinence;
-    public static double bladderCapacity;
-    public static double bowelCapacity;
-    public static double solidsRate;
-    public static double liquidsRate;
-    public static double maxLiquids;
-    public static double maxSolids;
+    public static int bladderCapacity;
+    public static int bowelCapacity;
+    public static int solidsRate;
+    public static int liquidsRate;
+    public static int maxLiquids;
+    public static int maxSolids;
 
 
     public static void register() {

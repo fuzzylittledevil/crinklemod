@@ -3,6 +3,8 @@ package ninja.crinkle.mod.metabolism.common.capabilities;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraftforge.common.capabilities.AutoRegisterCapability;
 import net.minecraftforge.common.util.INBTSerializable;
+import net.minecraftforge.entity.IEntityAdditionalSpawnData;
+import ninja.crinkle.mod.lib.common.settings.Setting;
 
 /**
  * Metabolism capability interface.
@@ -13,34 +15,34 @@ import net.minecraftforge.common.util.INBTSerializable;
  * @see net.minecraftforge.common.util.INBTSerializable
  */
 @AutoRegisterCapability
-public interface IMetabolism extends INBTSerializable<CompoundTag> {
+public interface IMetabolism extends INBTSerializable<CompoundTag>, IEntityAdditionalSpawnData {
     /**
      * Get the amount of liquids in the player's stomach
      *
      * @return The amount of liquids in the player's stomach
      */
-    double getLiquids();
+    int getLiquids();
 
     /**
      * Set the amount of liquids in the player's stomach
      *
      * @param value The amount of liquids in the player's stomach
      */
-    void setLiquids(double value);
+    void setLiquids(int value);
 
     /**
      * Get the amount of solids in the player's stomach
      *
      * @return The amount of solids in the player's stomach
      */
-    double getSolids();
+    int getSolids();
 
     /**
      * Set the amount of solids in the player's stomach
      *
      * @param value The amount of solids in the player's stomach
      */
-    void setSolids(double value);
+    void setSolids(int value);
 
 
     /**
@@ -48,28 +50,28 @@ public interface IMetabolism extends INBTSerializable<CompoundTag> {
      *
      * @return The amount of fluid in the player's bladder
      */
-    double getBladder();
+    int getBladder();
 
     /**
      * Set the amount of fluid in the player's bladder
      *
      * @param value The amount of fluid in the player's bladder
      */
-    void setBladder(double value);
+    void setBladder(int value);
 
     /**
      * Get the amount of solids in the player's bowels
      *
      * @return The amount of solids in the player's bowels
      */
-    double getBowels();
+    int getBowels();
 
     /**
      * Set the amount of solids in the player's bowels
      *
      * @param value The amount of solids in the player's bowels
      */
-    void setBowels(double value);
+    void setBowels(int value);
 
     /**
      * Get the capacity of the player's bladder
@@ -77,7 +79,7 @@ public interface IMetabolism extends INBTSerializable<CompoundTag> {
      * @return The capacity of the player's bladder
      * @implNote The maximum is determined by {@link #getMaxLiquids()}
      */
-    double getBladderCapacity();
+    int getBladderCapacity();
 
     /**
      * Set the capacity of the player's bladder
@@ -85,7 +87,7 @@ public interface IMetabolism extends INBTSerializable<CompoundTag> {
      * @param value The capacity of the player's bladder
      * @implNote The maximum is determined by {@link #getMaxLiquids()}
      */
-    void setBladderCapacity(double value);
+    void setBladderCapacity(int value);
 
     /**
      * Get the capacity of the player's bowels
@@ -93,7 +95,7 @@ public interface IMetabolism extends INBTSerializable<CompoundTag> {
      * @return The capacity of the player's bowels
      * @implNote The maximum is determined by {@link #getMaxSolids()}
      */
-    double getBowelCapacity();
+    int getBowelCapacity();
 
     /**
      * Set the capacity of the player's bowels
@@ -101,35 +103,35 @@ public interface IMetabolism extends INBTSerializable<CompoundTag> {
      * @param value The capacity of the player's bowels
      * @implNote The maximum is determined by {@link #getMaxSolids()}
      */
-    void setBowelCapacity(double value);
+    void setBowelCapacity(int value);
 
     /**
      * Get the rate at which solids are digested
      *
      * @return The rate at which solids are digested
      */
-    double getSolidsRate();
+    int getSolidsRate();
 
     /**
      * Set the rate at which solids are digested
      *
      * @param value The rate at which solids are digested
      */
-    void setSolidsRate(double value);
+    void setSolidsRate(int value);
 
     /**
      * Get the rate at which liquids are digested
      *
      * @return The rate at which liquids are digested
      */
-    double getLiquidsRate();
+    int getLiquidsRate();
 
     /**
      * Set the rate at which liquids are digested
      *
      * @param value The rate at which liquids are digested
      */
-    void setLiquidsRate(double value);
+    void setLiquidsRate(int value);
 
     /**
      * Get the maximum amount of solids the stomach can hold
@@ -137,7 +139,7 @@ public interface IMetabolism extends INBTSerializable<CompoundTag> {
      * @return The maximum amount of solids the stomach can hold
      * @implNote This also controls the maximum size of the bowels
      */
-    double getMaxSolids();
+    int getMaxSolids();
 
     /**
      * Set the maximum amount of solids the stomach can hold
@@ -145,7 +147,7 @@ public interface IMetabolism extends INBTSerializable<CompoundTag> {
      * @param value The maximum amount of solids the stomach can hold
      * @implNote This also controls the maximum size of the bowels
      */
-    void setMaxSolids(double value);
+    void setMaxSolids(int value);
 
     /**
      * Get the maximum amount of liquids the stomach can hold
@@ -153,7 +155,7 @@ public interface IMetabolism extends INBTSerializable<CompoundTag> {
      * @return The maximum amount of liquids the stomach can hold
      * @implNote This also controls the maximum size of the bladder
      */
-    double getMaxLiquids();
+    int getMaxLiquids();
 
     /**
      * Set the maximum amount of liquids the stomach can hold
@@ -161,7 +163,7 @@ public interface IMetabolism extends INBTSerializable<CompoundTag> {
      * @param value The maximum amount of liquids the stomach can hold
      * @implNote This also controls the maximum size of the bladder
      */
-    void setMaxLiquids(double value);
+    void setMaxLiquids(int value);
 
     /**
      * Get the bladder continence of the player
