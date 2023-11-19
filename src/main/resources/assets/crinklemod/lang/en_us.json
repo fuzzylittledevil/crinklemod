@@ -59,10 +59,18 @@
   "event.crinklemod.undergarment.bowel.accident.text": "You feel a warm squishiness in your pants.",
   "event.crinklemod.undergarment.liquids.leak.text": "You feel a trickle running down your leg.",
   "event.crinklemod.undergarment.solids.leak.text": "Your pants can't handle much more of this, Captain!",
+  "event.crinklemod.undergarment.use.cauldron.text": "You wash your %s in the cauldron.",
+  "event.crinklemod.undergarment.use.cauldron.nothing.text": "You wash your %s in the cauldron, but nothing happens.",
+  "event.crinklemod.undergarment.use.cauldron.no_water.text": "You try to wash your %s in the cauldron, but there's no water in it.",
 
   "gui.crinklemod.undergarment_button.title": "Pants",
   "gui.crinklemod.undergarment_screen.title": "Pants",
   "gui.crinklemod.undergarment_screen.main_menu.title": "Pants",
   "gui.crinklemod.undergarment_screen.liquids_menu.title": "Liquids Settings",
-  "gui.crinklemod.undergarment_screen.solids_menu.title": "Solids Settings"
+  "gui.crinklemod.undergarment_screen.solids_menu.title": "Solids Settings",
+
+  "block.crinklemod.dunny": "Dunny",
+  "item.crinklemod.diaper": "Diaper",
+
+  "tab.crinklemod.crinkle": "CrinkleMod"
 }

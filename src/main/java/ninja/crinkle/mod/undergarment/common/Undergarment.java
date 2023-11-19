@@ -7,10 +7,8 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.network.PacketDistributor;
-import ninja.crinkle.mod.CrinkleMod;
-import ninja.crinkle.mod.lib.client.events.LeakEvent;
-import ninja.crinkle.mod.metabolism.common.network.MetabolismChannel;
-import ninja.crinkle.mod.metabolism.common.network.messages.MetabolismUpdateMessage;
+import ninja.crinkle.mod.lib.common.tooltips.GradientBarTooltip;
+import ninja.crinkle.mod.lib.common.util.ColorUtil;
 import ninja.crinkle.mod.undergarment.common.capabilities.IUndergarment;
 import ninja.crinkle.mod.undergarment.common.capabilities.UndergarmentCapabilities;
 import ninja.crinkle.mod.undergarment.common.config.UndergarmentConfig;
@@ -20,16 +18,24 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
-import java.util.Objects;
 import java.util.Optional;
 
 public class Undergarment {
     private static final Logger LOGGER = LogUtils.getLogger();
+    private static final int LIQUIDS_COLOR = 0xffffef00;
+    private static final int SOLIDS_COLOR = 0xFF836953;
     private final Player player;
+    private ItemStack itemStack = ItemStack.EMPTY;
     private boolean isDirty;
 
     private Undergarment(Player player) {
         this.player = player;
+        this.itemStack = getItemStack();
+    }
+
+    private Undergarment(@NotNull ItemStack itemStack) {
+        this.itemStack = itemStack;
+        this.player = null;
     }
 
     @Contract(value = "_ -> new", pure = true)
@@ -37,7 +43,15 @@ public class Undergarment {
         return new Undergarment(player);
     }
 
+    @Contract(value = "_ -> new", pure = true)
+    public static @NotNull Undergarment of(ItemStack item) {
+        return new Undergarment(item);
+    }
+
     public ItemStack getItemStack() {
+        if (player == null) {
+            return itemStack;
+        }
         for (final ItemStack i : player.getArmorSlots()) {
             if (!LivingEntity.getEquipmentSlotForItem(i).equals(EquipmentSlot.LEGS)) {
                 continue;
@@ -50,7 +64,7 @@ public class Undergarment {
         return ItemStack.EMPTY;
     }
 
-    public Optional<IUndergarment> getUndergarment() {
+    public Optional<IUndergarment> get() {
         ItemStack i = getItemStack();
         if (i.isEmpty()) {
             return Optional.empty();
@@ -58,60 +72,56 @@ public class Undergarment {
         return i.getCapability(UndergarmentCapabilities.UNDERGARMENT).resolve();
     }
 
-    public boolean isWearingUndergarment() {
-        return getUndergarment().isPresent();
-    }
-
     public int getMaxLiquids() {
-        return getUndergarment().map(IUndergarment::getMaxLiquids).orElse(0);
+        return get().map(IUndergarment::getMaxLiquids).orElse(0);
     }
 
     public void setMaxLiquids(int value) {
-        getUndergarment().ifPresent(i -> i.setMaxLiquids(value));
+        get().ifPresent(i -> i.setMaxLiquids(value));
         isDirty = true;
     }
 
     public int getMaxSolids() {
-        return getUndergarment().map(IUndergarment::getMaxSolids).orElse(0);
+        return get().map(IUndergarment::getMaxSolids).orElse(0);
     }
 
     public void setMaxSolids(int value) {
-        getUndergarment().ifPresent(i -> i.setMaxSolids(value));
+        get().ifPresent(i -> i.setMaxSolids(value));
         isDirty = true;
     }
 
     public int getLiquids() {
-        return getUndergarment().map(IUndergarment::getLiquids).orElse(0);
+        return get().map(IUndergarment::getLiquids).orElse(0);
     }
 
     public void setLiquids(int value) {
-        getUndergarment().ifPresent(i -> i.setLiquids(value));
+        get().ifPresent(i -> i.setLiquids(value));
         isDirty = true;
     }
 
     public int getSolids() {
-        return getUndergarment().map(IUndergarment::getSolids).orElse(0);
+        return get().map(IUndergarment::getSolids).orElse(0);
     }
 
     public void setSolids(int value) {
-        getUndergarment().ifPresent(i -> i.setSolids(value));
+        get().ifPresent(i -> i.setSolids(value));
         isDirty = true;
     }
 
     public void modifyLiquids(int amount) {
-        getUndergarment().ifPresent(i -> i.setLiquids(i.getLiquids() + amount));
+        get().ifPresent(i -> i.setLiquids(i.getLiquids() + amount));
         isDirty = true;
     }
 
     public void modifySolids(int amount) {
-        getUndergarment().ifPresent(i -> i.setSolids(i.getSolids() + amount));
+        get().ifPresent(i -> i.setSolids(i.getSolids() + amount));
         isDirty = true;
     }
 
     public void syncServer(boolean force) {
         if (isDirty || force) {
             LOGGER.debug("Sending undergarment sync to server");
-            getUndergarment().ifPresent(u -> UndergarmentChannel.INSTANCE.sendToServer(new UndergarmentUpdateMessage(u)));
+            get().ifPresent(u -> UndergarmentChannel.INSTANCE.sendToServer(new UndergarmentUpdateMessage(u)));
             isDirty = false;
         }
     }
@@ -119,7 +129,7 @@ public class Undergarment {
     public void syncClient() {
         if (player instanceof ServerPlayer serverPlayer) {
             LOGGER.debug("Sending undergarment sync to client");
-            getUndergarment().ifPresent(u ->
+            get().ifPresent(u ->
                     UndergarmentChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> serverPlayer),
                             new UndergarmentUpdateMessage(u)));
         }
@@ -127,8 +137,21 @@ public class Undergarment {
 
     public void tick() {
         ItemStack stack = getItemStack();
-        if(stack.isEmpty()) {
+        if (stack.isEmpty()) {
             return;
-        }syncServer(false);
+        }
+        syncServer(false);
+    }
+
+    public GradientBarTooltip getLiquidsTooltip() {
+        return new GradientBarTooltip(UndergarmentSettings.LIQUIDS.label(), getLiquids(), getMaxLiquids(),
+                        LIQUIDS_COLOR, ColorUtil.darken(LIQUIDS_COLOR, 0.5f),
+                        ColorUtil.darken(LIQUIDS_COLOR, 0.25f), 9, 60, 40);
+    }
+
+    public GradientBarTooltip getSolidsTooltip() {
+        return new GradientBarTooltip(UndergarmentSettings.SOLIDS.label(), getSolids(), getMaxSolids(),
+                SOLIDS_COLOR, ColorUtil.darken(SOLIDS_COLOR, 0.5f),
+                ColorUtil.darken(SOLIDS_COLOR, 0.25f), 9, 60, 40);
     }
 }

@@ -20,6 +20,11 @@ build
 # other
 eclipse
 run
+/run-data/**
+
+
+# Datagen Cache
+/src/generated/resources/.cache/*
 
 # Files from Forge MDK
 forge*changelog.txt

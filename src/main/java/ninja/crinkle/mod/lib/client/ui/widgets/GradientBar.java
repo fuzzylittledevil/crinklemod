@@ -6,6 +6,7 @@ import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.network.chat.Component;
 import ninja.crinkle.mod.lib.client.ui.elements.Text;
+import ninja.crinkle.mod.lib.common.util.RenderUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Supplier;
@@ -143,12 +144,7 @@ public class GradientBar extends AbstractWidget {
     protected void renderWidget(@NotNull GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
         int value = valueSupplier.get().intValue();
         int maxValue = maxValueSupplier.get().intValue();
-        double percentage = maxValue == 0 ? 0 : ((double) value / maxValue);
-
-        int offset = (int) (width * percentage);
-
-        pGuiGraphics.fillGradient(getX(), getY(), getX() + offset, getY() + height, colorFrom, colorTo);
-        pGuiGraphics.fill(getX() + offset, getY(), getX() + width, getY() + height, backgroundColor);
+        RenderUtil.drawGradient(pGuiGraphics, getX(), getY(), width, height, colorFrom, colorTo, backgroundColor, value, maxValue);
         if (isHovered()) {
             if (hoverText != null) {
                 hoverText.draw(pGuiGraphics, getX() + (width - hoverText.getWidth()) / 2, getY() + height / 2 - hoverText.getFont().lineHeight / 2);

@@ -47,7 +47,7 @@ public class UndergarmentUpdateMessage {
         Optional.ofNullable(ctx.get().getSender())
                 .flatMap(player -> {
                     LOGGER.debug("Received undergarment update message from {}", player.getName().getString());
-                    return Undergarment.of(player).getUndergarment();
+                    return Undergarment.of(player).get();
                 })
                 .ifPresent(u -> {
                     u.setLiquids(liquids);

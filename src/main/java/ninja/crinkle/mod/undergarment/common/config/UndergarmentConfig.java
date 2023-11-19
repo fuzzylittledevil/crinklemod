@@ -47,7 +47,8 @@ public class UndergarmentConfig {
             .comment("A list of undergarments and their associated data.")
             .defineListAllowEmpty("undergarment",
                     List.of(
-                            new UndergarmentData("minecraft:leather_leggings", 100, 100).toConfig()
+                            new UndergarmentData("minecraft:leather_leggings", 100, 100).toConfig(),
+                            new UndergarmentData(CrinkleMod.MODID + ":diaper", 2000, 2000).toConfig()
                     ),
                     ConfigUtil.getItemNameValidator("name")
             );
