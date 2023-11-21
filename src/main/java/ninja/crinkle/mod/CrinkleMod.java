@@ -1,22 +1,22 @@
 package ninja.crinkle.mod;
 
-import net.minecraftforge.api.distmarker.Dist;
+import net.minecraft.world.entity.Entity;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.BusBuilder;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import ninja.crinkle.mod.metabolism.client.MetabolismClientRegistration;
-import ninja.crinkle.mod.metabolism.common.MetabolismCommonRegistration;
-import ninja.crinkle.mod.metabolism.server.MetabolismServerRegistration;
-import ninja.crinkle.mod.misc.blocks.CrinkleBlocks;
-import ninja.crinkle.mod.misc.datagen.MiscDataGeneration;
-import ninja.crinkle.mod.misc.items.CrinkleItems;
-import ninja.crinkle.mod.misc.items.CrinkleTabs;
-import ninja.crinkle.mod.misc.menus.CrinkleMenus;
-import ninja.crinkle.mod.undergarment.client.UndergarmentClientRegistration;
-import ninja.crinkle.mod.undergarment.common.UndergarmentCommonRegistration;
-import ninja.crinkle.mod.undergarment.server.UndergarmentServerRegistration;
+import ninja.crinkle.mod.blocks.CrinkleBlocks;
+import ninja.crinkle.mod.capabilities.MetabolismProvider;
+import ninja.crinkle.mod.config.ConsumableConfig;
+import ninja.crinkle.mod.config.MetabolismConfig;
+import ninja.crinkle.mod.config.UndergarmentConfig;
+import ninja.crinkle.mod.datagen.MiscDataGeneration;
+import ninja.crinkle.mod.events.handlers.UndergarmentEventHandler;
+import ninja.crinkle.mod.items.CrinkleItems;
+import ninja.crinkle.mod.items.CrinkleTabs;
+import ninja.crinkle.mod.menus.CrinkleMenus;
+import ninja.crinkle.mod.network.MetabolismChannel;
 import software.bernie.geckolib.GeckoLib;
 
 /**
@@ -35,19 +35,24 @@ public class CrinkleMod {
     public static final IEventBus EVENT_BUS = BusBuilder.builder().build();
 
     public CrinkleMod() {
-        MetabolismCommonRegistration.register();
-        DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> MetabolismClientRegistration::register);
-        MetabolismServerRegistration.register();
+        // Metabolism
+        MetabolismConfig.register();
+        ConsumableConfig.register();
+        MinecraftForge.EVENT_BUS.addGenericListener(Entity.class, MetabolismProvider::attach);
+        MetabolismChannel.register();
 
-        UndergarmentCommonRegistration.register();
-        DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> UndergarmentClientRegistration::register);
-        UndergarmentServerRegistration.register();
+        // Undergarments
+        UndergarmentConfig.register();
+
+        // Common
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
         CrinkleBlocks.register(modEventBus);
         CrinkleItems.register(modEventBus);
         CrinkleTabs.register(modEventBus);
         CrinkleMenus.register(modEventBus);
+        CrinkleMod.EVENT_BUS.register(new UndergarmentEventHandler());
 
+        // DataGen
         modEventBus.addListener(MiscDataGeneration::generate);
 
         GeckoLib.initialize();
