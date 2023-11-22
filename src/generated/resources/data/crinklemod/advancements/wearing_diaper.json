@@ -1,0 +1,39 @@
+{
+  "criteria": {
+    "has_diaper": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "crinklemod:diaper"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "background": "minecraft:textures/block/white_wool.png",
+    "description": {
+      "translate": "advancements.crinklemod.wearing_diaper.description"
+    },
+    "frame": "challenge",
+    "hidden": true,
+    "icon": {
+      "item": "crinklemod:diaper",
+      "nbt": "{Damage:0}"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.crinklemod.wearing_diaper.title"
+    }
+  },
+  "requirements": [
+    [
+      "has_diaper"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

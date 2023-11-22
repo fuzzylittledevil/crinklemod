@@ -11,9 +11,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.CompletableFuture;
 
-public class MiscBlockTags extends BlockTagsProvider {
-    public MiscBlockTags(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider, String modId,
-                         @Nullable ExistingFileHelper existingFileHelper) {
+public class CrinkleBlockTags extends BlockTagsProvider {
+    public CrinkleBlockTags(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider, String modId,
+                            @Nullable ExistingFileHelper existingFileHelper) {
         super(output, lookupProvider, modId, existingFileHelper);
     }
 

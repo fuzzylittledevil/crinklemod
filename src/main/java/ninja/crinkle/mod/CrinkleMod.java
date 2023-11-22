@@ -1,5 +1,6 @@
 package ninja.crinkle.mod;
 
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.BusBuilder;
@@ -11,7 +12,7 @@ import ninja.crinkle.mod.capabilities.MetabolismProvider;
 import ninja.crinkle.mod.config.ConsumableConfig;
 import ninja.crinkle.mod.config.MetabolismConfig;
 import ninja.crinkle.mod.config.UndergarmentConfig;
-import ninja.crinkle.mod.datagen.MiscDataGeneration;
+import ninja.crinkle.mod.datagen.CrinkleDataGeneration;
 import ninja.crinkle.mod.events.handlers.UndergarmentEventHandler;
 import ninja.crinkle.mod.items.CrinkleItems;
 import ninja.crinkle.mod.items.CrinkleTabs;
@@ -53,8 +54,12 @@ public class CrinkleMod {
         CrinkleMod.EVENT_BUS.register(new UndergarmentEventHandler());
 
         // DataGen
-        modEventBus.addListener(MiscDataGeneration::generate);
+        modEventBus.addListener(CrinkleDataGeneration::generate);
 
         GeckoLib.initialize();
+    }
+
+    public static ResourceLocation loc(String path) {
+        return new ResourceLocation(MODID, path);
     }
 }

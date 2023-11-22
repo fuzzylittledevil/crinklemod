@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "p": {
+      "item": "minecraft:paper"
+    },
+    "w": {
+      "tag": "minecraft:wool"
+    }
+  },
+  "pattern": [
+    "ppp",
+    " w ",
+    "ppp"
+  ],
+  "result": {
+    "item": "crinklemod:diaper"
+  },
+  "show_notification": true
+}
