@@ -44,7 +44,7 @@ jar:
       artifacts: true
   script:
     - gradle jar
-    - mv build/reobfJar/output.jar crinklemod-$NEW_MOD_VERSION.jar
+    - mv build/reobfJar/output.jar crinklemod-$MOD_VERSION.jar
     - echo "JAR_JOB_ID=${CI_JOB_ID}" >> variables.env
   cache:
       key: "$CI_COMMIT_REF_NAME"
