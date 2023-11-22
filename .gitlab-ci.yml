@@ -88,6 +88,10 @@ commit_version:
     - if: $CI_COMMIT_TAG
       when: never
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+  needs:
+    - job: version
+      artifacts: true
+    - job: release
   script:
     - git config --global user.name "GitLab CI"
     - git config --global user.email "fuzzy.little.devil+ci@gmail.com"
