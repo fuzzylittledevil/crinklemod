@@ -28,8 +28,8 @@ version:
     - export MOD_VERSION=$(grep mod_version gradle.properties | cut -d'=' -f2)
     - IFS='.' read -r v1 v2 v3 <<< "$MOD_VERSION"
     - export NEW_MOD_VERSION="$v1.$v2.$((v3+1))"
-    - sed -i "s/mod_version=$MOD_VERSION/mod_version=$NEW_MOD_VERSION/g" gradle.properties
     - echo "MOD_VERSION=${NEW_MOD_VERSION}" >> version.env
+    - echo "OLD_VERSION=${MOD_VERSION}" >> version.env
   artifacts:
     reports:
         dotenv: version.env
@@ -43,6 +43,7 @@ jar:
     - job: version
       artifacts: true
   script:
+    - sed -i "s/mod_version=$OLD_VERSION/mod_version=$MOD_VERSION/g" gradle.properties
     - gradle jar
     - mv build/reobfJar/output.jar crinklemod-$MOD_VERSION.jar
     - echo "JAR_JOB_ID=${CI_JOB_ID}" >> variables.env
@@ -93,6 +94,7 @@ commit_version:
       artifacts: true
     - job: release
   script:
+    - sed -i "s/mod_version=$OLD_VERSION/mod_version=$MOD_VERSION/g" gradle.properties
     - git config --global user.name "GitLab CI"
     - git config --global user.email "fuzzy.little.devil+ci@gmail.com"
     - git add gradle.properties
