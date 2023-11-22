@@ -99,7 +99,7 @@ commit_version:
     - sed -i "s/mod_version=$OLD_VERSION/mod_version=$MOD_VERSION/g" gradle.properties
     - git config --global user.name "GitLab CI"
     - git config --global user.email "fuzzy.little.devil+ci@gmail.com"
+    - git remote set-url origin https://${GITLAB_CI_USER}:${GITLAB_CI_TOKEN}@gitlab.com/fuzzy.little.devil/crinklemod
     - git add gradle.properties
     - git commit -m "Bump version to $MOD_VERSION"
-    - git push -o ci.skip "https://${GITLAB_CI_USER}:${GITLAB_CI_TOKEN}@gitlab.com:443/fuzzy.little.devil/crinklemod.git" HEAD:main
-
+    - git push -o ci.skip -u origin main
