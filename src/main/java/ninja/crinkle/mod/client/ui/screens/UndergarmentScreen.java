@@ -14,6 +14,7 @@ import ninja.crinkle.mod.client.ui.menus.ConfigMenu;
 import ninja.crinkle.mod.client.ui.menus.StatusMenu;
 import ninja.crinkle.mod.undergarment.Undergarment;
 import ninja.crinkle.mod.undergarment.UndergarmentSettings;
+import ninja.crinkle.mod.util.ColorUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
@@ -63,7 +64,7 @@ public class UndergarmentScreen extends Screen {
 
         Optional.ofNullable(DistExecutor.safeCallWhenOn(Dist.CLIENT, () -> ClientHooks::getMinecraft))
                 .ifPresent(minecraft -> {
-                    mainMenu = StatusMenu.builder(Undergarment.getWornUndergarment(Objects.requireNonNull(minecraft.player)))
+                    mainMenu = StatusMenu.builder(() -> Undergarment.getWornUndergarment(Objects.requireNonNull(minecraft.player)))
                             .title(TITLE)
                             .font(font)
                             .leftPos(leftPos)
@@ -75,17 +76,17 @@ public class UndergarmentScreen extends Screen {
                                     .lineNumber(1)
                                     .setting(UndergarmentSettings.LIQUIDS)
                                     .onPress((menu) -> setCurrentMenu(liquidsMenu))
-                                    .gradientStartColor(0xffffef00)
-                                    .gradientEndColor(0xffffdf00)
-                                    .gradientBackgroundColor(0xfff5c71a)
+                                    .gradientStartColor(Undergarment.LIQUIDS_COLOR)
+                                    .gradientEndColor(ColorUtil.darken(Undergarment.LIQUIDS_COLOR, 0.5f))
+                                    .gradientBackgroundColor(ColorUtil.darken(Undergarment.LIQUIDS_COLOR, 0.25f))
                                     .build())
                             .entry(StatusMenu.Entry.intBuilder()
                                     .lineNumber(2)
                                     .setting(UndergarmentSettings.SOLIDS)
                                     .onPress((menu) -> setCurrentMenu(solidsMenu))
-                                    .gradientStartColor(0xFF836953)
-                                    .gradientEndColor(0xFF644117)
-                                    .gradientBackgroundColor(0xFF321414)
+                                    .gradientStartColor(Undergarment.SOLIDS_COLOR)
+                                    .gradientEndColor(ColorUtil.darken(Undergarment.SOLIDS_COLOR, 0.5f))
+                                    .gradientBackgroundColor(ColorUtil.darken(Undergarment.SOLIDS_COLOR, 0.25f))
                                     .build())
                             .build();
                     mainMenu.visitChildren(this::addRenderableWidget);

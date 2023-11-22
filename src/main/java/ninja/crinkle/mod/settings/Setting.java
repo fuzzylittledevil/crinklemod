@@ -2,7 +2,7 @@ package ninja.crinkle.mod.settings;
 
 import net.minecraft.network.chat.Component;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import ninja.crinkle.mod.api.ISynchronizer;
+import ninja.crinkle.mod.api.ServerUpdater;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -15,17 +15,17 @@ public abstract class Setting<T extends Comparable<? super T>> {
     protected final Component label;
     protected final Component tooltip;
     protected final Map<BiPredicate<ICapabilityProvider, T>, BiFunction<ICapabilityProvider, T, Component>> validators;
-    protected final Supplier<T> defaultSupplier;
+    protected final Function<ICapabilityProvider, T> defaultSupplier;
     protected final Function<ICapabilityProvider, T> getter;
     protected final BiConsumer<ICapabilityProvider, T> setter;
 
-    protected final Function<ICapabilityProvider, ISynchronizer> syncer;
+    protected final Function<ICapabilityProvider, ServerUpdater> syncer;
     protected final RangeSupplier<T> rangeSupplier;
 
     protected Setting(String key, Component label, Component tooltip, Class<T> type,
                       Map<BiPredicate<ICapabilityProvider, T>, BiFunction<ICapabilityProvider, T, Component>> validators,
-                      Supplier<T> defaultSupplier, Function<ICapabilityProvider, T> getter,
-                      BiConsumer<ICapabilityProvider, T> setter, Function<ICapabilityProvider, ISynchronizer> syncer, RangeSupplier<T> rangeSupplier) {
+                      Function<ICapabilityProvider, T> defaultSupplier, Function<ICapabilityProvider, T> getter,
+                      BiConsumer<ICapabilityProvider, T> setter, Function<ICapabilityProvider, ServerUpdater> syncer, RangeSupplier<T> rangeSupplier) {
         this.key = key;
         this.type = type;
         this.label = label;
@@ -127,28 +127,16 @@ public abstract class Setting<T extends Comparable<? super T>> {
         return true;
     }
 
-    public Optional<ISynchronizer> syncer(ICapabilityProvider provider) {
+    public Optional<ServerUpdater> syncer(ICapabilityProvider provider) {
         return Optional.ofNullable(syncer).map(s -> s.apply(provider));
     }
 
-    public T getDefault() {
-        return defaultSupplier.get();
+    public T getDefault(ICapabilityProvider provider) {
+        return defaultSupplier.apply(provider);
     }
 
-    public int getDefaultInt() {
-        return IntValue.of(getDefault());
-    }
-
-    public double getDefaultDouble() {
-        return DoubleValue.of(getDefault());
-    }
-
-    public boolean getDefaultBoolean() {
-        return BooleanValue.of(getDefault());
-    }
-
-    public String getDefaultString() {
-        return StringValue.of(getDefault());
+    public double getDefaultDouble(ICapabilityProvider provider) {
+        return DoubleValue.of(getDefault(provider));
     }
 
     public String key() {
@@ -157,7 +145,7 @@ public abstract class Setting<T extends Comparable<? super T>> {
 
     public T get(ICapabilityProvider provider) {
         if (getter == null)
-            return getDefault();
+            return getDefault(provider);
         return getter.apply(provider);
     }
 
@@ -201,8 +189,8 @@ public abstract class Setting<T extends Comparable<? super T>> {
     public static class DoubleValue extends Setting<Double> {
         protected DoubleValue(String key, Component label, Component tooltip,
                               Map<BiPredicate<ICapabilityProvider, Double>, BiFunction<ICapabilityProvider, Double, Component>> validators,
-                              Supplier<Double> defaultSupplier, Function<ICapabilityProvider, Double> getter,
-                              BiConsumer<ICapabilityProvider, Double> setter, Function<ICapabilityProvider, ISynchronizer> syncer, RangeSupplier<Double> rangeSupplier) {
+                              Function<ICapabilityProvider, Double> defaultSupplier, Function<ICapabilityProvider, Double> getter,
+                              BiConsumer<ICapabilityProvider, Double> setter, Function<ICapabilityProvider, ServerUpdater> syncer, RangeSupplier<Double> rangeSupplier) {
             super(key, label, tooltip, Double.class, validators, defaultSupplier, getter, setter, syncer, rangeSupplier);
         }
         public static double of(Object value) {
@@ -223,8 +211,8 @@ public abstract class Setting<T extends Comparable<? super T>> {
     public static class IntValue extends Setting<Integer> {
         protected IntValue(String key, Component label, Component tooltip,
                            Map<BiPredicate<ICapabilityProvider, Integer>, BiFunction<ICapabilityProvider, Integer, Component>> validators,
-                           Supplier<Integer> defaultSupplier, Function<ICapabilityProvider, Integer> getter,
-                           BiConsumer<ICapabilityProvider, Integer> setter, Function<ICapabilityProvider, ISynchronizer> syncer, RangeSupplier<Integer> rangeSupplier) {
+                           Function<ICapabilityProvider, Integer> defaultSupplier, Function<ICapabilityProvider, Integer> getter,
+                           BiConsumer<ICapabilityProvider, Integer> setter, Function<ICapabilityProvider, ServerUpdater> syncer, RangeSupplier<Integer> rangeSupplier) {
             super(key, label, tooltip, Integer.class, validators, defaultSupplier, getter, setter, syncer, rangeSupplier);
         }
 
@@ -246,8 +234,8 @@ public abstract class Setting<T extends Comparable<? super T>> {
     public static class BooleanValue extends Setting<Boolean> {
         protected BooleanValue(String key, Component label, Component tooltip,
                                Map<BiPredicate<ICapabilityProvider, Boolean>, BiFunction<ICapabilityProvider, Boolean, Component>> validators,
-                               Supplier<Boolean> defaultSupplier, Function<ICapabilityProvider, Boolean> getter,
-                               BiConsumer<ICapabilityProvider, Boolean> setter, Function<ICapabilityProvider, ISynchronizer> syncer, RangeSupplier<Boolean> rangeSupplier) {
+                               Function<ICapabilityProvider, Boolean> defaultSupplier, Function<ICapabilityProvider, Boolean> getter,
+                               BiConsumer<ICapabilityProvider, Boolean> setter, Function<ICapabilityProvider, ServerUpdater> syncer, RangeSupplier<Boolean> rangeSupplier) {
             super(key, label, tooltip, Boolean.class, validators, defaultSupplier, getter, setter, syncer, rangeSupplier);
         }
 
@@ -269,8 +257,8 @@ public abstract class Setting<T extends Comparable<? super T>> {
     public static class StringValue extends Setting<String> {
         protected StringValue(String key, Component label, Component tooltip,
                               Map<BiPredicate<ICapabilityProvider, String>, BiFunction<ICapabilityProvider, String, Component>> validators,
-                              Supplier<String> defaultSupplier, Function<ICapabilityProvider, String> getter,
-                              BiConsumer<ICapabilityProvider, String> setter, Function<ICapabilityProvider, ISynchronizer> syncer, RangeSupplier<String> rangeSupplier) {
+                              Function<ICapabilityProvider, String> defaultSupplier, Function<ICapabilityProvider, String> getter,
+                              BiConsumer<ICapabilityProvider, String> setter, Function<ICapabilityProvider, ServerUpdater> syncer, RangeSupplier<String> rangeSupplier) {
             super(key, label, tooltip, String.class, validators, defaultSupplier, getter, setter, syncer, rangeSupplier);
         }
 
@@ -294,10 +282,10 @@ public abstract class Setting<T extends Comparable<? super T>> {
         protected final Map<BiPredicate<ICapabilityProvider, T>, BiFunction<ICapabilityProvider, T, Component>> validators = new HashMap<>();
         protected Component label;
         protected Component tooltip;
-        protected Supplier<T> defaultSupplier;
+        protected Function<ICapabilityProvider, T> defaultSupplier;
         protected Function<ICapabilityProvider, T> getter;
         protected BiConsumer<ICapabilityProvider, T> setter;
-        protected Function<ICapabilityProvider, ISynchronizer> syncer;
+        protected Function<ICapabilityProvider, ServerUpdater> syncer;
         protected RangeSupplier<T> rangeSupplier;
 
         private Builder(String key) {
@@ -315,11 +303,11 @@ public abstract class Setting<T extends Comparable<? super T>> {
         }
 
         public Builder<T> defaultValue(T value) {
-            this.defaultSupplier = () -> value;
+            this.defaultSupplier = p -> value;
             return this;
         }
 
-        public Builder<T> defaultValue(Supplier<T> supplier) {
+        public Builder<T> defaultValue(Function<ICapabilityProvider, T> supplier) {
             this.defaultSupplier = supplier;
             return this;
         }
@@ -340,7 +328,7 @@ public abstract class Setting<T extends Comparable<? super T>> {
             return this;
         }
         
-        public Builder<T> synchronizer(Function<ICapabilityProvider, ISynchronizer> synchronizer) {
+        public Builder<T> synchronizer(Function<ICapabilityProvider, ServerUpdater> synchronizer) {
             this.syncer = synchronizer;
             return this;
         }

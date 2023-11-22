@@ -24,11 +24,11 @@ public class StatusMenu extends AbstractMenu {
     private final int barWidth;
     private final Component title;
     private final List<Entry<?>> entries = new ArrayList<>();
-    private final ICapabilityProvider provider;
+    private final Supplier<ICapabilityProvider> provider;
 
 
 
-    protected StatusMenu(Builder builder, ICapabilityProvider provider) {
+    protected StatusMenu(Builder builder, Supplier<ICapabilityProvider> provider) {
         super(builder.leftPos, builder.topPos, builder.spacer, builder.lineSpacing, builder.margin, builder.lineHeight,
                 builder.visible, builder.font);
         this.barWidth = builder.barWidth;
@@ -38,7 +38,7 @@ public class StatusMenu extends AbstractMenu {
         create();
     }
 
-    public static Builder builder(ICapabilityProvider provider) {
+    public static Builder builder(Supplier<ICapabilityProvider> provider) {
         return new Builder(provider);
     }
 
@@ -64,39 +64,39 @@ public class StatusMenu extends AbstractMenu {
             return new Builder<>();
         }
 
-        private Supplier<Component> hoverText(Setting<T> setting, ICapabilityProvider provider) {
+        private Supplier<Component> hoverText(Setting<T> setting, Supplier<ICapabilityProvider> provider) {
             return () -> {
                 if (setting.isInt() || setting.isDouble())
                 {
-                    double value = setting.getDouble(provider);
-                    double max = setting.range().apply(provider).asDouble().max();
+                    double value = setting.getDouble(provider.get());
+                    double max = setting.range().apply(provider.get()).asDouble().max();
                     if(setting.isInt())
                         return Component.literal(String.format("%d / %d", (int) value, (int) max));
                     else
                         return Component.literal(String.format("%.2f / %.2f", value, max));
                 }
-                return Component.literal(setting.get(provider).toString());
+                return Component.literal(setting.get(provider.get()).toString());
             };
         }
 
-        private Supplier<Component> text(Setting<T> setting, ICapabilityProvider provider) {
+        private Supplier<Component> text(Setting<T> setting, Supplier<ICapabilityProvider> provider) {
             return () -> {
                 if (setting.isInt() || setting.isDouble()) {
-                    double value = setting.getDouble(provider);
-                    double max = setting.range().apply(provider).asDouble().max();
+                    double value = setting.getDouble(provider.get());
+                    double max = setting.range().apply(provider.get()).asDouble().max();
                     double p = max == 0 ? 0 : value / max * 100;
                     if (setting.isInt())
                         return Component.literal(String.format("%d%%", (int) p));
                     else
                         return Component.literal(String.format("%.2f%%", p));
                 }
-                return Component.literal(setting.get(provider).toString());
+                return Component.literal(setting.get(provider.get()).toString());
             };
         }
 
         public List<AbstractWidget> create(StatusMenu menu) {
             List<AbstractWidget> widgets = new ArrayList<>();
-            ICapabilityProvider provider = menu.provider;
+
             widgets.add(Label.builder(menu.getFont(), setting.label())
                     .pos(menu.getLeftPos() + menu.getMargin(), menu.getTopPos() + menu.getLineYOffset(lineNumber) + menu.getFontOffset())
                     .dropShadow(false)
@@ -104,15 +104,15 @@ public class StatusMenu extends AbstractMenu {
             widgets.add(GradientBar.builder(setting.label())
                     .bounds(menu.getLeftPos() + menu.getLineXOffset(), menu.getTopPos() + menu.getLineYOffset(lineNumber), menu.barWidth,
                             menu.getLineHeight())
-                    .maxValueSupplier(() -> setting.range().apply(provider).asDouble().max() == 0 ? setting.getDefaultDouble() :
-                            setting.range().apply(provider).asDouble().max())
-                    .valueSupplier(() -> (Number) setting.get(provider))
+                    .maxValueSupplier(() -> setting.range().apply(menu.provider.get()).asDouble().max() == 0 ? setting.getDefaultDouble(menu.provider.get()) :
+                            setting.range().apply(menu.provider.get()).asDouble().max())
+                    .valueSupplier(() -> (Number) setting.get(menu.provider.get()))
                             .tooltip(Tooltip.create(setting.tooltip()))
-                    .hoverText(Text.builder(menu.getFont(), hoverText(setting, provider))
+                    .hoverText(Text.builder(menu.getFont(), hoverText(setting, menu.provider))
                             .color(0xffffffff)
                             .dropShadow(true)
                             .build())
-                    .text(Text.builder(menu.getFont(), text(setting, provider))
+                    .text(Text.builder(menu.getFont(), text(setting, menu.provider))
                             .color(0xffffffff)
                             .dropShadow(true)
                             .build())
@@ -204,9 +204,9 @@ public class StatusMenu extends AbstractMenu {
         public final List<Entry<?>> entries = new ArrayList<>();
         public Component title = Component.empty();
         private Font font;
-        private final ICapabilityProvider provider;
+        private final Supplier<ICapabilityProvider> provider;
 
-        Builder(ICapabilityProvider provider) {
+        Builder(Supplier<ICapabilityProvider> provider) {
             this.provider = provider;
         }
 

@@ -10,6 +10,7 @@ import ninja.crinkle.mod.capabilities.IMetabolism;
 import ninja.crinkle.mod.capabilities.MetabolismCapabilities;
 import ninja.crinkle.mod.capabilities.MetabolismImpl;
 import ninja.crinkle.mod.client.ClientHooks;
+import ninja.crinkle.mod.util.ClientUtil;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -116,10 +117,7 @@ public class MetabolismUpdateMessage {
      * @param ctx The context of the message
      */
     public void messageConsumer(@NotNull Supplier<NetworkEvent.Context> ctx) {
-        Player player = ctx.get().getSender();
-        if (player == null) {
-            player = DistExecutor.safeCallWhenOn(Dist.CLIENT, () -> ClientHooks::getPlayer);
-        }
+        Player player = ctx.get().getSender() != null ? ctx.get().getSender() : ClientUtil.getPlayer();
         if (player == null) {
             LOGGER.warn("Failed to update metabolism of player");
             ctx.get().setPacketHandled(false);

@@ -5,6 +5,7 @@ import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.simple.SimpleChannel;
 import ninja.crinkle.mod.CrinkleMod;
 import ninja.crinkle.mod.network.messages.MetabolismUpdateMessage;
+import ninja.crinkle.mod.network.messages.UndergarmentUpdateMessage;
 
 /**
  * A network channel that is used to sync the metabolism of a player to the client or server.
@@ -12,9 +13,9 @@ import ninja.crinkle.mod.network.messages.MetabolismUpdateMessage;
  * @see MetabolismUpdateMessage
  * @see net.minecraftforge.network.simple.SimpleChannel
  */
-public class MetabolismChannel {
+public class CrinkleChannel {
     private static final String PROTOCOL_VERSION = "1";
-    private static final String NAME = "metabolism";
+    private static final String NAME = "crinklenet";
     public static final SimpleChannel INSTANCE = NetworkRegistry.ChannelBuilder
             .named(new ResourceLocation(CrinkleMod.MODID, NAME))
             .clientAcceptedVersions(PROTOCOL_VERSION::equals)
@@ -28,6 +29,11 @@ public class MetabolismChannel {
                 .decoder(MetabolismUpdateMessage::decoder)
                 .encoder(MetabolismUpdateMessage::encoder)
                 .consumerMainThread(MetabolismUpdateMessage::messageConsumer)
+                .add();
+        INSTANCE.messageBuilder(UndergarmentUpdateMessage.class, ++id)
+                .decoder(UndergarmentUpdateMessage::decoder)
+                .encoder(UndergarmentUpdateMessage::encoder)
+                .consumerMainThread(UndergarmentUpdateMessage::messageConsumer)
                 .add();
     }
 }

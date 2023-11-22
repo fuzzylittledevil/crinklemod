@@ -7,12 +7,12 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.network.PacketDistributor;
 import ninja.crinkle.mod.CrinkleMod;
-import ninja.crinkle.mod.api.ISynchronizer;
+import ninja.crinkle.mod.api.ServerUpdater;
 import ninja.crinkle.mod.capabilities.IMetabolism;
 import ninja.crinkle.mod.capabilities.MetabolismCapabilities;
 import ninja.crinkle.mod.config.ConsumableConfig;
 import ninja.crinkle.mod.events.AccidentEvent;
-import ninja.crinkle.mod.network.MetabolismChannel;
+import ninja.crinkle.mod.network.CrinkleChannel;
 import ninja.crinkle.mod.network.messages.MetabolismUpdateMessage;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -20,7 +20,7 @@ import org.slf4j.Logger;
 
 import java.util.Optional;
 
-public class Metabolism implements ISynchronizer {
+public class Metabolism implements ServerUpdater {
     private static final Logger LOGGER = LogUtils.getLogger();
 
     private static final double BLADDER_SMALL_ACCIDENT_THRESHOLD = 0.3;
@@ -287,13 +287,13 @@ public class Metabolism implements ISynchronizer {
 
     public void syncServer() {
         // LOGGER.debug("Sending metabolism sync to server");
-        getMetabolism().ifPresent(m -> MetabolismChannel.INSTANCE.sendToServer(new MetabolismUpdateMessage(m)));
+        getMetabolism().ifPresent(m -> CrinkleChannel.INSTANCE.sendToServer(new MetabolismUpdateMessage(m)));
     }
 
     public void syncClient() {
         if (player instanceof ServerPlayer serverPlayer) {
             // LOGGER.debug("Sending metabolism sync to client");
-            getMetabolism().ifPresent(m -> MetabolismChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> serverPlayer), new MetabolismUpdateMessage(m)));
+            getMetabolism().ifPresent(m -> CrinkleChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> serverPlayer), new MetabolismUpdateMessage(m)));
         }
     }
 

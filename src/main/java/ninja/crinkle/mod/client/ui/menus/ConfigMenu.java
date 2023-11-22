@@ -6,7 +6,7 @@ import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.network.chat.Component;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import ninja.crinkle.mod.api.ISynchronizer;
+import ninja.crinkle.mod.api.ServerUpdater;
 import ninja.crinkle.mod.client.ui.widgets.Label;
 import ninja.crinkle.mod.settings.Setting;
 
@@ -130,6 +130,7 @@ public class ConfigMenu<E extends ICapabilityProvider> extends AbstractMenu {
                     configMenuEntries.forEach(c -> {
                         if (!editBoxes.get(c).getValue().isEmpty()) {
                             c.setting().set(entitySupplier.get(), c.setting().valueOf(editBoxes.get(c).getValue()));
+                            c.setting().syncer(entitySupplier.get()).ifPresent(ServerUpdater::syncServer);
                         }
                     });
                 })
@@ -139,8 +140,9 @@ public class ConfigMenu<E extends ICapabilityProvider> extends AbstractMenu {
         add(Button.builder(RESET_BUTTON, b -> {
                     clearNotifications();
                     configMenuEntries.forEach(c -> {
-                        c.setting().set(entitySupplier.get(), c.setting().getDefault());
+                        c.setting().set(entitySupplier.get(), c.setting().getDefault(entitySupplier.get()));
                         editBoxes.get(c).setValue(String.valueOf(c.setting().get(entitySupplier.get())));
+                        c.setting().syncer(entitySupplier.get()).ifPresent(ServerUpdater::syncServer);
                     });
                 })
                 .bounds(getLeftPos() + getMargin() + BUTTON_WIDTH + getSpacer(), getTopPos() + getLineYOffset(lastLineNumber + 1), BUTTON_WIDTH, getLineHeight())

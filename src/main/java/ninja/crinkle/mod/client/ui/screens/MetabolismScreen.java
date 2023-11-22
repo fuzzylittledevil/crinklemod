@@ -66,7 +66,7 @@ public class MetabolismScreen extends Screen {
 
         Optional.ofNullable(DistExecutor.safeCallWhenOn(Dist.CLIENT, () -> ClientHooks::getMinecraft))
                 .ifPresent(minecraft -> {
-                    mainMenu = StatusMenu.builder(minecraft.player)
+                    mainMenu = StatusMenu.builder(() -> minecraft.player)
                             .title(TITLE)
                             .font(font)
                             .leftPos(leftPos)

@@ -16,7 +16,7 @@ import ninja.crinkle.mod.events.handlers.UndergarmentEventHandler;
 import ninja.crinkle.mod.items.CrinkleItems;
 import ninja.crinkle.mod.items.CrinkleTabs;
 import ninja.crinkle.mod.menus.CrinkleMenus;
-import ninja.crinkle.mod.network.MetabolismChannel;
+import ninja.crinkle.mod.network.CrinkleChannel;
 import software.bernie.geckolib.GeckoLib;
 
 /**
@@ -39,7 +39,7 @@ public class CrinkleMod {
         MetabolismConfig.register();
         ConsumableConfig.register();
         MinecraftForge.EVENT_BUS.addGenericListener(Entity.class, MetabolismProvider::attach);
-        MetabolismChannel.register();
+        CrinkleChannel.register();
 
         // Undergarments
         UndergarmentConfig.register();

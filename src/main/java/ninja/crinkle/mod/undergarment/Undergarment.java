@@ -16,8 +16,8 @@ import org.slf4j.Logger;
 
 public class Undergarment {
     private static final Logger LOGGER = LogUtils.getLogger();
-    private static final int LIQUIDS_COLOR = 0xffffef00;
-    private static final int SOLIDS_COLOR = 0xFF836953;
+    public static final int LIQUIDS_COLOR = 0xffffef00;
+    public static final int SOLIDS_COLOR = 0xFF836953;
     private final ItemStack itemStack;
     private final IUndergarment capability;
 
