@@ -23,6 +23,7 @@ jar:
   script:
     - gradle jar
     - mv build/reobfJar/output.jar crinklemod-$CI_COMMIT_SHORT_SHA.jar
+    - echo "JAR_JOB_ID=${CI_JOB_ID}" >> variables.env
   cache:
       key: "$CI_COMMIT_REF_NAME"
       policy: push
@@ -34,6 +35,8 @@ jar:
       - crinklemod-$CI_COMMIT_SHORT_SHA.jar
     expire_in: 12 months
     name: "crinklemod-$CI_COMMIT_SHORT_SHA.jar"
+    reports:
+      dotenv: variables.env
 
 release:
   stage: deploy
@@ -55,6 +58,6 @@ release:
     assets:
       links:
         - name: "CrinkleMod Latest Jar"
-          url: "https://gitlab.com/fuzzy.little.devil/crinklemod/-/jobs/${CI_JOB_ID}/artifacts/file/crinklemod-$CI_COMMIT_SHORT_SHA.jar"
+          url: "https://gitlab.com/fuzzy.little.devil/crinklemod/-/jobs/${JAR_JOB_ID}/artifacts/file/crinklemod-$CI_COMMIT_SHORT_SHA.jar"
 
 
