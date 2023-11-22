@@ -102,4 +102,4 @@ commit_version:
     - git remote set-url origin https://${GITLAB_CI_USER}:${GITLAB_CI_TOKEN}@gitlab.com/fuzzy.little.devil/crinklemod
     - git add gradle.properties
     - git commit -m "Bump version to $MOD_VERSION"
-    - git push -o ci.skip -u origin main
+    - git push -o ci.skip -u origin HEAD:main
