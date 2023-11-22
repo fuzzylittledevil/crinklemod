@@ -71,6 +71,8 @@ release:
   script:
     - echo "Releasing CrinkleMod v$MOD_VERSION"
   needs:
+    - job: version
+      artifacts: true
     - job: jar
       artifacts: true
   release:
