@@ -5,6 +5,7 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import ninja.crinkle.mod.CrinkleMod;
 import ninja.crinkle.mod.capabilities.IUndergarment;
 import ninja.crinkle.mod.capabilities.UndergarmentImpl;
 import ninja.crinkle.mod.config.UndergarmentConfig;
@@ -16,6 +17,7 @@ import org.slf4j.Logger;
 
 public class Undergarment {
     private static final Logger LOGGER = LogUtils.getLogger();
+    public static final String NBT_KEY = CrinkleMod.MODID + ".undergarment";
     public static final int LIQUIDS_COLOR = 0xffffef00;
     public static final int SOLIDS_COLOR = 0xFF836953;
     private final ItemStack itemStack;
@@ -24,7 +26,7 @@ public class Undergarment {
     private Undergarment(@NotNull ItemStack itemStack) {
         this.itemStack = itemStack;
         IUndergarment u = new UndergarmentImpl(itemStack.getItem());
-        u.deserializeNBT(itemStack.getOrCreateTagElement("undergarment"));
+        u.deserializeNBT(itemStack.getOrCreateTagElement(NBT_KEY));
         this.capability = u;
     }
 

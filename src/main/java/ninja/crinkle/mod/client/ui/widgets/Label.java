@@ -32,6 +32,10 @@ public class Label extends AbstractWidget {
         return new Builder(font, value);
     }
 
+    public int getWrapWidth() {
+        return wrapWidth;
+    }
+
     public static class Builder {
         private int x;
         private int y;
@@ -139,6 +143,10 @@ public class Label extends AbstractWidget {
         for(int i = 0; i < lines.size(); i++) {
             pGuiGraphics.drawString(font, lines.get(i), getX(), getY() + (i * font.lineHeight), color, dropShadow);
         }
+    }
+
+    public int getLineHeight() {
+        return font.lineHeight * (wrapWidth == 0 ? 1 : font.split(value, wrapWidth).size());
     }
 
     @Override

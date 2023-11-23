@@ -1,8 +1,10 @@
 package ninja.crinkle.mod.client.models;
 
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
 import ninja.crinkle.mod.CrinkleMod;
 import ninja.crinkle.mod.items.custom.DiaperArmorItem;
+import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.model.GeoModel;
 
 public class DiaperArmorModel extends GeoModel<DiaperArmorItem> {
@@ -13,7 +15,7 @@ public class DiaperArmorModel extends GeoModel<DiaperArmorItem> {
 
     @Override
     public ResourceLocation getTextureResource(DiaperArmorItem animatable) {
-        return new ResourceLocation(CrinkleMod.MODID, "textures/armor/diaper.png");
+        return new ResourceLocation(CrinkleMod.MODID, animatable.getTexture());
     }
 
     @Override

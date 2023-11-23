@@ -11,7 +11,8 @@ import ninja.crinkle.mod.CrinkleMod;
 import ninja.crinkle.mod.client.ClientHooks;
 import ninja.crinkle.mod.client.ui.menus.AbstractMenu;
 import ninja.crinkle.mod.client.ui.menus.ConfigMenu;
-import ninja.crinkle.mod.client.ui.menus.StatusMenu;
+import ninja.crinkle.mod.client.ui.menus.status.StatusBarEntry;
+import ninja.crinkle.mod.client.ui.menus.status.StatusMenu;
 import ninja.crinkle.mod.undergarment.Undergarment;
 import ninja.crinkle.mod.undergarment.UndergarmentSettings;
 import ninja.crinkle.mod.util.ColorUtil;
@@ -64,7 +65,7 @@ public class UndergarmentScreen extends Screen {
 
         Optional.ofNullable(DistExecutor.safeCallWhenOn(Dist.CLIENT, () -> ClientHooks::getMinecraft))
                 .ifPresent(minecraft -> {
-                    mainMenu = StatusMenu.builder(() -> Undergarment.getWornUndergarment(Objects.requireNonNull(minecraft.player)))
+                    mainMenu = StatusMenu.builder(this)
                             .title(TITLE)
                             .font(font)
                             .leftPos(leftPos)
@@ -72,7 +73,7 @@ public class UndergarmentScreen extends Screen {
                             .lineHeight(15)
                             .lineSpacing(5)
                             .spacer(4)
-                            .entry(StatusMenu.Entry.intBuilder()
+                            .entry(StatusBarEntry.intBuilder(() -> Undergarment.getWornUndergarment(Objects.requireNonNull(minecraft.player)))
                                     .lineNumber(1)
                                     .setting(UndergarmentSettings.LIQUIDS)
                                     .onPress((menu) -> setCurrentMenu(liquidsMenu))
@@ -80,7 +81,7 @@ public class UndergarmentScreen extends Screen {
                                     .gradientEndColor(ColorUtil.darken(Undergarment.LIQUIDS_COLOR, 0.5f))
                                     .gradientBackgroundColor(ColorUtil.darken(Undergarment.LIQUIDS_COLOR, 0.25f))
                                     .build())
-                            .entry(StatusMenu.Entry.intBuilder()
+                            .entry(StatusBarEntry.intBuilder(() -> Undergarment.getWornUndergarment(Objects.requireNonNull(minecraft.player)))
                                     .lineNumber(2)
                                     .setting(UndergarmentSettings.SOLIDS)
                                     .onPress((menu) -> setCurrentMenu(solidsMenu))
@@ -91,7 +92,7 @@ public class UndergarmentScreen extends Screen {
                             .build();
                     mainMenu.visitChildren(this::addRenderableWidget);
                     setCurrentMenu(mainMenu);
-                    liquidsMenu = ConfigMenu.builder(font, LIQUIDS_MENU_TITLE, () -> Undergarment.getWornUndergarment(Objects.requireNonNull(minecraft.player)))
+                    liquidsMenu = ConfigMenu.builder(this, font, LIQUIDS_MENU_TITLE, () -> Undergarment.getWornUndergarment(Objects.requireNonNull(minecraft.player)))
                             .origin(leftPos, topPos)
                             .onClose(m -> setCurrentMenu(mainMenu))
                             .entry(new ConfigMenu.Entry<>(1, 10, UndergarmentSettings.LIQUIDS))
@@ -99,7 +100,7 @@ public class UndergarmentScreen extends Screen {
                             .visible(false)
                             .build();
                     liquidsMenu.visitChildren(this::addRenderableWidget);
-                    solidsMenu = ConfigMenu.builder(font, SOLIDS_MENU_TITLE, () -> Undergarment.getWornUndergarment(Objects.requireNonNull(minecraft.player)))
+                    solidsMenu = ConfigMenu.builder(this, font, SOLIDS_MENU_TITLE, () -> Undergarment.getWornUndergarment(Objects.requireNonNull(minecraft.player)))
                             .origin(leftPos, topPos)
                             .onClose(m -> setCurrentMenu(mainMenu))
                             .entry(new ConfigMenu.Entry<>(1, 10, UndergarmentSettings.SOLIDS))

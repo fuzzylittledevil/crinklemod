@@ -4,9 +4,11 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import ninja.crinkle.mod.api.ServerUpdater;
+import ninja.crinkle.mod.client.ui.screens.FlexContainerScreen;
 import ninja.crinkle.mod.client.ui.widgets.Label;
 import ninja.crinkle.mod.settings.Setting;
 
@@ -34,8 +36,8 @@ public class ConfigMenu<E extends ICapabilityProvider> extends AbstractMenu {
     private Label notificationLabel;
     private Button saveButton;
 
-    protected ConfigMenu(Builder<E> builder) {
-        super(builder.leftPos, builder.topPos, builder.spacer, builder.lineSpacing, builder.margin, builder.lineHeight,
+    protected ConfigMenu(Builder<E> builder, Screen screen) {
+        super(screen, builder.leftPos, builder.topPos, builder.spacer, builder.lineSpacing, builder.margin, builder.lineHeight,
                 builder.visible, builder.font);
         this.entitySupplier = builder.entitySupplier;
         this.title = builder.title;
@@ -43,16 +45,21 @@ public class ConfigMenu<E extends ICapabilityProvider> extends AbstractMenu {
         this.configMenuEntries.addAll(builder.configMenuEntries);
         create();
         setVisible(isVisible());
+        clearNotifications();
     }
 
     public record Entry<T extends Comparable<? super T>>(int lineNumber, int maxLength, Setting<T> setting) {
     }
-    public static <E extends ICapabilityProvider> Builder<E> builder(Font font, Component title, Supplier<E> capabilityProvider) {
-        return new Builder<>(font, title, capabilityProvider);
+    public static <E extends ICapabilityProvider> Builder<E> builder(Screen screen, Font font, Component title, Supplier<E> capabilityProvider) {
+        return new Builder<>(screen, font, title, capabilityProvider);
     }
 
     private void clearNotifications() {
         notificationLabel.visible = false;
+        notificationLabel.setHeight(0);
+        if (getScreen() instanceof FlexContainerScreen flexContainerScreen) {
+            flexContainerScreen.refreshFlex();
+        }
     }
 
     private void setNotificationLabel(Component component, int color) {
@@ -60,6 +67,10 @@ public class ConfigMenu<E extends ICapabilityProvider> extends AbstractMenu {
         notificationLabel.setValue(component);
         notificationLabel.visible = true;
         notificationLabel.setColor(color);
+        notificationLabel.setHeight(notificationLabel.getLineHeight());
+        if (getScreen() instanceof FlexContainerScreen flexContainerScreen) {
+            flexContainerScreen.refreshFlex();
+        }
     }
 
     @Override
@@ -156,6 +167,7 @@ public class ConfigMenu<E extends ICapabilityProvider> extends AbstractMenu {
     }
 
     public static class Builder<E extends ICapabilityProvider> {
+        private final Screen screen;
         private final Component title;
         private int leftPos;
         private int topPos;
@@ -170,7 +182,8 @@ public class ConfigMenu<E extends ICapabilityProvider> extends AbstractMenu {
         private final Font font;
         private final List<Entry<?>> configMenuEntries = new ArrayList<>();
 
-        public Builder(Font font, Component title, Supplier<E> entitySupplier) {
+        public Builder(Screen screen, Font font, Component title, Supplier<E> entitySupplier) {
+            this.screen = screen;
             this.font = font;
             this.title = title;
             this.entitySupplier = entitySupplier;
@@ -206,7 +219,7 @@ public class ConfigMenu<E extends ICapabilityProvider> extends AbstractMenu {
         }
 
         public ConfigMenu<E> build() {
-            return new ConfigMenu<>(this);
+            return new ConfigMenu<>(this, screen);
         }
     }
 }

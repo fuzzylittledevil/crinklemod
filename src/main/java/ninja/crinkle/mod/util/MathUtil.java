@@ -13,4 +13,8 @@ public class MathUtil {
         double scale = Math.pow(10, places);
         return Math.round(value * scale) / scale;
     }
+
+    public static int twenties(int value) {
+        return (int) Math.round(value / 20.0) * 20;
+    }
 }

@@ -5,7 +5,9 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import ninja.crinkle.mod.CrinkleMod;
 import ninja.crinkle.mod.config.UndergarmentConfig;
+import ninja.crinkle.mod.undergarment.Undergarment;
 import ninja.crinkle.mod.util.MathUtil;
 import org.slf4j.Logger;
 
@@ -79,7 +81,7 @@ public class UndergarmentImpl implements IUndergarment {
 
     public void save(ItemStack itemStack) {
         CompoundTag nbt = itemStack.getOrCreateTag();
-        nbt.put("undergarment", serializeNBT());
+        nbt.put(Undergarment.NBT_KEY, serializeNBT());
         itemStack.setTag(nbt);
     }
 

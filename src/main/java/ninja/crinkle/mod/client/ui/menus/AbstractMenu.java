@@ -3,6 +3,7 @@ package ninja.crinkle.mod.client.ui.menus;
 import com.google.common.collect.Lists;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.DistExecutor;
@@ -17,6 +18,7 @@ public abstract class AbstractMenu {
     private static final int DEFAULT_MARGIN = 8;
     private static final int DEFAULT_LINE_HEIGHT = 15;
     private static final int DEFAULT_LINE_SPACING = 4;
+    private final Screen screen;
     private final Font font;
     private final List<AbstractWidget> children = Lists.newArrayList();
     private boolean visible;
@@ -27,8 +29,9 @@ public abstract class AbstractMenu {
     private final int lineHeight;
     private final int lineSpacing;
 
-    protected AbstractMenu(int leftPos, int topPos, int spacer, int lineSpacing, int margin, int lineHeight,
+    protected AbstractMenu(Screen screen, int leftPos, int topPos, int spacer, int lineSpacing, int margin, int lineHeight,
                            boolean visible, Font font) {
+        this.screen = screen;
         this.visible = visible;
         this.leftPos = leftPos;
         this.topPos = topPos;
@@ -107,5 +110,9 @@ public abstract class AbstractMenu {
         return Optional.ofNullable(DistExecutor.safeCallWhenOn(Dist.CLIENT, () -> ClientHooks::getMinecraft))
                 .map(m -> m.player)
                 .orElseThrow(() -> new IllegalStateException("Cannot create menu without a player"));
+    }
+
+    public Screen getScreen() {
+        return screen;
     }
 }
