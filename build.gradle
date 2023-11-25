@@ -130,6 +130,9 @@ repositories {
         name = 'GeckoLib'
         url 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/'
     }
+    maven { // TOP
+        url "https://maven.k-4u.nl"
+    }
 }
 
 dependencies {
@@ -152,9 +155,7 @@ dependencies {
     compileOnly fg.deobf("mezz.jei:jei-${minecraft_version}-forge-api:${jei_version}")
     runtimeOnly fg.deobf("mezz.jei:jei-${minecraft_version}-forge:${jei_version}")
     implementation fg.deobf("software.bernie.geckolib:geckolib-forge-${minecraft_version}:${geckolib_version}")
-
-    // word wrap
-    implementation "com.github.davidmoten:word-wrap:0.1.12"
+    implementation fg.deobf("mcjty.theoneprobe:theoneprobe:${top_version}") { transitive = false}
 
     // Example mod dependency using a mod jar from ./libs with a flat dir repository
     // This maps to ./libs/coolmod-${mc_version}-${coolmod_version}.jar
