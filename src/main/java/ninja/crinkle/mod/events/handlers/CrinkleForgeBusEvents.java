@@ -13,11 +13,13 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LayeredCauldronBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.client.event.RenderTooltipEvent;
+import net.minecraftforge.client.event.ScreenEvent;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.Mod;
@@ -27,6 +29,7 @@ import ninja.crinkle.mod.commands.MetabolismCommand;
 import ninja.crinkle.mod.items.CrinkleItems;
 import ninja.crinkle.mod.metabolism.Metabolism;
 import ninja.crinkle.mod.undergarment.Undergarment;
+import ninja.crinkle.mod.util.ClientUtil;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
@@ -117,6 +120,24 @@ public class CrinkleForgeBusEvents {
         if (event.getEntity().level().isClientSide) return;
         if (event.getEntity() instanceof Player player)
             Metabolism.of(player).consume(event.getItem());
+    }
+
+    @SubscribeEvent
+    public static void onMousePressedPre(PlayerInteractEvent.RightClickItem event) {
+        ItemStack stack = event.getItemStack();
+        Player player = event.getEntity();
+        Metabolism metabolism = Metabolism.of(player);
+        if (stack.isEdible() && !player.getFoodData().needsFood()) {
+            if (metabolism.getStomachFullness() > 0.9f) {
+                event.setCanceled(true);
+                event.setCancellationResult(InteractionResult.FAIL);
+                if (event.getSide() == LogicalSide.CLIENT)
+                    player.sendSystemMessage(Component.literal("You are too full to eat."));
+                return;
+            }
+            player.getFoodData().setFoodLevel(player.getFoodData().getFoodLevel() - 1);
+        }
+
     }
 
     /**

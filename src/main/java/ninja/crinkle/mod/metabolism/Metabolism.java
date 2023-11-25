@@ -82,6 +82,12 @@ public class Metabolism implements ServerUpdater {
         return capacity == 0.0 ? 0.0 : (double) getBowels() / getBowelCapacity();
     }
 
+    public double getStomachFullness() {
+        double liquidsPct = (double) getLiquids() / getMaxLiquids();
+        double solidsPct = (double) getSolids() / getMaxSolids();
+        return liquidsPct + solidsPct;
+    }
+
     public double getBladderDesperation() {
         return getBladderFullness() * (1 / getBladderContinence());
     }
