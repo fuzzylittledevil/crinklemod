@@ -5,23 +5,23 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import ninja.crinkle.mod.client.color.Color;
-import ninja.crinkle.mod.client.ui.themes.BorderThemeData;
-import ninja.crinkle.mod.client.ui.themes.BorderThemeSize;
+import ninja.crinkle.mod.client.ui.themes.BoxTheme;
 import ninja.crinkle.mod.client.ui.themes.Theme;
 import org.jetbrains.annotations.NotNull;
 
 public class ThemedBorderBox extends AbstractWidget {
     private final Theme theme;
-    private final BorderThemeSize borderThemeSize;
+    private final BoxTheme.Size borderThemeSize;
     private boolean inverted = false;
     public ThemedBorderBox(int x, int y, int width, int height, Component message, Theme theme,
-                           BorderThemeSize borderThemeSize) {
+                           BoxTheme.Size borderThemeSize) {
         super(x, y, width, height, message);
         this.theme = theme;
         this.borderThemeSize = borderThemeSize;
     }
+
+    private void renderBackground() {}
 
     @Override
     protected void renderWidget(@NotNull GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
@@ -30,11 +30,9 @@ public class ThemedBorderBox extends AbstractWidget {
         pGuiGraphics.setColor((float) color.getRed(), (float) color.getGreen(), (float) color.getBlue(), this.alpha);
         RenderSystem.enableBlend();
         RenderSystem.enableDepthTest();
-        BorderThemeData borderTheme = theme.getBorderTheme(borderThemeSize);
-        ResourceLocation texture = inverted ? theme.getInvertedTexture(borderTheme) : borderTheme.texture();
-        pGuiGraphics.blitNineSlicedSized(texture, getX(), getY(), getWidth(), getHeight(), borderTheme.cornerWidth(),
-                borderTheme.cornerHeight(), borderTheme.edgeWidth(), borderTheme.edgeHeight(), borderTheme.uWidth(), borderTheme.vHeight(),
-                borderTheme.uOffset(), borderTheme.vOffset(), borderTheme.textureWidth(), borderTheme.textureHeight());
+        BoxTheme borderTheme = theme.getBorderTheme(borderThemeSize);
+        renderTexture(pGuiGraphics, borderTheme.draw(getWidth(), getHeight(), inverted), getX(), getY(), 0, 0,
+                0, getWidth(), getHeight(), getWidth(), getHeight());
         pGuiGraphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.disableBlend();
         RenderSystem.disableDepthTest();

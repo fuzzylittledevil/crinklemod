@@ -1,29 +1,34 @@
 package ninja.crinkle.mod.client.ui.screens;
 
+import com.mojang.logging.LogUtils;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import ninja.crinkle.mod.client.ui.themes.BorderThemeData;
-import ninja.crinkle.mod.client.ui.themes.BorderThemeSize;
+import ninja.crinkle.mod.client.ui.themes.BoxTheme;
 import ninja.crinkle.mod.client.ui.themes.Theme;
 import ninja.crinkle.mod.client.ui.widgets.themes.ThemedBorderBox;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public abstract class FlexContainerScreen extends Screen {
+    private static final Logger LOGGER = LogUtils.getLogger();
     private final Theme theme;
     private final ContainerInfo containerInfo = new ContainerInfo(0, 0, 0, 0);
     private ThemedBorderBox borderBox;
     private final List<RelativeWidget> flexedWidgets = new ArrayList<>();
+    private int screenWidth;
+    private int screenHeight;
 
     public FlexContainerScreen(Component title, Theme theme) {
         super(title);
         this.theme = theme;
-        this.borderBox = new ThemedBorderBox(0, 0, 0, 0, title, theme, BorderThemeSize.LARGE);
+        this.borderBox = new ThemedBorderBox(0, 0, 0, 0, title, theme, BoxTheme.Size.LARGE);
     }
 
     public void setPadding(int padding) {
@@ -31,6 +36,7 @@ public abstract class FlexContainerScreen extends Screen {
     }
 
     protected void flex() {
+        LOGGER.debug("Flexing screen");
         int maxX = 0;
         int maxY = 0;
         flexedWidgets.clear();
@@ -55,10 +61,10 @@ public abstract class FlexContainerScreen extends Screen {
                 widget.setY(widget.getY() + containerInfo.topPos);
             }
         }
-        BorderThemeData borderTheme = theme.getBorderTheme(BorderThemeSize.LARGE);
+        BoxTheme borderTheme = theme.getBorderTheme(BoxTheme.Size.LARGE);
         containerInfo.width += borderTheme.edgeWidth() + containerInfo.padding;
         containerInfo.height += borderTheme.edgeHeight() + containerInfo.padding;
-        borderBox = new ThemedBorderBox(containerInfo.leftPos, containerInfo.topPos, containerInfo.width, containerInfo.height, title, theme, BorderThemeSize.LARGE);
+        borderBox = new ThemedBorderBox(containerInfo.leftPos, containerInfo.topPos, containerInfo.width, containerInfo.height, title, theme, BoxTheme.Size.LARGE);
     }
 
     public void refreshFlex() {
@@ -90,6 +96,19 @@ public abstract class FlexContainerScreen extends Screen {
 
     public Theme getTheme() {
         return theme;
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+        int newScreenWidth = Objects.requireNonNull(minecraft).getWindow().getGuiScaledWidth();
+        int newScreenHeight = minecraft.getWindow().getGuiScaledHeight();
+        if (newScreenWidth != screenWidth || newScreenHeight != screenHeight) {
+            LOGGER.debug("Screen resized from ({}, {}) to ({}, {})", screenWidth, screenHeight, newScreenWidth, newScreenHeight);
+            screenWidth = newScreenWidth;
+            screenHeight = newScreenHeight;
+            refreshFlex();
+        }
     }
 
     private static class ContainerInfo {

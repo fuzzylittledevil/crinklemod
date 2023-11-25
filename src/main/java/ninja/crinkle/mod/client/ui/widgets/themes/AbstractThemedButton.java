@@ -4,7 +4,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.navigation.CommonInputs;
 import net.minecraft.network.chat.Component;
-import ninja.crinkle.mod.client.ui.themes.BorderThemeSize;
+import ninja.crinkle.mod.client.ui.themes.BoxTheme;
 import ninja.crinkle.mod.client.ui.themes.Theme;
 import org.jetbrains.annotations.NotNull;
 
@@ -15,12 +15,13 @@ public abstract class AbstractThemedButton extends ThemedBorderBox {
     private boolean isClicked = false;
     public AbstractThemedButton(int pX, int pY, int pWidth, int pHeight, Component pMessage, Theme theme,
                                 Consumer<AbstractThemedButton> onPress) {
-        super(pX, pY, pWidth, pHeight, pMessage, theme, BorderThemeSize.MEDIUM);
+        super(pX, pY, pWidth, pHeight, pMessage, theme, BoxTheme.Size.MEDIUM);
         this.onPress = onPress;
     }
 
     @Override
     protected void renderWidget(@NotNull GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
+        if (!isHovered && isClicked) isClicked = false;
         setInverted(this.isClicked);
         super.renderWidget(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
         if (this.isHoveredOrFocused()) {

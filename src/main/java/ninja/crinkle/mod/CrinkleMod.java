@@ -33,6 +33,7 @@ public class CrinkleMod {
     /**
      * The event bus that is used to register internal events.
      */
+
     public static final IEventBus EVENT_BUS = BusBuilder.builder().build();
 
     public CrinkleMod() {

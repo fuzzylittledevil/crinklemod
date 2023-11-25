@@ -6,10 +6,10 @@ import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.network.chat.Component;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import ninja.crinkle.mod.api.ServerUpdater;
+import ninja.crinkle.mod.client.ui.themes.BoxTheme;
 import ninja.crinkle.mod.icons.Icons;
 import ninja.crinkle.mod.client.ui.elements.Text;
 import ninja.crinkle.mod.client.ui.menus.AbstractMenu;
-import ninja.crinkle.mod.client.ui.themes.BorderThemeSize;
 import ninja.crinkle.mod.client.ui.widgets.GradientBar;
 import ninja.crinkle.mod.client.ui.widgets.Label;
 import ninja.crinkle.mod.client.ui.widgets.themes.ThemedIconButton;
@@ -17,7 +17,6 @@ import ninja.crinkle.mod.settings.Setting;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -107,8 +106,8 @@ public class StatusBarEntry<T extends Comparable<? super T>> implements IEntry {
                         .build())
                 .gradientColor(gradientStartColor, gradientEndColor, gradientBackgroundColor)
                 .build());
-        int buttonWidth = menu.getLineHeight() + menu.getTheme().getBorderTheme(BorderThemeSize.MEDIUM).edgeWidth();
-        int buttonHeight = menu.getLineHeight() + menu.getTheme().getBorderTheme(BorderThemeSize.MEDIUM).edgeHeight();
+        int buttonWidth = menu.getLineHeight() + menu.getTheme().getBorderTheme(BoxTheme.Size.MEDIUM).edgeWidth();
+        int buttonHeight = menu.getLineHeight() + menu.getTheme().getBorderTheme(BoxTheme.Size.MEDIUM).edgeHeight();
         ThemedIconButton configButton = ThemedIconButton.builder(menu.getTheme(), Icons.WRENCH)
                 .onPress(onPress == null ? b -> {} : b -> onPress.accept(menu))
                 .x(menu.getLeftPos() + menu.getLineXOffset() + barWidth + menu.getSpacer())

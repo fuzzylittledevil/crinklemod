@@ -15,34 +15,27 @@ import java.util.Map;
 public class Theme {
     public static final Theme DEFAULT = new Theme(
             Map.of(
-                    BorderThemeSize.SMALL, BorderThemeData.GRAY_SMALL,
-                    BorderThemeSize.MEDIUM, BorderThemeData.GRAY_MEDIUM,
-                    BorderThemeSize.LARGE, BorderThemeData.GRAY_LARGE
+                    BoxTheme.Size.SMALL, BoxTheme.GRAY_SMALL,
+                    BoxTheme.Size.MEDIUM, BoxTheme.GRAY_MEDIUM,
+                    BoxTheme.Size.LARGE, BoxTheme.GRAY_LARGE
             ),
             Color.of(0xFFD7AEFF),
             Color.WHITE,
             Color.of("#AA7FD6")
     );
-    private final Map<BorderThemeSize, BorderThemeData> borderThemes;
-    private final Map<BorderThemeData, ResourceLocation> invertedTextures;
+    private final Map<BoxTheme.Size, BoxTheme> borderThemes;
     private final Color backgroundColor;
     private final Color foregroundColor;
     private final Color secondaryColor;
 
-    public Theme(Map<BorderThemeSize, BorderThemeData> borderThemes, Color backgroundColor, Color foregroundColor, Color secondaryColor) {
+    public Theme(Map<BoxTheme.Size, BoxTheme> borderThemes, Color backgroundColor, Color foregroundColor, Color secondaryColor) {
         this.borderThemes = borderThemes;
         this.backgroundColor = backgroundColor;
         this.foregroundColor = foregroundColor;
         this.secondaryColor = secondaryColor;
-        this.invertedTextures = borderThemes.values().stream().distinct().collect(
-                java.util.stream.Collectors.toMap(
-                        borderTheme -> borderTheme,
-                        borderTheme -> invertTexture(borderTheme.texture())
-                )
-        );
     }
 
-    public BorderThemeData getBorderTheme(BorderThemeSize size) {
+    public BoxTheme getBorderTheme(BoxTheme.Size size) {
         return borderThemes.get(size);
     }
 
@@ -56,33 +49,5 @@ public class Theme {
 
     public Color getSecondaryColor() {
         return secondaryColor;
-    }
-
-    public ResourceLocation getInvertedTexture(BorderThemeData borderTheme) {
-        return invertedTextures.get(borderTheme);
-    }
-
-    private static ResourceLocation invertTexture(ResourceLocation texture) {
-        Minecraft minecraft = ClientUtil.getMinecraft();
-        TextureManager textureManager = minecraft.getTextureManager();
-        try(InputStream is = minecraft.getResourceManager().open(texture)) {
-            NativeImage image = NativeImage.read(is);
-            // Invert the texture colors
-            for(int x = 0; x < image.getWidth(); x++) {
-                for(int y = 0; y < image.getHeight(); y++) {
-                    int color = image.getPixelRGBA(x, y);
-                    int alpha = color & 0xFF000000;
-                    int rgb = color & 0x00FFFFFF;
-                    int inverted = alpha | (~rgb & 0x00FFFFFF);
-                    image.setPixelRGBA(x, y, inverted);
-                }
-            }
-            // Create a dynamic texture
-            ResourceLocation invertedTexture = new ResourceLocation(texture.getNamespace(), texture.getPath() + "_inverted");
-            textureManager.register(invertedTexture, new DynamicTexture(image));
-            return invertedTexture;
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
     }
 }

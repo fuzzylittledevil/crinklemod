@@ -4,8 +4,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import ninja.crinkle.mod.client.renderers.IconRenderer;
 import ninja.crinkle.mod.icons.Icons;
-import ninja.crinkle.mod.client.ui.themes.BorderThemeData;
-import ninja.crinkle.mod.client.ui.themes.BorderThemeSize;
+import ninja.crinkle.mod.client.ui.themes.BoxTheme;
 import ninja.crinkle.mod.client.ui.themes.Theme;
 import org.apache.commons.lang3.NotImplementedException;
 import org.jetbrains.annotations.NotNull;
@@ -18,13 +17,14 @@ public class ThemedIconButton extends ThemedButton {
     public ThemedIconButton(int pX, int pY, int pWidth, int pHeight, Component pMessage, Theme theme, Consumer<AbstractThemedButton> onPress, Icons icon) {
         super(pX, pY, pWidth, pHeight, pMessage, theme, onPress);
         this.icon = icon;
+        this.setLabel(null);
     }
 
     @Override
     protected void renderWidget(@NotNull GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
         super.renderWidget(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
         if (icon != null) {
-            BorderThemeData borderTheme = getTheme().getBorderTheme(BorderThemeSize.MEDIUM);
+            BoxTheme borderTheme = getTheme().getBorderTheme(BoxTheme.Size.MEDIUM);
             IconRenderer.renderIcon(pGuiGraphics, icon, getX() + borderTheme.edgeWidth(),
                     getY() + borderTheme.edgeHeight(), getTheme().getSecondaryColor().withAlpha(this.alpha));
         }

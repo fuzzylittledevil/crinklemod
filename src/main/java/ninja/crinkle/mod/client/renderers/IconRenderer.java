@@ -22,12 +22,8 @@ public class IconRenderer {
         // Get RGBA from int
         graphics.setColor((float) color.getRed(), (float) color.getGreen(), (float) color.getBlue(),
                 (float) color.getAlpha());
-        RenderSystem.enableBlend();
-        RenderSystem.enableDepthTest();
         renderIcon(graphics, icon, x, y);
         graphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
-        RenderSystem.disableBlend();
-        RenderSystem.disableDepthTest();
     }
 
 }

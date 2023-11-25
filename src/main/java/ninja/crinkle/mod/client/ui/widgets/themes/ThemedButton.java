@@ -5,8 +5,7 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
-import ninja.crinkle.mod.client.ui.themes.BorderThemeData;
-import ninja.crinkle.mod.client.ui.themes.BorderThemeSize;
+import ninja.crinkle.mod.client.ui.themes.BoxTheme;
 import ninja.crinkle.mod.client.ui.themes.Theme;
 import ninja.crinkle.mod.util.ClientUtil;
 import org.jetbrains.annotations.NotNull;
@@ -29,12 +28,11 @@ public class ThemedButton extends AbstractThemedButton {
     }
 
     public void setLabel(Component label) {
-        if (label == null) return;
         this.label = label;
-        if (autoSize) {
+        if (autoSize && label != null) {
             Minecraft minecraft = ClientUtil.getMinecraft();
             if (minecraft == null) return;
-            BorderThemeData borderTheme = getTheme().getBorderTheme(BorderThemeSize.MEDIUM);
+            BoxTheme borderTheme = getTheme().getBorderTheme(BoxTheme.Size.MEDIUM);
             setWidth(minecraft.font.width(label) + borderTheme.edgeWidth() * 2 + padding);
             setHeight(minecraft.font.lineHeight + borderTheme.edgeHeight() * 2 + padding);
         }
