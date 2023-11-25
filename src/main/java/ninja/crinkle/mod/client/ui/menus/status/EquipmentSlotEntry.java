@@ -37,7 +37,7 @@ public class EquipmentSlotEntry implements IEntry {
         widgets.add(labelComponent);
         ItemStack stack = menu.getPlayer().getItemBySlot(slot);
         int offset = menu.getFont().width(label) + menu.getSpacer() + menu.getMargin();
-        Label name = Label.builder(menu.getFont(), Component.literal("None"))
+        Label name = Label.builder(menu.getFont(), Component.translatable("gui.crinklemod.status.equipment_slot.empty"))
                 .pos(menu.getLeftPos() + offset, menu.getTopPos() + menu.getLineYOffset(lineNumber) + menu.getFontOffset() + 2)
                 .dropShadow(true)
                 .color(0xff404040)

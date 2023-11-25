@@ -125,8 +125,8 @@ public class StatusBarEntry<T extends Comparable<? super T>> implements IEntry {
                 .width(buttonWidth)
                 .height(buttonHeight)
                 .build();
-        resetButton.setTooltip(Tooltip.create(Component.literal("Reset to default")));
-        configButton.setTooltip(Tooltip.create(Component.literal("Configure values")));
+        resetButton.setTooltip(Tooltip.create(Component.translatable("gui.crinklemod.status.reset_tooltip")));
+        configButton.setTooltip(Tooltip.create(Component.translatable("gui.crinklemod.status.config_tooltip")));
         widgets.add(configButton);
         widgets.add(resetButton);
         for(EntryAction action : actions) {

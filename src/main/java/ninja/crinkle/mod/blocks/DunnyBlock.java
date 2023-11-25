@@ -70,25 +70,6 @@ public class DunnyBlock extends Block implements EntityBlock {
         super.onBlockStateChange(level, pos, oldState, newState);
     }
 
-    /*
-    @Nullable
-    @Override
-    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, @NotNull BlockState state,
-                                                                  @NotNull BlockEntityType<T> type) {
-        if (level.isClientSide) {
-            // We don't have anything to do on the client side
-            return null;
-        } else {
-            // Server side we delegate ticking to our block entity
-            return (lvl, pos, st, blockEntity) -> {
-                if (blockEntity instanceof DunnyBlockEntity be) {
-                    be.tickServer();
-                }
-            };
-        }
-    }
-*/
-
     @SuppressWarnings("deprecation")
     @Override
     public @NotNull InteractionResult use(@NotNull BlockState state, Level level, @NotNull BlockPos pos,
@@ -100,7 +81,7 @@ public class DunnyBlock extends Block implements EntityBlock {
                 MenuProvider containerProvider = new MenuProvider() {
                     @Override
                     public @NotNull Component getDisplayName() {
-                        return Component.literal("Dunny");
+                        return Component.translatable("block.crinklemod.dunny");
                     }
 
                     @Override

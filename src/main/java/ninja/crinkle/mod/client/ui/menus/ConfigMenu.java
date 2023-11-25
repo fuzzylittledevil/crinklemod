@@ -110,7 +110,7 @@ public class ConfigMenu<E extends ICapabilityProvider> extends AbstractMenu {
                 .dropShadow(false)
                 .color(0xffffffff)
                 .build());
-        notificationLabel = Label.builder(getFont(), Component.literal(""))
+        notificationLabel = Label.builder(getFont(), Component.empty())
                 .pos(getLeftPos() + getMargin(), getTopPos() + getLineYOffset(lastLineNumber + 2))
                 .wrapWidth(150)
                 .dropShadow(false)

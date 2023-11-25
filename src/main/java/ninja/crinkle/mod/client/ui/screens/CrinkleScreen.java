@@ -122,7 +122,7 @@ public class CrinkleScreen extends FlexContainerScreen {
                                                 s.syncer(p).ifPresent(ServerUpdater::syncServer);
                                                 CrinkleMod.EVENT_BUS.post(new AccidentEvent.Bladder(minecraft.player, amount, AccidentEvent.Side.CLIENT));
                                             },
-                                            Tooltip.create(Component.literal("Fill'em"))
+                                            Tooltip.create(Component.translatable("gui.crinklemod.crinkle_screen.bladder.accident_button.tooltip"))
                                     ))
                                     .build())
                             .entry(StatusBarEntry.intBuilder(() -> minecraft.player)
@@ -141,14 +141,14 @@ public class CrinkleScreen extends FlexContainerScreen {
                                                 s.syncer(p).ifPresent(ServerUpdater::syncServer);
                                                 CrinkleMod.EVENT_BUS.post(new AccidentEvent.Bowels(minecraft.player, amount, AccidentEvent.Side.CLIENT));
                                             },
-                                            Tooltip.create(Component.literal("Fill'em"))
+                                            Tooltip.create(Component.translatable("gui.crinklemod.crinkle_screen.bowel.accident_button.tooltip"))
                                     ))
                                     .build())
                             .build();
                     // Creating this here so nextLine() still works
                     EquipmentSlotEntry equipmentSlotEntry = new EquipmentSlotEntry(nextLine(), EquipmentSlot.LEGS,
-                            Component.literal("Pants:"),
-                            Tooltip.create(Component.literal("These are your pants")));
+                            Component.translatable("gui.crinklemod.status.equipment_slot.title"),
+                            Tooltip.create(Component.translatable("gui.crinklemod.status.equipment_slot.tooltip")));
                     undergarmentMenu = StatusMenu.builder(this)
                             .font(font)
                             .lineHeight(lineHeight)

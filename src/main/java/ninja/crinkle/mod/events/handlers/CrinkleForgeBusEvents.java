@@ -132,7 +132,7 @@ public class CrinkleForgeBusEvents {
                 event.setCanceled(true);
                 event.setCancellationResult(InteractionResult.FAIL);
                 if (event.getSide() == LogicalSide.CLIENT)
-                    player.sendSystemMessage(Component.literal("You are too full to eat."));
+                    player.sendSystemMessage(Component.translatable("action.crinklemod.metabolism.stomach.full.text"));
                 return;
             }
             player.getFoodData().setFoodLevel(player.getFoodData().getFoodLevel() - 1);

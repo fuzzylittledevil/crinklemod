@@ -71,5 +71,13 @@
   "advancements.crinklemod.wearing_diaper.description": "*CRINKLE*",
   "gui.crinklemod.metabolism_screen.void_bladder_button": "Empty Bladder",
   "gui.crinklemod.metabolism_screen.void_bowels_button": "Empty Bowels",
-  "gui.crinklemod.metabolism_screen.empty_metabolism": "Empty Metabolism"
+  "gui.crinklemod.metabolism_screen.empty_metabolism": "Empty Metabolism",
+  "action.crinklemod.metabolism.stomach.full.text": "You are too full to eat.",
+  "gui.crinklemod.status.equipment_slot.empty": "(None)",
+  "gui.crinklemod.crinkle_screen.bladder.accident_button.tooltip": "Fill'em",
+  "gui.crinklemod.crinkle_screen.bowel.accident_button.tooltip": "Fill'em",
+  "gui.crinklemod.status.reset_tooltip": "Reset to default",
+  "gui.crinklemod.status.config_tooltip": "Configure values",
+  "gui.crinklemod.status.equipment_slot.title": "Pants:",
+  "gui.crinklemod.status.equipment_slot.tooltip": "These are your pants! Do with them what you will."
 }
