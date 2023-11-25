@@ -1,6 +1,7 @@
 package ninja.crinkle.mod.events;
 
 import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.Event;
 import ninja.crinkle.mod.capabilities.MetabolismImpl;
 
@@ -14,10 +15,17 @@ import ninja.crinkle.mod.capabilities.MetabolismImpl;
 public abstract class AccidentEvent extends Event {
     private final int amount;
     private final Player player;
+    private final Side side;
 
-    public AccidentEvent(Player player, int amount) {
+    public enum Side {
+        CLIENT,
+        SERVER
+    }
+
+    public AccidentEvent(Player player, int amount, Side side) {
         this.player = player;
         this.amount = amount;
+        this.side = side;
     }
 
     /**
@@ -38,12 +46,16 @@ public abstract class AccidentEvent extends Event {
         return player;
     }
 
+    public Side getSide() {
+        return side;
+    }
+
     /**
      * An accident event that is fired when a player has a bladder accident.
      */
     public static class Bladder extends AccidentEvent {
-        public Bladder(Player player, int amount) {
-            super(player, amount);
+        public Bladder(Player player, int amount, Side side) {
+            super(player, amount, side);
         }
     }
 
@@ -51,15 +63,16 @@ public abstract class AccidentEvent extends Event {
      * An accident event that is fired when a player has a bowel accident.
      */
     public static class Bowels extends AccidentEvent {
-        public Bowels(Player player, int amount) {
-            super(player, amount);
+        public Bowels(Player player, int amount, Side side) {
+            super(player, amount, side);
         }
     }
 
     @Override
     public String toString() {
         return "AccidentEvent{" +
-                "amount=" + amount +
+                "side=" + side +
+                ", amount=" + amount +
                 ", player=" + player +
                 '}';
     }

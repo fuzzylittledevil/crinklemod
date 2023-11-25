@@ -105,7 +105,7 @@ public class ConfigMenu<E extends ICapabilityProvider> extends AbstractMenu {
 
     private void create() {
         final int lastLineNumber = configMenuEntries.stream().mapToInt(Entry::lineNumber).max().orElse(0);
-        add(Label.builder(getFont(), title)
+        addWidget(Label.builder(getFont(), title)
                 .pos(getLeftPos() + getMargin(), getTopPos() + getMargin())
                 .dropShadow(false)
                 .color(0xffffffff)
@@ -115,14 +115,14 @@ public class ConfigMenu<E extends ICapabilityProvider> extends AbstractMenu {
                 .wrapWidth(150)
                 .dropShadow(false)
                 .build();
-        add(notificationLabel);
+        addWidget(notificationLabel);
         final int labelWidth = configMenuEntries.stream().mapToInt(c -> getFont().width(c.setting().label())).max().orElse(0);
         configMenuEntries.stream().sorted(Comparator.comparingInt(Entry::lineNumber)).forEach(c -> {
             final Label label = Label.builder(getFont(), c.setting().label())
                     .pos(getLeftPos() + getMargin(), getTopPos() + getLineYOffset(c.lineNumber()) + getFontOffset())
                     .dropShadow(false)
                     .build();
-            add(label);
+            addWidget(label);
             labels.put(c, label);
             final EditBox editBox = new EditBox(getFont(),
                     getLeftPos() + getMargin() + labelWidth + getSpacer(),
@@ -133,7 +133,7 @@ public class ConfigMenu<E extends ICapabilityProvider> extends AbstractMenu {
             editBox.setMaxLength(c.maxLength());
             editBox.setValue(String.valueOf(c.setting.get(entitySupplier.get())));
             editBox.setTooltip(Tooltip.create(c.setting().tooltip()));
-            add(editBox);
+            addWidget(editBox);
             editBoxes.put(c, editBox);
         });
         saveButton = Button.builder(SAVE_BUTTON, b -> {
@@ -147,8 +147,8 @@ public class ConfigMenu<E extends ICapabilityProvider> extends AbstractMenu {
                 })
                 .bounds(getLeftPos() + getMargin(), getTopPos() + getLineYOffset(lastLineNumber + 1), BUTTON_WIDTH, getLineHeight())
                 .build();
-        add(saveButton);
-        add(Button.builder(RESET_BUTTON, b -> {
+        addWidget(saveButton);
+        addWidget(Button.builder(RESET_BUTTON, b -> {
                     clearNotifications();
                     configMenuEntries.forEach(c -> {
                         c.setting().set(entitySupplier.get(), c.setting().getDefault(entitySupplier.get()));
@@ -158,12 +158,20 @@ public class ConfigMenu<E extends ICapabilityProvider> extends AbstractMenu {
                 })
                 .bounds(getLeftPos() + getMargin() + BUTTON_WIDTH + getSpacer(), getTopPos() + getLineYOffset(lastLineNumber + 1), BUTTON_WIDTH, getLineHeight())
                 .build());
-        add(Button.builder(BACK_BUTTON, b -> {
+        addWidget(Button.builder(BACK_BUTTON, b -> {
                     clearNotifications();
                     onClose.accept(this);
                 })
                 .bounds(getLeftPos() + getMargin() + (BUTTON_WIDTH * 2) + (getSpacer() * 2), getTopPos() + getLineYOffset(lastLineNumber + 1), BUTTON_WIDTH, getLineHeight())
                 .build());
+    }
+
+    @Override
+    public void setVisible(boolean visible) {
+        super.setVisible(visible);
+        if (visible) {
+            configMenuEntries.forEach(c -> editBoxes.get(c).setValue(String.valueOf(c.setting().get(entitySupplier.get()))));
+        }
     }
 
     public static class Builder<E extends ICapabilityProvider> {

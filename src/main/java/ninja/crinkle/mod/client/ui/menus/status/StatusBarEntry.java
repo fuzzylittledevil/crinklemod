@@ -2,19 +2,22 @@ package ninja.crinkle.mod.client.ui.menus.status;
 
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.AbstractWidget;
-import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.network.chat.Component;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import ninja.crinkle.mod.api.ServerUpdater;
+import ninja.crinkle.mod.icons.Icons;
 import ninja.crinkle.mod.client.ui.elements.Text;
 import ninja.crinkle.mod.client.ui.menus.AbstractMenu;
+import ninja.crinkle.mod.client.ui.themes.BorderThemeSize;
 import ninja.crinkle.mod.client.ui.widgets.GradientBar;
 import ninja.crinkle.mod.client.ui.widgets.Label;
+import ninja.crinkle.mod.client.ui.widgets.themes.ThemedIconButton;
 import ninja.crinkle.mod.settings.Setting;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -27,10 +30,12 @@ public class StatusBarEntry<T extends Comparable<? super T>> implements IEntry {
     private final int gradientStartColor;
     private final int gradientEndColor;
     private final int gradientBackgroundColor;
+    private final List<EntryAction> actions = new ArrayList<>();
 
     public StatusBarEntry(int lineNumber, Setting<T> setting, Consumer<AbstractMenu> onPress,
                           int gradientStartColor, int gradientEndColor, int gradientBackgroundColor,
-                          Supplier<ICapabilityProvider> provider) {
+                          Supplier<ICapabilityProvider> provider,
+                          List<EntryAction> actions) {
         this.lineNumber = lineNumber;
         this.setting = setting;
         this.onPress = onPress;
@@ -38,14 +43,15 @@ public class StatusBarEntry<T extends Comparable<? super T>> implements IEntry {
         this.gradientStartColor = gradientStartColor;
         this.gradientEndColor = gradientEndColor;
         this.gradientBackgroundColor = gradientBackgroundColor;
-    }
-
-    public int getLineWidth(Font font) {
-        return font.width(setting.label());
+        this.actions.addAll(actions);
     }
 
     public static <E extends ICapabilityProvider> Builder<Integer, E> intBuilder(Supplier<ICapabilityProvider> provider) {
         return new Builder<>(provider);
+    }
+
+    public int getLineWidth(Font font) {
+        return font.width(setting.label());
     }
 
     private Supplier<Component> hoverText(Setting<T> setting, Supplier<ICapabilityProvider> provider) {
@@ -101,20 +107,52 @@ public class StatusBarEntry<T extends Comparable<? super T>> implements IEntry {
                         .build())
                 .gradientColor(gradientStartColor, gradientEndColor, gradientBackgroundColor)
                 .build());
-        widgets.add(Button.builder(Component.literal("C"), b -> Optional.ofNullable(onPress).ifPresent(c -> c.accept(menu)))
-                .bounds(menu.getLeftPos() + menu.getLineXOffset() + barWidth + menu.getSpacer(), menu.getTopPos() + menu.getLineYOffset(lineNumber), menu.getLineHeight(), menu.getLineHeight())
-                .build());
+        int buttonWidth = menu.getLineHeight() + menu.getTheme().getBorderTheme(BorderThemeSize.MEDIUM).edgeWidth();
+        int buttonHeight = menu.getLineHeight() + menu.getTheme().getBorderTheme(BorderThemeSize.MEDIUM).edgeHeight();
+        ThemedIconButton configButton = ThemedIconButton.builder(menu.getTheme(), Icons.WRENCH)
+                .onPress(onPress == null ? b -> {} : b -> onPress.accept(menu))
+                .x(menu.getLeftPos() + menu.getLineXOffset() + barWidth + menu.getSpacer())
+                .y(menu.getTopPos() + menu.getLineYOffset(lineNumber))
+                .width(buttonWidth)
+                .height(buttonHeight)
+                .build();
+        ThemedIconButton resetButton = ThemedIconButton.builder(menu.getTheme(), Icons.RESET)
+                .onPress(b -> {
+                    setting.reset(provider.get());
+                    setting.syncer(provider.get()).ifPresent(ServerUpdater::syncServer);
+                })
+                .x(configButton.getX() + configButton.getWidth() + menu.getSpacer())
+                .y(menu.getTopPos() + menu.getLineYOffset(lineNumber))
+                .width(buttonWidth)
+                .height(buttonHeight)
+                .build();
+        resetButton.setTooltip(Tooltip.create(Component.literal("Reset to default")));
+        configButton.setTooltip(Tooltip.create(Component.literal("Configure values")));
+        widgets.add(configButton);
+        widgets.add(resetButton);
+        for(EntryAction action : actions) {
+            ThemedIconButton actionButton = ThemedIconButton.builder(menu.getTheme(), action.getIcon())
+                    .onPress(b -> action.getAction().accept(setting, provider.get()))
+                    .x(resetButton.getX() + resetButton.getWidth() + menu.getSpacer())
+                    .y(menu.getTopPos() + menu.getLineYOffset(lineNumber))
+                    .width(buttonWidth)
+                    .height(buttonHeight)
+                    .build();
+            actionButton.setTooltip(action.getTooltip());
+            widgets.add(actionButton);
+        }
         return widgets;
     }
 
     static public class Builder<T extends Comparable<? super T>, E extends ICapabilityProvider> {
+        private final Supplier<ICapabilityProvider> provider;
         private int lineNumber;
         private Setting<T> setting;
         private Consumer<AbstractMenu> onPress;
         private int gradientStartColor;
         private int gradientEndColor;
         private int gradientBackgroundColor;
-        private final Supplier<ICapabilityProvider> provider;
+        private final List<EntryAction> actions = new ArrayList<>();
 
         public Builder(Supplier<ICapabilityProvider> provider) {
             this.provider = provider;
@@ -150,9 +188,14 @@ public class StatusBarEntry<T extends Comparable<? super T>> implements IEntry {
             return this;
         }
 
+        public Builder<T, E> action(EntryAction action) {
+            actions.add(action);
+            return this;
+        }
+
         public StatusBarEntry<T> build() {
             return new StatusBarEntry<>(lineNumber, setting, onPress, gradientStartColor, gradientEndColor,
-                    gradientBackgroundColor, provider);
+                    gradientBackgroundColor, provider, actions);
         }
     }
 }

@@ -36,14 +36,15 @@ public class EquipmentSlotEntry implements IEntry {
             labelComponent.setTooltip(tooltip);
         widgets.add(labelComponent);
         ItemStack stack = menu.getPlayer().getItemBySlot(slot);
+        int offset = menu.getFont().width(label) + menu.getSpacer() + menu.getMargin();
         Label name = Label.builder(menu.getFont(), Component.literal("None"))
-                .pos(menu.getLeftPos() + menu.getMargin() + menu.getLineXOffset(), menu.getTopPos() + menu.getLineYOffset(lineNumber) + menu.getFontOffset() + 2)
+                .pos(menu.getLeftPos() + offset, menu.getTopPos() + menu.getLineYOffset(lineNumber) + menu.getFontOffset() + 2)
                 .dropShadow(true)
                 .color(0xff404040)
                 .build();
         if (!stack.isEmpty()) {
             name = Label.builder(menu.getFont(), stack.getHoverName())
-                    .pos(menu.getLeftPos() + menu.getMargin() + menu.getLineXOffset(), menu.getTopPos() + menu.getLineYOffset(lineNumber) + menu.getFontOffset() + 2)
+                    .pos(menu.getLeftPos() + offset, menu.getTopPos() + menu.getLineYOffset(lineNumber) + menu.getFontOffset() + 2)
                     .dropShadow(false)
                     .color(0xffffffff)
                     .build();

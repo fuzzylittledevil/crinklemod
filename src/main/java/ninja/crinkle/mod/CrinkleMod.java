@@ -13,7 +13,7 @@ import ninja.crinkle.mod.config.ConsumableConfig;
 import ninja.crinkle.mod.config.MetabolismConfig;
 import ninja.crinkle.mod.config.UndergarmentConfig;
 import ninja.crinkle.mod.datagen.CrinkleDataGeneration;
-import ninja.crinkle.mod.events.handlers.UndergarmentEventHandler;
+import ninja.crinkle.mod.events.handlers.CrinkleBusEvents;
 import ninja.crinkle.mod.items.CrinkleItems;
 import ninja.crinkle.mod.items.CrinkleTabs;
 import ninja.crinkle.mod.menus.CrinkleMenus;
@@ -51,7 +51,7 @@ public class CrinkleMod {
         CrinkleItems.register(modEventBus);
         CrinkleTabs.register(modEventBus);
         CrinkleMenus.register(modEventBus);
-        CrinkleMod.EVENT_BUS.register(new UndergarmentEventHandler());
+        CrinkleMod.EVENT_BUS.register(new CrinkleBusEvents());
 
         // DataGen
         modEventBus.addListener(CrinkleDataGeneration::generate);

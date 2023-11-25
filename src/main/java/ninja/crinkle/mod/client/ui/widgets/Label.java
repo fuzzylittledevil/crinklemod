@@ -39,8 +39,8 @@ public class Label extends AbstractWidget {
     public static class Builder {
         private int x;
         private int y;
-        private Component value;
-        private Font font;
+        private final Component value;
+        private final Font font;
         private int color = DEFAULT_COLOR;
         private boolean dropShadow;
         private boolean visible = true;
@@ -63,16 +63,6 @@ public class Label extends AbstractWidget {
 
         public Builder pos(int x, int y) {
             return x(x).y(y);
-        }
-
-        public Builder value(Component value) {
-            this.value = value;
-            return this;
-        }
-
-        public Builder font(Font font) {
-            this.font = font;
-            return this;
         }
 
         public Builder color(int color) {

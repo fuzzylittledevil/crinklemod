@@ -17,6 +17,7 @@ import ninja.crinkle.mod.network.messages.MetabolismUpdateMessage;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
+import org.spongepowered.asm.mixin.MixinEnvironment;
 
 import java.util.Optional;
 
@@ -242,7 +243,7 @@ public class Metabolism implements ServerUpdater {
             int amount = (int) (getBladder() * (1 - getBladderContinence()));
             LOGGER.debug("Small bladder accident: amount={} chance={} desperation={} continence={}", amount, chance, getBladderDesperation(), getBladderContinence());
             modifyBladder(-amount);
-            CrinkleMod.EVENT_BUS.post(new AccidentEvent.Bladder(player, amount));
+            CrinkleMod.EVENT_BUS.post(new AccidentEvent.Bladder(player, amount, AccidentEvent.Side.SERVER));
         }
     }
 
@@ -255,7 +256,7 @@ public class Metabolism implements ServerUpdater {
             int amount = (int) (getBowels() * (1 - getBowelContinence()));
             LOGGER.debug("Small bowel accident: amount={} chance={} desperation={} continence={}", amount, chance, getBowelDesperation(), getBowelContinence());
             modifyBowels(-amount);
-            CrinkleMod.EVENT_BUS.post(new AccidentEvent.Bowels(player, amount));
+            CrinkleMod.EVENT_BUS.post(new AccidentEvent.Bowels(player, amount, AccidentEvent.Side.SERVER));
         }
     }
 
@@ -268,7 +269,7 @@ public class Metabolism implements ServerUpdater {
             int amount = (int) (getBladder() * BLADDER_LARGE_ACCIDENT_AMOUNT);
             LOGGER.debug("Large bladder accident: amount={} chance={} desperation={} continence={}", amount, chance, getBladderDesperation(), getBladderContinence());
             modifyBladder(-amount);
-            CrinkleMod.EVENT_BUS.post(new AccidentEvent.Bladder(player, amount));
+            CrinkleMod.EVENT_BUS.post(new AccidentEvent.Bladder(player, amount, AccidentEvent.Side.SERVER));
         }
     }
 
@@ -281,7 +282,7 @@ public class Metabolism implements ServerUpdater {
             int amount = (int) (getBowels() * BOWEL_LARGE_ACCIDENT_AMOUNT);
             LOGGER.debug("Large bowel accident: amount={} chance={} desperation={} continence={}", amount, chance, getBowelDesperation(), getBowelContinence());
             modifyBowels(-amount);
-            CrinkleMod.EVENT_BUS.post(new AccidentEvent.Bowels(player, amount));
+            CrinkleMod.EVENT_BUS.post(new AccidentEvent.Bowels(player, amount, AccidentEvent.Side.SERVER));
         }
     }
 
@@ -332,5 +333,4 @@ public class Metabolism implements ServerUpdater {
         checkForBowelLargeAccident();
         syncClient();
     }
-
 }

@@ -39,7 +39,7 @@
   "setting.crinklemod.metabolism.bowel_capacity.tooltip": "The maximum amount of liquid your bowels can hold.",
   "setting.crinklemod.metabolism.bowel_continence.label": "Continence",
   "setting.crinklemod.metabolism.bowel_continence.tooltip": "Your ability to hold your bowels. The higher this is, the longer you can hold it.",
-  "gui.crinklemod.metabolism_button.title": "Metabolism",
+  "gui.crinklemod.crinkle_button.title": "CrinkleMod",
   "gui.crinklemod.metabolism_screen.title": "Metabolism",
   "gui.crinklemod.metabolism_screen.main_menu.title": "Metabolism",
   "gui.crinklemod.metabolism_screen.liquids_menu.title": "Liquids Settings",
@@ -63,16 +63,13 @@
   "event.crinklemod.undergarment.use.cauldron.nothing.text": "You wash your %s in the cauldron, but nothing happens.",
   "event.crinklemod.undergarment.use.cauldron.no_water.text": "You try to wash your %s in the cauldron, but there's no water in it.",
 
-  "gui.crinklemod.undergarment_button.title": "Pants",
-  "gui.crinklemod.undergarment_screen.title": "Pants",
-  "gui.crinklemod.undergarment_screen.main_menu.title": "Pants",
-  "gui.crinklemod.undergarment_screen.liquids_menu.title": "Liquids Settings",
-  "gui.crinklemod.undergarment_screen.solids_menu.title": "Solids Settings",
-
   "block.crinklemod.dunny": "Dunny",
   "item.crinklemod.diaper": "Diaper",
 
   "tab.crinklemod.crinkle": "CrinkleMod",
   "advancements.crinklemod.wearing_diaper.title": "*crinkle*",
-  "advancements.crinklemod.wearing_diaper.description": "*CRINKLE*"
+  "advancements.crinklemod.wearing_diaper.description": "*CRINKLE*",
+  "gui.crinklemod.metabolism_screen.void_bladder_button": "Empty Bladder",
+  "gui.crinklemod.metabolism_screen.void_bowels_button": "Empty Bowels",
+  "gui.crinklemod.metabolism_screen.empty_metabolism": "Empty Metabolism"
 }

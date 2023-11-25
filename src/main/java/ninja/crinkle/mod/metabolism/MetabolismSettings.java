@@ -24,6 +24,7 @@ public class MetabolismSettings {
             .getter(p -> Metabolism.of(p).getSolids())
             .setter((p, v) -> Metabolism.of(p).setSolids(v))
             .synchronizer(Metabolism::of)
+
             .build();
 
     public static final Setting<Integer> BLADDER = Setting.intBuilder("bladder")

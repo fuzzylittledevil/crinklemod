@@ -12,17 +12,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class StatusMenu extends AbstractMenu {
-    private static final Logger LOGGER = LogUtils.getLogger();
-    private final Component title;
     private final List<IEntry> entries = new ArrayList<>();
-
-
 
     protected StatusMenu(Builder builder, Screen screen) {
         super(screen, builder.leftPos, builder.topPos, builder.spacer, builder.lineSpacing, builder.margin, builder.lineHeight,
                 builder.visible, builder.font);
-        this.title = builder.title;
         this.entries.addAll(builder.entries);
+        this.addAllSubMenus(builder.subMenus);
         create();
     }
 
@@ -31,13 +27,7 @@ public class StatusMenu extends AbstractMenu {
     }
 
     public void create() {
-        LOGGER.debug("Creating status menu");
-        add(Label.builder(getFont(), title)
-                .pos(getLeftPos() + getMargin(), getTopPos() + getMargin())
-                .dropShadow(false)
-                .color(0xffffffff)
-                .build());
-        entries.forEach(e -> addAll(e.create(this)));
+        entries.forEach(e -> addAllWidgets(e.create(this)));
     }
 
     @Override
@@ -51,20 +41,25 @@ public class StatusMenu extends AbstractMenu {
     }
 
     public static class Builder {
-        public final Screen screen;
-        public int leftPos;
-        public int topPos;
-        public int spacer = 4;
-        public int margin = 8;
-        public int lineHeight = 15;
-        public boolean visible = true;
-        public int lineSpacing;
-        public final List<IEntry> entries = new ArrayList<>();
-        public Component title = Component.empty();
+        private final Screen screen;
+        private int leftPos;
+        private int topPos;
+        private int spacer = 4;
+        private int margin = 8;
+        private int lineHeight = 15;
+        private boolean visible = true;
+        private int lineSpacing;
+        private final List<IEntry> entries = new ArrayList<>();
+        private final List<AbstractMenu> subMenus = new ArrayList<>();
         private Font font;
 
         Builder(Screen screen) {
             this.screen = screen;
+        }
+
+        public Builder visible(boolean visible) {
+            this.visible = visible;
+            return this;
         }
 
         public Builder leftPos(int leftPos) {
@@ -108,8 +103,12 @@ public class StatusMenu extends AbstractMenu {
             return this;
         }
 
+        public Builder subMenu(AbstractMenu menu) {
+            subMenus.add(menu);
+            return this;
+        }
+
         public Builder title(Component title) {
-            this.title = title;
             return this;
         }
 

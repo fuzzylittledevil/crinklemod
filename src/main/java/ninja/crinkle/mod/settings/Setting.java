@@ -1,7 +1,9 @@
 package ninja.crinkle.mod.settings;
 
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import ninja.crinkle.mod.CrinkleMod;
 import ninja.crinkle.mod.api.ServerUpdater;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -10,6 +12,22 @@ import java.util.*;
 import java.util.function.*;
 
 public abstract class Setting<T extends Comparable<? super T>> {
+    public enum ActionType {
+        RESET, SYNC_SERVER, SYNC_CLIENT;
+
+        private String custom;
+
+        ActionType() {
+        }
+
+        public String getCustom() {
+            return custom;
+        }
+
+        public void setCustom(String custom) {
+            this.custom = custom;
+        }
+    }
     protected final String key;
     protected final Class<T> type;
     protected final Component label;
@@ -21,11 +39,13 @@ public abstract class Setting<T extends Comparable<? super T>> {
 
     protected final Function<ICapabilityProvider, ServerUpdater> syncer;
     protected final RangeSupplier<T> rangeSupplier;
+    protected final Map<ActionType, List<BiConsumer<Setting<T>, ICapabilityProvider>>> actionListeners;
 
     protected Setting(String key, Component label, Component tooltip, Class<T> type,
                       Map<BiPredicate<ICapabilityProvider, T>, BiFunction<ICapabilityProvider, T, Component>> validators,
                       Function<ICapabilityProvider, T> defaultSupplier, Function<ICapabilityProvider, T> getter,
-                      BiConsumer<ICapabilityProvider, T> setter, Function<ICapabilityProvider, ServerUpdater> syncer, RangeSupplier<T> rangeSupplier) {
+                      BiConsumer<ICapabilityProvider, T> setter, Function<ICapabilityProvider, ServerUpdater> syncer,
+                      RangeSupplier<T> rangeSupplier, Map<ActionType, List<BiConsumer<Setting<T>, ICapabilityProvider>>> actionListeners) {
         this.key = key;
         this.type = type;
         this.label = label;
@@ -36,6 +56,7 @@ public abstract class Setting<T extends Comparable<? super T>> {
         this.setter = setter;
         this.syncer = syncer;
         this.rangeSupplier = rangeSupplier;
+        this.actionListeners = actionListeners;
     }
 
     @Contract("_ -> new")
@@ -165,33 +186,30 @@ public abstract class Setting<T extends Comparable<? super T>> {
         return StringValue.of(get(entity));
     }
 
+    public void dispatchAction(ActionType type, ICapabilityProvider provider) {
+        actionListeners.get(type).forEach(l -> l.accept(this, provider));
+    }
+
     public void set(ICapabilityProvider entity, Object value) {
-        if (setter != null)
+        if (setter != null) {
             setter.accept(entity, valueOf(value.toString()));
+        }
     }
 
-    public void setInteger(ICapabilityProvider entity, int value) {
-        set(entity, value);
-    }
-
-    public void setDouble(ICapabilityProvider entity, double value) {
-        set(entity, value);
-    }
-
-    public void setBoolean(ICapabilityProvider entity, boolean value) {
-        set(entity, value);
-    }
-
-    public void setString(ICapabilityProvider entity, String value) {
-        set(entity, value);
+    public void reset(ICapabilityProvider provider) {
+        set(provider, getDefault(provider));
     }
 
     public static class DoubleValue extends Setting<Double> {
         protected DoubleValue(String key, Component label, Component tooltip,
                               Map<BiPredicate<ICapabilityProvider, Double>, BiFunction<ICapabilityProvider, Double, Component>> validators,
                               Function<ICapabilityProvider, Double> defaultSupplier, Function<ICapabilityProvider, Double> getter,
-                              BiConsumer<ICapabilityProvider, Double> setter, Function<ICapabilityProvider, ServerUpdater> syncer, RangeSupplier<Double> rangeSupplier) {
-            super(key, label, tooltip, Double.class, validators, defaultSupplier, getter, setter, syncer, rangeSupplier);
+                              BiConsumer<ICapabilityProvider, Double> setter,
+                              Function<ICapabilityProvider, ServerUpdater> syncer,
+                              RangeSupplier<Double> rangeSupplier,
+                              Map<ActionType, List<BiConsumer<Setting<Double>, ICapabilityProvider>>> changeListeners) {
+            super(key, label, tooltip, Double.class, validators, defaultSupplier, getter, setter, syncer, rangeSupplier,
+                    changeListeners);
         }
         public static double of(Object value) {
             return Double.parseDouble(String.valueOf(value));
@@ -212,8 +230,12 @@ public abstract class Setting<T extends Comparable<? super T>> {
         protected IntValue(String key, Component label, Component tooltip,
                            Map<BiPredicate<ICapabilityProvider, Integer>, BiFunction<ICapabilityProvider, Integer, Component>> validators,
                            Function<ICapabilityProvider, Integer> defaultSupplier, Function<ICapabilityProvider, Integer> getter,
-                           BiConsumer<ICapabilityProvider, Integer> setter, Function<ICapabilityProvider, ServerUpdater> syncer, RangeSupplier<Integer> rangeSupplier) {
-            super(key, label, tooltip, Integer.class, validators, defaultSupplier, getter, setter, syncer, rangeSupplier);
+                           BiConsumer<ICapabilityProvider, Integer> setter,
+                           Function<ICapabilityProvider, ServerUpdater> syncer,
+                           RangeSupplier<Integer> rangeSupplier,
+                           Map<ActionType, List<BiConsumer<Setting<Integer>, ICapabilityProvider>>> changeListeners) {
+            super(key, label, tooltip, Integer.class, validators, defaultSupplier, getter, setter, syncer, rangeSupplier,
+                    changeListeners);
         }
 
         public static int of(Object value) {
@@ -235,8 +257,11 @@ public abstract class Setting<T extends Comparable<? super T>> {
         protected BooleanValue(String key, Component label, Component tooltip,
                                Map<BiPredicate<ICapabilityProvider, Boolean>, BiFunction<ICapabilityProvider, Boolean, Component>> validators,
                                Function<ICapabilityProvider, Boolean> defaultSupplier, Function<ICapabilityProvider, Boolean> getter,
-                               BiConsumer<ICapabilityProvider, Boolean> setter, Function<ICapabilityProvider, ServerUpdater> syncer, RangeSupplier<Boolean> rangeSupplier) {
-            super(key, label, tooltip, Boolean.class, validators, defaultSupplier, getter, setter, syncer, rangeSupplier);
+                               BiConsumer<ICapabilityProvider, Boolean> setter,
+                               Function<ICapabilityProvider, ServerUpdater> syncer,
+                               RangeSupplier<Boolean> rangeSupplier,
+                               Map<ActionType, List<BiConsumer<Setting<Boolean>, ICapabilityProvider>>> changeListeners) {
+            super(key, label, tooltip, Boolean.class, validators, defaultSupplier, getter, setter, syncer, rangeSupplier, changeListeners);
         }
 
         public static boolean of(Object value) {
@@ -258,8 +283,12 @@ public abstract class Setting<T extends Comparable<? super T>> {
         protected StringValue(String key, Component label, Component tooltip,
                               Map<BiPredicate<ICapabilityProvider, String>, BiFunction<ICapabilityProvider, String, Component>> validators,
                               Function<ICapabilityProvider, String> defaultSupplier, Function<ICapabilityProvider, String> getter,
-                              BiConsumer<ICapabilityProvider, String> setter, Function<ICapabilityProvider, ServerUpdater> syncer, RangeSupplier<String> rangeSupplier) {
-            super(key, label, tooltip, String.class, validators, defaultSupplier, getter, setter, syncer, rangeSupplier);
+                              BiConsumer<ICapabilityProvider, String> setter,
+                              Function<ICapabilityProvider, ServerUpdater> syncer,
+                              RangeSupplier<String> rangeSupplier,
+                              Map<ActionType, List<BiConsumer<Setting<String>, ICapabilityProvider>>> changeListeners) {
+            super(key, label, tooltip, String.class, validators, defaultSupplier, getter, setter, syncer, rangeSupplier,
+                    changeListeners);
         }
 
         public static String of(Object value) {
@@ -287,6 +316,7 @@ public abstract class Setting<T extends Comparable<? super T>> {
         protected BiConsumer<ICapabilityProvider, T> setter;
         protected Function<ICapabilityProvider, ServerUpdater> syncer;
         protected RangeSupplier<T> rangeSupplier;
+        protected final Map<ActionType, List<BiConsumer<Setting<T>, ICapabilityProvider>>> actionListeners = new HashMap<>();
 
         private Builder(String key) {
             this.key = key;
@@ -333,6 +363,13 @@ public abstract class Setting<T extends Comparable<? super T>> {
             return this;
         }
 
+        public Builder<T> onAction(ActionType actionType, BiConsumer<Setting<T>, ICapabilityProvider> listener) {
+            if (!this.actionListeners.containsKey(actionType))
+                this.actionListeners.put(actionType, new ArrayList<>());
+            this.actionListeners.get(actionType).add(listener);
+            return this;
+        }
+
         public Builder<T> range(RangeSupplier<T> rangeSupplier) {
             this.rangeSupplier = rangeSupplier;
             return this;
@@ -346,6 +383,7 @@ public abstract class Setting<T extends Comparable<? super T>> {
     }
 
     public static class IntValueBuilder extends Builder<Integer> {
+
         private IntValueBuilder(String key) {
             super(key);
         }
@@ -357,7 +395,8 @@ public abstract class Setting<T extends Comparable<? super T>> {
                     RangeSupplier.Result<Integer> range = rangeSupplier.apply(e);
                     return Component.translatable("validation.crinklemod.metabolism.failure.out_of_range.integer", v, range.min(), range.max());
                 });
-            return new IntValue(key, label, tooltip, validators, defaultSupplier, getter, setter, syncer, rangeSupplier);
+            return new IntValue(key, label, tooltip, validators, defaultSupplier, getter, setter, syncer, rangeSupplier,
+                    actionListeners);
         }
     }
 
@@ -374,7 +413,7 @@ public abstract class Setting<T extends Comparable<? super T>> {
                     return Component.translatable("validation.crinklemod.metabolism.failure.out_of_range.double", v, range.min(), range.max());
                 });
             }
-            return new DoubleValue(key, label, tooltip, validators, defaultSupplier, getter, setter, syncer, rangeSupplier);
+            return new DoubleValue(key, label, tooltip, validators, defaultSupplier, getter, setter, syncer, rangeSupplier, actionListeners);
         }
     }
 
@@ -386,7 +425,7 @@ public abstract class Setting<T extends Comparable<? super T>> {
         public BooleanValue build() {
             if (rangeSupplier != null)
                 throw new IllegalStateException("Boolean values cannot have a rangeSupplier");
-            return new BooleanValue(key, label, tooltip, validators, defaultSupplier, getter, setter, syncer, null);
+            return new BooleanValue(key, label, tooltip, validators, defaultSupplier, getter, setter, syncer, null, actionListeners);
         }
     }
 
@@ -398,7 +437,7 @@ public abstract class Setting<T extends Comparable<? super T>> {
         public StringValue build() {
             if (rangeSupplier != null)
                 throw new IllegalStateException("String values cannot have a rangeSupplier");
-            return new StringValue(key, label, tooltip, validators, defaultSupplier, getter, setter, syncer, null);
+            return new StringValue(key, label, tooltip, validators, defaultSupplier, getter, setter, syncer, null, actionListeners);
         }
     }
 

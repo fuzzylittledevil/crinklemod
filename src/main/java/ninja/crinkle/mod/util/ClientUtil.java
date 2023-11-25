@@ -1,5 +1,6 @@
 package ninja.crinkle.mod.util;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.DistExecutor;
@@ -11,5 +12,9 @@ public class ClientUtil {
     public static Player getPlayer() {
         return Optional.ofNullable(DistExecutor.safeCallWhenOn(Dist.CLIENT, () -> ClientHooks::getMinecraft))
                 .map(minecraft -> minecraft.player).orElse(null);
+    }
+
+    public static Minecraft getMinecraft() {
+        return DistExecutor.safeCallWhenOn(Dist.CLIENT, () -> ClientHooks::getMinecraft);
     }
 }

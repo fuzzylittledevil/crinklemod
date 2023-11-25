@@ -8,6 +8,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.DistExecutor;
 import ninja.crinkle.mod.client.ClientHooks;
+import ninja.crinkle.mod.client.ui.screens.FlexContainerScreen;
+import ninja.crinkle.mod.client.ui.themes.Theme;
 
 import java.util.List;
 import java.util.Optional;
@@ -21,6 +23,7 @@ public abstract class AbstractMenu {
     private final Screen screen;
     private final Font font;
     private final List<AbstractWidget> children = Lists.newArrayList();
+    private final List<AbstractMenu> subMenus = Lists.newArrayList();
     private boolean visible;
     private final int leftPos;
     private final int topPos;
@@ -42,21 +45,36 @@ public abstract class AbstractMenu {
         this.font = font;
     }
 
-    public void add(AbstractWidget widget) {
+    public void addWidget(AbstractWidget widget) {
         children.add(widget);
     }
+    public void addSubMenu(AbstractMenu menu) {
+        subMenus.add(menu);
+    }
+    public void addAllSubMenus(List<AbstractMenu> menus) {
+        subMenus.addAll(menus);
+    }
 
-    public void addAll(List<AbstractWidget> widgets) {
+    public void addAllWidgets(List<AbstractWidget> widgets) {
         children.addAll(widgets);
     }
 
     public void visitChildren(Consumer<AbstractWidget> visitor) {
         children.forEach(visitor);
     }
+    public void visitSubMenus(Consumer<AbstractMenu> visitor) {
+        subMenus.forEach(visitor);
+    }
+
+    public void visitAll(Consumer<AbstractWidget> visitor) {
+        visitChildren(visitor);
+        visitSubMenus(menu -> menu.visitAll(visitor));
+    }
 
     public void setVisible(boolean visible) {
         this.visible = visible;
         visitChildren(widget -> widget.visible = visible);
+        visitSubMenus(menu -> menu.setVisible(visible));
     }
 
     public boolean isVisible() {
@@ -70,8 +88,8 @@ public abstract class AbstractMenu {
     }
 
     public int getLineYOffset(int count) {
-        int offset = (getLineHeight() + getLineSpacing()) * count;
-        return offset + getLineSpacing() + getMargin();
+        if (count == 0) return getMargin();
+        return (getLineHeight() + getLineSpacing()) * count;
     }
 
     public int getLineXOffset() {
@@ -114,5 +132,11 @@ public abstract class AbstractMenu {
 
     public Screen getScreen() {
         return screen;
+    }
+
+    public Theme getTheme() {
+        if (screen instanceof FlexContainerScreen flexContainerScreen)
+            return flexContainerScreen.getTheme();
+        return Theme.DEFAULT;
     }
 }
