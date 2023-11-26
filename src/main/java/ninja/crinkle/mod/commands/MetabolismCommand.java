@@ -47,8 +47,8 @@ public class MetabolismCommand {
                         .then(command(MetabolismSettings.SOLIDS_RATE))
                         .then(command(MetabolismSettings.BLADDER_CAPACITY))
                         .then(command(MetabolismSettings.BOWEL_CAPACITY))
-                        .then(command(MetabolismSettings.BLADDER_CONTINENCE))
-                        .then(command(MetabolismSettings.BOWEL_CONTINENCE))
+                        .then(command(MetabolismSettings.BLADDER_ACCIDENT_WARNING))
+                        .then(command(MetabolismSettings.BOWEL_ACCIDENT_WARNING))
                 ));
         dispatcher.register(literal("met").redirect(node));
     }
@@ -104,9 +104,9 @@ public class MetabolismCommand {
         components.add(Component.literal(String.format("Solids: %d / %d (Rate: %d)", m.getSolids(),
                 m.getMaxSolids(), m.getSolidsRate())));
         components.add(Component.literal(String.format("Liquids: %d / %d (Cont: %.4f)",
-                m.getBladder(), m.getBladderCapacity(), m.getBladderContinence())));
+                m.getBladder(), m.getBladderCapacity(), m.getBladderAccidentWarning())));
         components.add(Component.literal(String.format("Bowels: %d / %d (Cont: %.4f)",
-                m.getBowels(), m.getBowelCapacity(), m.getBowelContinence())));
+                m.getBowels(), m.getBowelCapacity(), m.getBowelAccidentWarning())));
         source.sendSuccess(() -> Component.literal(target.getDisplayName().getString()), false);
         components.forEach(instigator::sendSystemMessage);
         return Command.SINGLE_SUCCESS;

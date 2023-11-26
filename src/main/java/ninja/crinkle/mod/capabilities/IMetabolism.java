@@ -164,35 +164,27 @@ public interface IMetabolism extends INBTSerializable<CompoundTag>, IEntityAddit
      */
     void setMaxLiquids(int value);
 
-    /**
-     * Get the bladder continence of the player
-     *
-     * @return The bladder continence of the player
-     * @implNote This is a value between 0 and 1, where 0 is no continence and 1 is full continence
-     */
-    double getBladderContinence();
+    double getBladderAccidentWarning();
 
-    /**
-     * Set the bladder continence of the player
-     *
-     * @param value The bladder continence of the player
-     * @implNote This is a value between 0 and 1, where 0 is no continence and 1 is full continence
-     */
-    void setBladderContinence(double value);
+    void setBladderAccidentWarning(double value);
 
-    /**
-     * Get the bowels continence of the player
-     *
-     * @return The bowels continence of the player
-     * @implNote This is a value between 0 and 1, where 0 is no continence and 1 is full continence
-     */
-    double getBowelContinence();
+    double getBowelAccidentWarning();
 
-    /**
-     * Set the bladder continence of the player
-     *
-     * @param value The bladder continence of the player
-     * @implNote This is a value between 0 and 1, where 0 is no continence and 1 is full continence
-     */
-    void setBowelContinence(double value);
+    void setBowelAccidentWarning(double value);
+
+    int getBladderAccidentFrequency();
+
+    void setBladderAccidentFrequency(int v);
+
+    int getBowelAccidentFrequency();
+
+    void setBowelAccidentFrequency(int v);
+
+    double getBladderAccidentAmountPercent();
+
+    void setBladderAccidentAmountPercent(double v);
+
+    double getBowelAccidentAmountPercent();
+
+    void setBowelAccidentAmountPercent(double v);
 }

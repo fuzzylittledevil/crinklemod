@@ -17,22 +17,11 @@ import ninja.crinkle.mod.network.messages.MetabolismUpdateMessage;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
-import org.spongepowered.asm.mixin.MixinEnvironment;
 
 import java.util.Optional;
 
 public class Metabolism implements ServerUpdater {
     private static final Logger LOGGER = LogUtils.getLogger();
-
-    private static final double BLADDER_SMALL_ACCIDENT_THRESHOLD = 0.3;
-    private static final double BOWEL_SMALL_ACCIDENT_THRESHOLD = 0.3;
-    private static final double BLADDER_LARGE_ACCIDENT_THRESHOLD = 0.5;
-    private static final double BOWEL_LARGE_ACCIDENT_THRESHOLD = 0.5;
-    private static final double BLADDER_LARGE_ACCIDENT_AMOUNT = 0.9;
-    private static final double BOWEL_LARGE_ACCIDENT_AMOUNT = 0.9;
-
-    private boolean recentBladderAccident = false;
-    private boolean recentBowelAccident = false;
     private final Player player;
 
     private Metabolism(Player player) {
@@ -88,14 +77,6 @@ public class Metabolism implements ServerUpdater {
         return liquidsPct + solidsPct;
     }
 
-    public double getBladderDesperation() {
-        return getBladderFullness() * (1 / getBladderContinence());
-    }
-
-    public double getBowelDesperation() {
-        return getBowelFullness() * (1 / getBowelContinence());
-    }
-
     public int getBladderCapacity() {
         return getMetabolism().map(IMetabolism::getBladderCapacity).orElse(0);
     }
@@ -112,12 +93,12 @@ public class Metabolism implements ServerUpdater {
         return getMetabolism().map(IMetabolism::getLiquidsRate).orElse(0);
     }
 
-    public double getBladderContinence() {
-        return Math.max(0.1, getMetabolism().map(IMetabolism::getBladderContinence).orElse(0d));
+    public double getBladderAccidentWarning() {
+        return Math.max(0.1, getMetabolism().map(IMetabolism::getBladderAccidentWarning).orElse(0d));
     }
 
-    public double getBowelContinence() {
-        return Math.max(0.1, getMetabolism().map(IMetabolism::getBowelContinence).orElse(0d));
+    public double getBowelAccidentWarning() {
+        return Math.max(0.1, getMetabolism().map(IMetabolism::getBowelAccidentWarning).orElse(0d));
     }
 
     public int getMaxLiquids() {
@@ -178,13 +159,13 @@ public class Metabolism implements ServerUpdater {
         syncClient();
     }
 
-    public void setBladderContinence(double value) {
-        getMetabolism().ifPresent(m -> m.setBladderContinence(value));
+    public void setBladderAccidentWarning(double value) {
+        getMetabolism().ifPresent(m -> m.setBladderAccidentWarning(value));
         syncClient();
     }
 
-    public void setBowelContinence(double value) {
-        getMetabolism().ifPresent(m -> m.setBowelContinence(value));
+    public void setBowelAccidentWarning(double value) {
+        getMetabolism().ifPresent(m -> m.setBowelAccidentWarning(value));
         syncClient();
     }
 
@@ -229,6 +210,50 @@ public class Metabolism implements ServerUpdater {
      * This method is called every tick to simulate the digestion of the player.
      * This method removes liquids and solids from the stomach and adds them to the bladder and bowels respectively.
      */
+
+    public int getBladderAccidentFrequency() {
+        return getMetabolism().map(IMetabolism::getBladderAccidentFrequency)
+                .orElse(MetabolismSettings.BLADDER_ACCIDENT_FREQUENCY.getDefault(player));
+    }
+
+    public void setBladderAccidentFrequency(Integer v) {
+        getMetabolism().ifPresent(m -> m.setBladderAccidentFrequency(v));
+        syncClient();
+    }
+
+    public int getBowelAccidentFrequency() {
+        return getMetabolism().map(IMetabolism::getBowelAccidentFrequency).orElse(
+                MetabolismSettings.BOWEL_ACCIDENT_FREQUENCY.getDefault(player)
+        );
+    }
+
+    public void setBowelAccidentFrequency(Integer v) {
+        getMetabolism().ifPresent(m -> m.setBowelAccidentFrequency(v));
+        syncClient();
+    }
+
+    public double getBladderAccidentAmountPercent() {
+        return getMetabolism().map(IMetabolism::getBladderAccidentAmountPercent).orElse(
+                MetabolismSettings.BLADDER_ACCIDENT_AMOUNT_PERCENT.getDefault(player)
+        );
+    }
+
+    public void setBladderAccidentAmountPercent(Double v) {
+        getMetabolism().ifPresent(m -> m.setBladderAccidentAmountPercent(v));
+        syncClient();
+    }
+
+    public double getBowelAccidentAmountPercent() {
+        return getMetabolism().map(IMetabolism::getBowelAccidentAmountPercent).orElse(
+                MetabolismSettings.BOWEL_ACCIDENT_AMOUNT_PERCENT.getDefault(player)
+        );
+    }
+
+    public void setBowelAccidentAmountPercent(Double v) {
+        getMetabolism().ifPresent(m -> m.setBowelAccidentAmountPercent(v));
+        syncClient();
+    }
+
     private void tickDigestion() {
         if (getSolids() > 0) {
             setSolids(getSolids() - getSolidsRate());
@@ -240,53 +265,23 @@ public class Metabolism implements ServerUpdater {
         }
     }
 
-    private void checkForBladderSmallAccident() {
-        if (getBladderFullness() < BLADDER_SMALL_ACCIDENT_THRESHOLD) return;
-        if (recentBladderAccident) return;
-        double chance = (1 - getBladderContinence()) * getBladderFullness();
-        if (Math.random() > chance) {
-            recentBladderAccident = true;
-            int amount = (int) (getBladder() * (1 - getBladderContinence()));
-            LOGGER.debug("Small bladder accident: amount={} chance={} desperation={} continence={}", amount, chance, getBladderDesperation(), getBladderContinence());
+    private void checkForBladderAccident() {
+        if (getBladderFullness() < getBladderAccidentWarning()) return;
+        if (Math.random() < getBladderFullness()) {
+            int amount = (int) (getBladderAccidentAmountPercent() * getBladder());
+            LOGGER.debug("Bladder accident: amount={} fullness={} warning={}", amount, getBladderFullness(), getBladderAccidentWarning());
             modifyBladder(-amount);
             CrinkleMod.EVENT_BUS.post(new AccidentEvent.Bladder(player, amount, AccidentEvent.Side.SERVER));
+        } else {
+
         }
     }
 
-    private void checkForBowelSmallAccident() {
-        if (getBowelFullness() < BOWEL_SMALL_ACCIDENT_THRESHOLD) return;
-        if (recentBowelAccident) return;
-        double chance = (1 - getBowelContinence()) * getBowelFullness();
-        if (Math.random() > chance) {
-            recentBowelAccident = true;
-            int amount = (int) (getBowels() * (1 - getBowelContinence()));
-            LOGGER.debug("Small bowel accident: amount={} chance={} desperation={} continence={}", amount, chance, getBowelDesperation(), getBowelContinence());
-            modifyBowels(-amount);
-            CrinkleMod.EVENT_BUS.post(new AccidentEvent.Bowels(player, amount, AccidentEvent.Side.SERVER));
-        }
-    }
-
-    private void checkForBladderLargeAccident() {
-        if (getBladderFullness() < BLADDER_LARGE_ACCIDENT_THRESHOLD) return;
-        if (recentBladderAccident) return;
-        double chance = (1 - getBladderContinence()) * getBladderFullness();
-        if (Math.random() > chance) {
-            recentBladderAccident = true;
-            int amount = (int) (getBladder() * BLADDER_LARGE_ACCIDENT_AMOUNT);
-            LOGGER.debug("Large bladder accident: amount={} chance={} desperation={} continence={}", amount, chance, getBladderDesperation(), getBladderContinence());
-            modifyBladder(-amount);
-            CrinkleMod.EVENT_BUS.post(new AccidentEvent.Bladder(player, amount, AccidentEvent.Side.SERVER));
-        }
-    }
-
-    private void checkForBowelLargeAccident() {
-        if (getBowelFullness() < BOWEL_LARGE_ACCIDENT_THRESHOLD) return;
-        if (recentBowelAccident) return;
-        double chance = (1 - getBowelContinence()) * getBowelFullness();
-        if (Math.random() > chance) {
-            recentBowelAccident = true;
-            int amount = (int) (getBowels() * BOWEL_LARGE_ACCIDENT_AMOUNT);
-            LOGGER.debug("Large bowel accident: amount={} chance={} desperation={} continence={}", amount, chance, getBowelDesperation(), getBowelContinence());
+    private void checkForBowelAccident() {
+        if (getBowelFullness() < getBowelAccidentWarning()) return;
+        if (Math.random() > getBowelFullness()) {
+            int amount = (int) (getBowelAccidentAmountPercent() * getBowels());
+            LOGGER.debug("Small bowel accident: amount={} fullness={} warning={}", amount, getBowelFullness(), getBowelAccidentWarning());
             modifyBowels(-amount);
             CrinkleMod.EVENT_BUS.post(new AccidentEvent.Bowels(player, amount, AccidentEvent.Side.SERVER));
         }
@@ -329,14 +324,24 @@ public class Metabolism implements ServerUpdater {
      * The metabolism is ticked every tick to simulate the digestion and continence of the player.
      * If the metabolism has changed, then a sync is sent to the server.
      */
-    public void tick() {
-        recentBladderAccident = false;
-        recentBowelAccident = false;
-        tickDigestion();
-        checkForBladderSmallAccident();
-        checkForBowelSmallAccident();
-        checkForBladderLargeAccident();
-        checkForBowelLargeAccident();
-        syncClient();
+    public void tick(int tickCount) {
+        boolean shouldSync = false;
+        if (tickCount > 0 && tickCount % 500 == 0) {
+            tickDigestion();
+            shouldSync = true;
+        }
+        int bladderTickCount = getBladderAccidentFrequency() * 1000;
+        if (getBladderFullness() == 1 || (tickCount > 0 && tickCount % bladderTickCount == 0)) {
+            checkForBladderAccident();
+            shouldSync = true;
+        }
+        int bowelTickCount = getBowelAccidentFrequency() * 1000;
+        if (getBowelFullness() == 1 || (tickCount > 0 && tickCount % bowelTickCount == 0)) {
+            checkForBowelAccident();
+            shouldSync = true;
+        }
+        if (shouldSync) {
+            syncClient();
+        }
     }
 }

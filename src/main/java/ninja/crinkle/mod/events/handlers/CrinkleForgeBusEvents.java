@@ -150,8 +150,8 @@ public class CrinkleForgeBusEvents {
     @SubscribeEvent
     public static void onPlayerTick(TickEvent.@NotNull PlayerTickEvent event) {
         if (event.side.isClient()) return;
-        if (event.phase == TickEvent.Phase.END && event.player.tickCount % 100 == 0) {
-            Metabolism.of(event.player).tick();
+        if (event.phase == TickEvent.Phase.END) {
+            Metabolism.of(event.player).tick(event.player.tickCount);
         }
     }
 }

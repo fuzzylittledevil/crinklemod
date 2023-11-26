@@ -3,13 +3,10 @@ package ninja.crinkle.mod.network.messages;
 import com.mojang.logging.LogUtils;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.network.NetworkEvent;
 import ninja.crinkle.mod.capabilities.IMetabolism;
 import ninja.crinkle.mod.capabilities.MetabolismCapabilities;
 import ninja.crinkle.mod.capabilities.MetabolismImpl;
-import ninja.crinkle.mod.client.ClientHooks;
 import ninja.crinkle.mod.util.ClientUtil;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -34,8 +31,12 @@ public class MetabolismUpdateMessage {
     private final int liquidsRate;
     private final int solidsFullAmount;
     private final int liquidsFullAmount;
-    private final double bladderContinence;
-    private final double bowelContinence;
+    private final double bladderAccidentWarning;
+    private final double bowelAccidentWarning;
+    private final int bladderAccidentFrequency;
+    private final int bowelAccidentFrequency;
+    private final double bladderAccidentAmountPercent;
+    private final double bowelAccidentAmountPercent;
 
     /**
      * Create a new update message from a metabolism
@@ -54,8 +55,12 @@ public class MetabolismUpdateMessage {
         this.liquidsRate = metabolism.getLiquidsRate();
         this.solidsFullAmount = metabolism.getMaxSolids();
         this.liquidsFullAmount = metabolism.getMaxLiquids();
-        this.bladderContinence = metabolism.getBladderContinence();
-        this.bowelContinence = metabolism.getBowelContinence();
+        this.bladderAccidentWarning = metabolism.getBladderAccidentWarning();
+        this.bowelAccidentWarning = metabolism.getBowelAccidentWarning();
+        this.bladderAccidentFrequency = metabolism.getBladderAccidentFrequency();
+        this.bowelAccidentFrequency = metabolism.getBowelAccidentFrequency();
+        this.bladderAccidentAmountPercent = metabolism.getBladderAccidentAmountPercent();
+        this.bowelAccidentAmountPercent = metabolism.getBowelAccidentAmountPercent();
     }
 
     /**
@@ -75,8 +80,12 @@ public class MetabolismUpdateMessage {
         this.liquidsRate = buffer.readInt();
         this.solidsFullAmount = buffer.readInt();
         this.liquidsFullAmount = buffer.readInt();
-        this.bladderContinence = buffer.readDouble();
-        this.bowelContinence = buffer.readDouble();
+        this.bladderAccidentWarning = buffer.readDouble();
+        this.bowelAccidentWarning = buffer.readDouble();
+        this.bladderAccidentFrequency = buffer.readInt();
+        this.bowelAccidentFrequency = buffer.readInt();
+        this.bladderAccidentAmountPercent = buffer.readDouble();
+        this.bowelAccidentAmountPercent = buffer.readDouble();
     }
 
     /**
@@ -107,8 +116,12 @@ public class MetabolismUpdateMessage {
         buffer.writeInt(liquidsRate);
         buffer.writeInt(solidsFullAmount);
         buffer.writeInt(liquidsFullAmount);
-        buffer.writeDouble(bladderContinence);
-        buffer.writeDouble(bowelContinence);
+        buffer.writeDouble(bladderAccidentWarning);
+        buffer.writeDouble(bowelAccidentWarning);
+        buffer.writeInt(bladderAccidentFrequency);
+        buffer.writeInt(bowelAccidentFrequency);
+        buffer.writeDouble(bladderAccidentAmountPercent);
+        buffer.writeDouble(bowelAccidentAmountPercent);
     }
 
     /**
@@ -136,8 +149,12 @@ public class MetabolismUpdateMessage {
         metabolism.setLiquidsRate(liquidsRate);
         metabolism.setMaxSolids(solidsFullAmount);
         metabolism.setMaxLiquids(liquidsFullAmount);
-        metabolism.setBladderContinence(bladderContinence);
-        metabolism.setBowelContinence(bowelContinence);
+        metabolism.setBladderAccidentWarning(bladderAccidentWarning);
+        metabolism.setBowelAccidentWarning(bowelAccidentWarning);
+        metabolism.setBladderAccidentFrequency(bladderAccidentFrequency);
+        metabolism.setBowelAccidentFrequency(bowelAccidentFrequency);
+        metabolism.setBladderAccidentAmountPercent(bladderAccidentAmountPercent);
+        metabolism.setBowelAccidentAmountPercent(bowelAccidentAmountPercent);
         ctx.get().setPacketHandled(true);
     }
 }

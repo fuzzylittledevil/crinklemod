@@ -79,5 +79,19 @@
   "gui.crinklemod.status.reset_tooltip": "Reset to default",
   "gui.crinklemod.status.config_tooltip": "Configure values",
   "gui.crinklemod.status.equipment_slot.title": "Pants:",
-  "gui.crinklemod.status.equipment_slot.tooltip": "These are your pants! Do with them what you will."
+  "gui.crinklemod.status.equipment_slot.tooltip": "These are your pants! Do with them what you will.",
+  "setting.crinklemod.metabolism.bladder_accident_warning.label": "Accident Warning",
+  "setting.crinklemod.metabolism.bladder_accident_warning.tooltip": "The fullness threshold for when bladder accidents begin.",
+  "setting.crinklemod.metabolism.bowel_accident_warning.label": "Accident Warning",
+  "setting.crinklemod.metabolism.bowel_accident_warning.tooltip": "The fullness threshold when bowel accidents begin.",
+  "setting.crinklemod.metabolism.bladder_accident_frequency.label": "Accident Frequency",
+  "setting.crinklemod.metabolism.bladder_accident_frequency.tooltip": "Frequency at which accidents are rolled for, in Minecraft hours. (1000 ticks or 50 seconds)",
+  "setting.crinklemod.metabolism.bowel_accident_frequency.label": "Accident Frequency",
+  "setting.crinklemod.metabolism.bowel_accident_frequency.tooltip": "The frequency at which accidents are rolled, in Minecraft hours. (Every 1000 ticks or 50 seconds)",
+  "setting.crinklemod.metabolism.bladder_accident_amount_percent.label": "Amount %",
+  "setting.crinklemod.metabolism.bladder_accident_amount_percent.tooltip": "The percentage of your bladder to lose when having an accident.",
+  "setting.crinklemod.metabolism.bowel_accident_amount_percent.label": "Amount %",
+  "setting.crinklemod.metabolism.bowel_accident_amount_percent.tooltip": "The percentage of your bowels to lose when having an accident.",
+  "setting.crinklemod.metabolism.bladder_accident_saves.label": "Accident Saves",
+  "setting.crinklemod.metabolism.bladder_accident_saves.tooltip": "The number of times you've avoided having an accident."
 }

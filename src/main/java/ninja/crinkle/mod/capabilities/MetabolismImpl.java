@@ -6,6 +6,10 @@ import ninja.crinkle.mod.config.MetabolismConfig;
 import ninja.crinkle.mod.metabolism.MetabolismSettings;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
+import java.util.function.Function;
+
 import static ninja.crinkle.mod.util.MathUtil.clamp;
 import static ninja.crinkle.mod.util.MathUtil.round;
 
@@ -27,9 +31,12 @@ public class MetabolismImpl implements IMetabolism {
     private int liquidsRate;
     private int maxSolids;
     private int maxLiquids;
-    private double bladderContinence;
-    private double bowelContinence;
-
+    private double bladderAccidentWarning;
+    private double bowelAccidentWarning;
+    private int bladderAccidentFrequency;
+    private int bowelAccidentFrequency;
+    private double bladderAccidentAmountPercent;
+    private double bowelAccidentAmountPercent;
 
     public MetabolismImpl() {
         bladderCapacity = MetabolismConfig.bladderCapacity;
@@ -38,8 +45,12 @@ public class MetabolismImpl implements IMetabolism {
         liquidsRate = MetabolismConfig.liquidsRate;
         maxSolids = MetabolismConfig.maxSolids;
         maxLiquids = MetabolismConfig.maxLiquids;
-        bladderContinence = MetabolismConfig.bladderContinence;
-        bowelContinence = MetabolismConfig.bowelContinence;
+        bladderAccidentWarning = MetabolismConfig.bladderAccidentWarning;
+        bowelAccidentWarning = MetabolismConfig.bowelAccidentWarning;
+        bladderAccidentFrequency = MetabolismConfig.bladderAccidentFrequency;
+        bowelAccidentFrequency = MetabolismConfig.bowelAccidentFrequency;
+        bladderAccidentAmountPercent = MetabolismConfig.bladderAccidentAmountPercent;
+        bowelAccidentAmountPercent = MetabolismConfig.bowelAccidentAmountPercent;
     }
 
     /**
@@ -60,8 +71,12 @@ public class MetabolismImpl implements IMetabolism {
         tag.putInt(MetabolismSettings.LIQUIDS_RATE.key(), getLiquidsRate());
         tag.putInt(MetabolismSettings.MAX_LIQUIDS.key(), getMaxLiquids());
         tag.putInt(MetabolismSettings.MAX_SOLIDS.key(), getMaxSolids());
-        tag.putDouble(MetabolismSettings.BLADDER_CONTINENCE.key(), getBladderContinence());
-        tag.putDouble(MetabolismSettings.BOWEL_CONTINENCE.key(), getBowelContinence());
+        tag.putDouble(MetabolismSettings.BLADDER_ACCIDENT_WARNING.key(), getBladderAccidentWarning());
+        tag.putDouble(MetabolismSettings.BOWEL_ACCIDENT_WARNING.key(), getBowelAccidentWarning());
+        tag.putInt(MetabolismSettings.BLADDER_ACCIDENT_FREQUENCY.key(), getBladderAccidentFrequency());
+        tag.putInt(MetabolismSettings.BOWEL_ACCIDENT_FREQUENCY.key(), getBowelAccidentFrequency());
+        tag.putDouble(MetabolismSettings.BLADDER_ACCIDENT_AMOUNT_PERCENT.key(), getBladderAccidentAmountPercent());
+        tag.putDouble(MetabolismSettings.BOWEL_ACCIDENT_AMOUNT_PERCENT.key(), getBowelAccidentAmountPercent());
         return tag;
     }
 
@@ -72,18 +87,28 @@ public class MetabolismImpl implements IMetabolism {
      */
     @Override
     public void deserializeNBT(@NotNull CompoundTag nbt) {
-        setLiquids(nbt.getInt(MetabolismSettings.LIQUIDS.key()));
-        setSolids(nbt.getInt(MetabolismSettings.SOLIDS.key()));
-        setBladder(nbt.getInt(MetabolismSettings.BLADDER.key()));
-        setBowels(nbt.getInt(MetabolismSettings.BOWELS.key()));
-        setBladderCapacity(nbt.getInt(MetabolismSettings.BLADDER_CAPACITY.key()));
-        setBowelCapacity(nbt.getInt(MetabolismSettings.BOWEL_CAPACITY.key()));
-        setSolidsRate(nbt.getInt(MetabolismSettings.SOLIDS_RATE.key()));
-        setLiquidsRate(nbt.getInt(MetabolismSettings.LIQUIDS_RATE.key()));
-        setMaxLiquids(nbt.getInt(MetabolismSettings.MAX_LIQUIDS.key()));
-        setMaxSolids(nbt.getInt(MetabolismSettings.MAX_SOLIDS.key()));
-        setBladderContinence(nbt.getDouble(MetabolismSettings.BLADDER_CONTINENCE.key()));
-        setBowelContinence(nbt.getDouble(MetabolismSettings.BOWEL_CONTINENCE.key()));
+        safeSet(nbt, MetabolismSettings.LIQUIDS.key(), (tag, key) -> setLiquids(tag.getInt(key)));
+        safeSet(nbt, MetabolismSettings.SOLIDS.key(), (tag, key) -> setSolids(tag.getInt(key)));
+        safeSet(nbt, MetabolismSettings.BLADDER.key(), (tag, key) -> setBladder(tag.getInt(key)));
+        safeSet(nbt, MetabolismSettings.BOWELS.key(), (tag, key) -> setBowels(tag.getInt(key)));
+        safeSet(nbt, MetabolismSettings.BLADDER_CAPACITY.key(), (tag, key) -> setBladderCapacity(tag.getInt(key)));
+        safeSet(nbt, MetabolismSettings.BOWEL_CAPACITY.key(), (tag, key) -> setBowelCapacity(tag.getInt(key)));
+        safeSet(nbt, MetabolismSettings.SOLIDS_RATE.key(), (tag, key) -> setSolidsRate(tag.getInt(key)));
+        safeSet(nbt, MetabolismSettings.LIQUIDS_RATE.key(), (tag, key) -> setLiquidsRate(tag.getInt(key)));
+        safeSet(nbt, MetabolismSettings.MAX_LIQUIDS.key(), (tag, key) -> setMaxLiquids(tag.getInt(key)));
+        safeSet(nbt, MetabolismSettings.MAX_SOLIDS.key(), (tag, key) -> setMaxSolids(tag.getInt(key)));
+        safeSet(nbt, MetabolismSettings.BLADDER_ACCIDENT_WARNING.key(), (tag, key) -> setBladderAccidentWarning(tag.getDouble(key)));
+        safeSet(nbt, MetabolismSettings.BOWEL_ACCIDENT_WARNING.key(), (tag, key) -> setBowelAccidentWarning(tag.getDouble(key)));
+        safeSet(nbt, MetabolismSettings.BLADDER_ACCIDENT_FREQUENCY.key(), (tag, key) -> setBladderAccidentFrequency(tag.getInt(key)));
+        safeSet(nbt, MetabolismSettings.BOWEL_ACCIDENT_FREQUENCY.key(), (tag, key) -> setBowelAccidentFrequency(tag.getInt(key)));
+        safeSet(nbt, MetabolismSettings.BLADDER_ACCIDENT_AMOUNT_PERCENT.key(), (tag, key) -> setBladderAccidentAmountPercent(tag.getDouble(key)));
+        safeSet(nbt, MetabolismSettings.BOWEL_ACCIDENT_AMOUNT_PERCENT.key(), (tag, key) -> setBowelAccidentAmountPercent(tag.getDouble(key)));
+    }
+
+    private void safeSet(CompoundTag nbt, String key, BiConsumer<CompoundTag, String> setter) {
+        if (nbt.contains(key)) {
+            setter.accept(nbt, key);
+        }
     }
 
     /**
@@ -231,23 +256,63 @@ public class MetabolismImpl implements IMetabolism {
 
 
     @Override
-    public double getBladderContinence() {
-        return round(bladderContinence, 4);
+    public double getBladderAccidentWarning() {
+        return round(bladderAccidentWarning, 4);
     }
 
     @Override
-    public void setBladderContinence(double bladderContinence) {
-        this.bladderContinence = clamp(bladderContinence, 0.1, 1);
+    public void setBladderAccidentWarning(double bladderAccidentWarning) {
+        this.bladderAccidentWarning = clamp(bladderAccidentWarning, 0.1, 1);
     }
 
     @Override
-    public double getBowelContinence() {
-        return round(bowelContinence, 4);
+    public double getBowelAccidentWarning() {
+        return round(bowelAccidentWarning, 4);
     }
 
     @Override
-    public void setBowelContinence(double bowelsContinence) {
-        this.bowelContinence = clamp(bowelsContinence, 0.1, 1);
+    public void setBowelAccidentWarning(double bowelAccidentWarning) {
+        this.bowelAccidentWarning = clamp(bowelAccidentWarning, 0.1, 1);
+    }
+
+    @Override
+    public int getBladderAccidentFrequency() {
+        return bladderAccidentFrequency;
+    }
+
+    @Override
+    public void setBladderAccidentFrequency(int v) {
+        bladderAccidentFrequency = clamp(v, 1, Integer.MAX_VALUE);
+    }
+
+    @Override
+    public int getBowelAccidentFrequency() {
+        return bowelAccidentFrequency;
+    }
+
+    @Override
+    public void setBowelAccidentFrequency(int v) {
+        bowelAccidentFrequency = clamp(v, 1, Integer.MAX_VALUE);
+    }
+
+    @Override
+    public double getBladderAccidentAmountPercent() {
+        return bladderAccidentAmountPercent;
+    }
+
+    @Override
+    public void setBladderAccidentAmountPercent(double v) {
+        bladderAccidentAmountPercent = v;
+    }
+
+    @Override
+    public double getBowelAccidentAmountPercent() {
+        return bowelAccidentAmountPercent;
+    }
+
+    @Override
+    public void setBowelAccidentAmountPercent(double v) {
+        bowelAccidentAmountPercent = v;
     }
 
     /**
@@ -266,8 +331,12 @@ public class MetabolismImpl implements IMetabolism {
                 ", liquidsRate=" + getLiquidsRate() +
                 ", maxSolids=" + getMaxSolids() +
                 ", maxLiquids=" + getMaxLiquids() +
-                ", bladderContinence=" + getBladderContinence() +
-                ", bowelContinence=" + getBowelContinence() +
+                ", bladderAccidentWarning=" + getBladderAccidentWarning() +
+                ", bowelAccidentWarning=" + getBowelAccidentWarning() +
+                ", bladderAccidentFrequency=" + getBladderAccidentFrequency() +
+                ", bowelAccidentFrequency=" + getBowelAccidentFrequency() +
+                ", bladderAccidentAmountPercent=" + getBladderAccidentAmountPercent() +
+                ", bowelAccidentAmountPercent=" + getBowelAccidentAmountPercent() +
                 '}';
     }
 
@@ -281,10 +350,10 @@ public class MetabolismImpl implements IMetabolism {
         buffer.writeInt(getSolidsRate());
         buffer.writeInt(getBladder());
         buffer.writeInt(getBladderCapacity());
-        buffer.writeDouble(getBladderContinence());
+        buffer.writeDouble(getBladderAccidentWarning());
         buffer.writeInt(getBowels());
         buffer.writeInt(getBowelCapacity());
-        buffer.writeDouble(getBowelContinence());
+        buffer.writeDouble(getBowelAccidentWarning());
     }
 
     @Override
@@ -297,9 +366,9 @@ public class MetabolismImpl implements IMetabolism {
         setSolidsRate(additionalData.readInt());
         setBladder(additionalData.readInt());
         setBladderCapacity(additionalData.readInt());
-        setBladderContinence(additionalData.readDouble());
+        setBladderAccidentWarning(additionalData.readDouble());
         setBowels(additionalData.readInt());
         setBowelCapacity(additionalData.readInt());
-        setBowelContinence(additionalData.readDouble());
+        setBowelAccidentWarning(additionalData.readDouble());
     }
 }

@@ -11,6 +11,7 @@ import net.minecraftforge.fml.DistExecutor;
 import ninja.crinkle.mod.CrinkleMod;
 import ninja.crinkle.mod.api.ServerUpdater;
 import ninja.crinkle.mod.client.ClientHooks;
+import ninja.crinkle.mod.client.color.Color;
 import ninja.crinkle.mod.client.ui.menus.AbstractMenu;
 import ninja.crinkle.mod.client.ui.menus.ConfigMenu;
 import ninja.crinkle.mod.client.ui.menus.status.*;
@@ -206,7 +207,9 @@ public class CrinkleScreen extends FlexContainerScreen {
                             .onClose(m -> setCurrentMenu(mainMenu))
                             .entry(new ConfigMenu.Entry<>(1, 10, MetabolismSettings.BLADDER))
                             .entry(new ConfigMenu.Entry<>(2, 10, MetabolismSettings.BLADDER_CAPACITY))
-                            .entry(new ConfigMenu.Entry<>(3, 10, MetabolismSettings.BLADDER_CONTINENCE))
+                            .entry(new ConfigMenu.Entry<>(3, 10, MetabolismSettings.BLADDER_ACCIDENT_WARNING))
+                            .entry(new ConfigMenu.Entry<>(4, 10, MetabolismSettings.BLADDER_ACCIDENT_FREQUENCY))
+                            .entry(new ConfigMenu.Entry<>(5, 10, MetabolismSettings.BLADDER_ACCIDENT_AMOUNT_PERCENT))
                             .visible(false)
                             .build();
                     bladderMenu.visitAll(this::addRenderableWidget);
@@ -215,7 +218,9 @@ public class CrinkleScreen extends FlexContainerScreen {
                             .onClose(m -> setCurrentMenu(mainMenu))
                             .entry(new ConfigMenu.Entry<>(1, 10, MetabolismSettings.BOWELS))
                             .entry(new ConfigMenu.Entry<>(2, 10, MetabolismSettings.BOWEL_CAPACITY))
-                            .entry(new ConfigMenu.Entry<>(3, 10, MetabolismSettings.BOWEL_CONTINENCE))
+                            .entry(new ConfigMenu.Entry<>(3, 10, MetabolismSettings.BOWEL_ACCIDENT_WARNING))
+                            .entry(new ConfigMenu.Entry<>(4, 10, MetabolismSettings.BOWEL_ACCIDENT_FREQUENCY))
+                            .entry(new ConfigMenu.Entry<>(5, 10, MetabolismSettings.BOWEL_ACCIDENT_AMOUNT_PERCENT))
                             .visible(false)
                             .build();
                     bowelMenu.visitAll(this::addRenderableWidget);

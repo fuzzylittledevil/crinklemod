@@ -107,23 +107,64 @@ public class MetabolismSettings {
             .synchronizer(Metabolism::of)
             .build();
 
-    public static final Setting<Double> BLADDER_CONTINENCE = Setting.doubleBuilder("bladderContinence")
+    public static final Setting<Double> BLADDER_ACCIDENT_WARNING = Setting.doubleBuilder("bladderAccidentWarning")
             .range(p -> 0.0, p -> 1.0)
-            .label(Component.translatable("setting.crinklemod.metabolism.bladder_continence.label"))
-            .tooltip(Component.translatable("setting.crinklemod.metabolism.bladder_continence.tooltip"))
-            .defaultValue(p -> MetabolismConfig.bladderContinence)
-            .getter(p -> Metabolism.of(p).getBladderContinence())
-            .setter((p, v) -> Metabolism.of(p).setBladderContinence(v))
+            .label(Component.translatable("setting.crinklemod.metabolism.bladder_accident_warning.label"))
+            .tooltip(Component.translatable("setting.crinklemod.metabolism.bladder_accident_warning.tooltip"))
+            .defaultValue(p -> MetabolismConfig.bladderAccidentWarning)
+            .getter(p -> Metabolism.of(p).getBladderAccidentWarning())
+            .setter((p, v) -> Metabolism.of(p).setBladderAccidentWarning(v))
             .synchronizer(Metabolism::of)
             .build();
 
-    public static final Setting<Double> BOWEL_CONTINENCE = Setting.doubleBuilder("bowelContinence")
+    public static final Setting<Double> BOWEL_ACCIDENT_WARNING = Setting.doubleBuilder("bowelAccidentWarning")
             .range(p -> 0.0, p -> 1.0)
-            .label(Component.translatable("setting.crinklemod.metabolism.bowel_continence.label"))
-            .tooltip(Component.translatable("setting.crinklemod.metabolism.bowel_continence.tooltip"))
-            .defaultValue(p -> MetabolismConfig.bowelContinence)
-            .getter(p -> Metabolism.of(p).getBowelContinence())
-            .setter((p, v) -> Metabolism.of(p).setBowelContinence(v))
+            .label(Component.translatable("setting.crinklemod.metabolism.bowel_accident_warning.label"))
+            .tooltip(Component.translatable("setting.crinklemod.metabolism.bowel_accident_warning.tooltip"))
+            .defaultValue(p -> MetabolismConfig.bowelAccidentWarning)
+            .getter(p -> Metabolism.of(p).getBowelAccidentWarning())
+            .setter((p, v) -> Metabolism.of(p).setBowelAccidentWarning(v))
             .synchronizer(Metabolism::of)
             .build();
+
+    public static final Setting<Integer> BLADDER_ACCIDENT_FREQUENCY = Setting.intBuilder("bladderAccidentFrequency")
+            .range(p -> 1, p -> Integer.MAX_VALUE)
+            .label(Component.translatable("setting.crinklemod.metabolism.bladder_accident_frequency.label"))
+            .tooltip(Component.translatable("setting.crinklemod.metabolism.bladder_accident_frequency.tooltip"))
+            .defaultValue(p -> MetabolismConfig.bladderAccidentFrequency)
+            .getter(p -> Metabolism.of(p).getBladderAccidentFrequency())
+            .setter((p, v) -> Metabolism.of(p).setBladderAccidentFrequency(v))
+            .synchronizer(Metabolism::of)
+            .build();
+
+    public static final Setting<Integer> BOWEL_ACCIDENT_FREQUENCY = Setting.intBuilder("bowelAccidentFrequency")
+            .range(p -> 1, p -> Integer.MAX_VALUE)
+            .label(Component.translatable("setting.crinklemod.metabolism.bowel_accident_frequency.label"))
+            .tooltip(Component.translatable("setting.crinklemod.metabolism.bowel_accident_frequency.tooltip"))
+            .defaultValue(p -> MetabolismConfig.bowelAccidentFrequency)
+            .getter(p -> Metabolism.of(p).getBowelAccidentFrequency())
+            .setter((p, v) -> Metabolism.of(p).setBowelAccidentFrequency(v))
+            .synchronizer(Metabolism::of)
+            .build();
+
+    public static final Setting<Double> BLADDER_ACCIDENT_AMOUNT_PERCENT = Setting.doubleBuilder("bladderAccidentAmountPercent")
+            .range(p -> 0.0, p -> 1.0)
+            .label(Component.translatable("setting.crinklemod.metabolism.bladder_accident_amount_percent.label"))
+            .tooltip(Component.translatable("setting.crinklemod.metabolism.bladder_accident_amount_percent.tooltip"))
+            .defaultValue(p -> MetabolismConfig.bladderAccidentAmountPercent)
+            .getter(p -> Metabolism.of(p).getBladderAccidentAmountPercent())
+            .setter((p, v) -> Metabolism.of(p).setBladderAccidentAmountPercent(v))
+            .synchronizer(Metabolism::of)
+            .build();
+
+    public static final Setting<Double> BOWEL_ACCIDENT_AMOUNT_PERCENT = Setting.doubleBuilder("bowelAccidentAmountPercent")
+            .range(p -> 0.0, p -> 1.0)
+            .label(Component.translatable("setting.crinklemod.metabolism.bowel_accident_amount_percent.label"))
+            .tooltip(Component.translatable("setting.crinklemod.metabolism.bowel_accident_amount_percent.tooltip"))
+            .defaultValue(p -> MetabolismConfig.bowelAccidentAmountPercent)
+            .getter(p -> Metabolism.of(p).getBowelAccidentAmountPercent())
+            .setter((p, v) -> Metabolism.of(p).setBowelAccidentAmountPercent(v))
+            .synchronizer(Metabolism::of)
+            .build();
+
 }
