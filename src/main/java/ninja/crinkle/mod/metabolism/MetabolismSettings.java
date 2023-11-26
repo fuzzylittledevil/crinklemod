@@ -108,7 +108,7 @@ public class MetabolismSettings {
             .build();
 
     public static final Setting<Double> BLADDER_ACCIDENT_WARNING = Setting.doubleBuilder("bladderAccidentWarning")
-            .range(p -> 0.0, p -> 1.0)
+            .range(p -> 0.1, p -> 1.0)
             .label(Component.translatable("setting.crinklemod.metabolism.bladder_accident_warning.label"))
             .tooltip(Component.translatable("setting.crinklemod.metabolism.bladder_accident_warning.tooltip"))
             .defaultValue(p -> MetabolismConfig.bladderAccidentWarning)
@@ -118,7 +118,7 @@ public class MetabolismSettings {
             .build();
 
     public static final Setting<Double> BOWEL_ACCIDENT_WARNING = Setting.doubleBuilder("bowelAccidentWarning")
-            .range(p -> 0.0, p -> 1.0)
+            .range(p -> 0.1, p -> 1.0)
             .label(Component.translatable("setting.crinklemod.metabolism.bowel_accident_warning.label"))
             .tooltip(Component.translatable("setting.crinklemod.metabolism.bowel_accident_warning.tooltip"))
             .defaultValue(p -> MetabolismConfig.bowelAccidentWarning)
@@ -148,7 +148,7 @@ public class MetabolismSettings {
             .build();
 
     public static final Setting<Double> BLADDER_ACCIDENT_AMOUNT_PERCENT = Setting.doubleBuilder("bladderAccidentAmountPercent")
-            .range(p -> 0.0, p -> 1.0)
+            .range(p -> 0.01, p -> 1.0)
             .label(Component.translatable("setting.crinklemod.metabolism.bladder_accident_amount_percent.label"))
             .tooltip(Component.translatable("setting.crinklemod.metabolism.bladder_accident_amount_percent.tooltip"))
             .defaultValue(p -> MetabolismConfig.bladderAccidentAmountPercent)
@@ -158,7 +158,7 @@ public class MetabolismSettings {
             .build();
 
     public static final Setting<Double> BOWEL_ACCIDENT_AMOUNT_PERCENT = Setting.doubleBuilder("bowelAccidentAmountPercent")
-            .range(p -> 0.0, p -> 1.0)
+            .range(p -> 0.01, p -> 1.0)
             .label(Component.translatable("setting.crinklemod.metabolism.bowel_accident_amount_percent.label"))
             .tooltip(Component.translatable("setting.crinklemod.metabolism.bowel_accident_amount_percent.tooltip"))
             .defaultValue(p -> MetabolismConfig.bowelAccidentAmountPercent)

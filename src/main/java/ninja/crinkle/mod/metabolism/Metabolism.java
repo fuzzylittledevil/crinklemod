@@ -267,7 +267,7 @@ public class Metabolism implements ServerUpdater {
 
     private void checkForBladderAccident() {
         if (getBladderFullness() < getBladderAccidentWarning()) return;
-        if (Math.random() < getBladderFullness()) {
+        if (getBladderFullness() >= 0.999 || Math.random() < getBladderFullness()) {
             int amount = (int) (getBladderAccidentAmountPercent() * getBladder());
             LOGGER.debug("Bladder accident: amount={} fullness={} warning={}", amount, getBladderFullness(), getBladderAccidentWarning());
             modifyBladder(-amount);
@@ -279,7 +279,7 @@ public class Metabolism implements ServerUpdater {
 
     private void checkForBowelAccident() {
         if (getBowelFullness() < getBowelAccidentWarning()) return;
-        if (Math.random() > getBowelFullness()) {
+        if (Math.random() < getBowelFullness()) {
             int amount = (int) (getBowelAccidentAmountPercent() * getBowels());
             LOGGER.debug("Small bowel accident: amount={} fullness={} warning={}", amount, getBowelFullness(), getBowelAccidentWarning());
             modifyBowels(-amount);
@@ -330,12 +330,22 @@ public class Metabolism implements ServerUpdater {
             tickDigestion();
             shouldSync = true;
         }
+
+        int adjustedBladderFullness = (int) ((getBladderFullness() - getBladderAccidentWarning()) * 100);
         int bladderTickCount = getBladderAccidentFrequency() * 1000;
+        if (adjustedBladderFullness > 0) {
+            bladderTickCount /= adjustedBladderFullness;
+        }
         if (getBladderFullness() == 1 || (tickCount > 0 && tickCount % bladderTickCount == 0)) {
             checkForBladderAccident();
             shouldSync = true;
         }
+
+        int adjustedBowelFullness = (int) ((getBowelFullness() - getBowelAccidentWarning()) * 100);
         int bowelTickCount = getBowelAccidentFrequency() * 1000;
+        if (adjustedBowelFullness > 0) {
+            bowelTickCount /= adjustedBowelFullness;
+        }
         if (getBowelFullness() == 1 || (tickCount > 0 && tickCount % bowelTickCount == 0)) {
             checkForBowelAccident();
             shouldSync = true;
