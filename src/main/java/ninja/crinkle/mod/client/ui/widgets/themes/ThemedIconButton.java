@@ -2,14 +2,16 @@ package ninja.crinkle.mod.client.ui.widgets.themes;
 
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
+import ninja.crinkle.mod.client.color.Color;
 import ninja.crinkle.mod.client.renderers.IconRenderer;
-import ninja.crinkle.mod.icons.Icons;
 import ninja.crinkle.mod.client.ui.themes.BoxTheme;
 import ninja.crinkle.mod.client.ui.themes.Theme;
+import ninja.crinkle.mod.icons.Icons;
 import org.apache.commons.lang3.NotImplementedException;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 public class ThemedIconButton extends ThemedButton {
     private final Icons icon;
@@ -25,8 +27,9 @@ public class ThemedIconButton extends ThemedButton {
         super.renderWidget(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
         if (icon != null) {
             BoxTheme borderTheme = getTheme().getBorderTheme(BoxTheme.Size.MEDIUM);
+            Color color = active ? getTheme().getSecondaryColor() : getTheme().getInactiveColor();
             IconRenderer.renderIcon(pGuiGraphics, icon, getX() + borderTheme.edgeWidth(),
-                    getY() + borderTheme.edgeHeight(), getTheme().getSecondaryColor().withAlpha(this.alpha));
+                    getY() + borderTheme.edgeHeight(), color.withAlpha(this.alpha));
         }
     }
 
@@ -46,6 +49,7 @@ public class ThemedIconButton extends ThemedButton {
         private Component label;
         private final Theme theme;
         private Consumer<AbstractThemedButton> onPress;
+        private Predicate<AbstractThemedButton> activePredicate;
         private final Icons icon;
 
         public Builder(Theme theme, Icons icon) {
@@ -83,8 +87,14 @@ public class ThemedIconButton extends ThemedButton {
             return this;
         }
 
+        public Builder activePredicate(Predicate<AbstractThemedButton> activePredicate) {
+            this.activePredicate = activePredicate;
+            return this;
+        }
+
         public ThemedIconButton build() {
             ThemedIconButton button = new ThemedIconButton(x, y, width, height, label, theme, onPress, icon);
+            button.setActivePredicate(activePredicate);
             button.setAutoSize(false);
             return button;
         }

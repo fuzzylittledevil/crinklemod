@@ -1,15 +1,16 @@
 package ninja.crinkle.mod.settings;
 
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import ninja.crinkle.mod.CrinkleMod;
 import ninja.crinkle.mod.api.ServerUpdater;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
-import java.util.function.*;
+import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
+import java.util.function.BiPredicate;
+import java.util.function.Function;
 
 public abstract class Setting<T extends Comparable<? super T>> {
     public enum ActionType {
@@ -28,6 +29,7 @@ public abstract class Setting<T extends Comparable<? super T>> {
             this.custom = custom;
         }
     }
+
     protected final String key;
     protected final Class<T> type;
     protected final Component label;
@@ -211,6 +213,7 @@ public abstract class Setting<T extends Comparable<? super T>> {
             super(key, label, tooltip, Double.class, validators, defaultSupplier, getter, setter, syncer, rangeSupplier,
                     changeListeners);
         }
+
         public static double of(Object value) {
             return Double.parseDouble(String.valueOf(value));
         }
@@ -357,7 +360,7 @@ public abstract class Setting<T extends Comparable<? super T>> {
             this.setter = setter;
             return this;
         }
-        
+
         public Builder<T> synchronizer(Function<ICapabilityProvider, ServerUpdater> synchronizer) {
             this.syncer = synchronizer;
             return this;

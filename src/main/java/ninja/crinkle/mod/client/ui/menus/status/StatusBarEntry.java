@@ -6,13 +6,13 @@ import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.network.chat.Component;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import ninja.crinkle.mod.api.ServerUpdater;
-import ninja.crinkle.mod.client.ui.themes.BoxTheme;
-import ninja.crinkle.mod.icons.Icons;
 import ninja.crinkle.mod.client.ui.elements.Text;
 import ninja.crinkle.mod.client.ui.menus.AbstractMenu;
+import ninja.crinkle.mod.client.ui.themes.BoxTheme;
 import ninja.crinkle.mod.client.ui.widgets.GradientBar;
 import ninja.crinkle.mod.client.ui.widgets.Label;
 import ninja.crinkle.mod.client.ui.widgets.themes.ThemedIconButton;
+import ninja.crinkle.mod.icons.Icons;
 import ninja.crinkle.mod.settings.Setting;
 
 import java.util.ArrayList;
@@ -25,11 +25,11 @@ public class StatusBarEntry<T extends Comparable<? super T>> implements IEntry {
     private final Setting<T> setting;
     private final Consumer<AbstractMenu> onPress;
     private final Supplier<ICapabilityProvider> provider;
-    private final int barWidth = 80;
     private final int gradientStartColor;
     private final int gradientEndColor;
     private final int gradientBackgroundColor;
     private final List<EntryAction> actions = new ArrayList<>();
+    private final List<AbstractWidget> widgets = new ArrayList<>();
 
     public StatusBarEntry(int lineNumber, Setting<T> setting, Consumer<AbstractMenu> onPress,
                           int gradientStartColor, int gradientEndColor, int gradientBackgroundColor,
@@ -83,12 +83,12 @@ public class StatusBarEntry<T extends Comparable<? super T>> implements IEntry {
     }
 
     public List<AbstractWidget> create(StatusMenu menu) {
-        List<AbstractWidget> widgets = new ArrayList<>();
 
         widgets.add(Label.builder(menu.getFont(), setting.label())
                 .pos(menu.getLeftPos() + menu.getMargin(), menu.getTopPos() + menu.getLineYOffset(lineNumber) + menu.getFontOffset())
                 .dropShadow(false)
                 .build());
+        int barWidth = 80;
         widgets.add(GradientBar.builder(setting.label())
                 .bounds(menu.getLeftPos() + menu.getLineXOffset(), menu.getTopPos() + menu.getLineYOffset(lineNumber), barWidth,
                         menu.getLineHeight())
@@ -109,7 +109,8 @@ public class StatusBarEntry<T extends Comparable<? super T>> implements IEntry {
         int buttonWidth = menu.getLineHeight() + menu.getTheme().getBorderTheme(BoxTheme.Size.MEDIUM).edgeWidth();
         int buttonHeight = menu.getLineHeight() + menu.getTheme().getBorderTheme(BoxTheme.Size.MEDIUM).edgeHeight();
         ThemedIconButton configButton = ThemedIconButton.builder(menu.getTheme(), Icons.WRENCH)
-                .onPress(onPress == null ? b -> {} : b -> onPress.accept(menu))
+                .onPress(onPress == null ? b -> {
+                } : b -> onPress.accept(menu))
                 .x(menu.getLeftPos() + menu.getLineXOffset() + barWidth + menu.getSpacer())
                 .y(menu.getTopPos() + menu.getLineYOffset(lineNumber))
                 .width(buttonWidth)
@@ -129,18 +130,27 @@ public class StatusBarEntry<T extends Comparable<? super T>> implements IEntry {
         configButton.setTooltip(Tooltip.create(Component.translatable("gui.crinklemod.status.config_tooltip")));
         widgets.add(configButton);
         widgets.add(resetButton);
-        for(EntryAction action : actions) {
-            ThemedIconButton actionButton = ThemedIconButton.builder(menu.getTheme(), action.getIcon())
-                    .onPress(b -> action.getAction().accept(setting, provider.get()))
+        for (EntryAction action : actions) {
+            ThemedIconButton actionButton = ThemedIconButton.builder(menu.getTheme(), action.icon())
+                    .onPress(b -> {
+                        b.active = false;
+                        action.action().accept(setting, provider.get());
+                        b.active = true;
+                    })
+                    .activePredicate(b -> action.activePredicate().test(b))
                     .x(resetButton.getX() + resetButton.getWidth() + menu.getSpacer())
                     .y(menu.getTopPos() + menu.getLineYOffset(lineNumber))
                     .width(buttonWidth)
                     .height(buttonHeight)
                     .build();
-            actionButton.setTooltip(action.getTooltip());
+            actionButton.setTooltip(action.tooltip());
             widgets.add(actionButton);
         }
         return widgets;
+    }
+
+    public void visitChildren(Consumer<AbstractWidget> consumer) {
+        widgets.forEach(consumer);
     }
 
     static public class Builder<T extends Comparable<? super T>, E extends ICapabilityProvider> {

@@ -31,9 +31,9 @@ public class ConsumableConfig {
      * This class also contains a method to convert the consumable data to a config object.
      */
     public static class ConsumableData {
-        public String name;
-        public int solids;
-        public int liquids;
+        public final String name;
+        public final int solids;
+        public final int liquids;
 
         public ConsumableData(String name, int solids, int liquids) {
             this.name = name;

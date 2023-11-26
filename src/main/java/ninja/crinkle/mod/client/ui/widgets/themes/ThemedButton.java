@@ -11,11 +11,13 @@ import ninja.crinkle.mod.util.ClientUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 public class ThemedButton extends AbstractThemedButton {
     private Component label;
-    private int padding;
+    private final int padding;
     private boolean autoSize = true;
+
     public ThemedButton(int pX, int pY, int pWidth, int pHeight, Component pMessage, Theme theme,
                         Consumer<AbstractThemedButton> onPress) {
         super(pX, pY, pWidth, pHeight, pMessage, theme, onPress);
@@ -71,6 +73,7 @@ public class ThemedButton extends AbstractThemedButton {
         protected Component label;
         protected final Theme theme;
         protected Consumer<AbstractThemedButton> onPress;
+        protected Predicate<AbstractThemedButton> activePredicate;
         protected boolean autoSize = true;
 
         public Builder(Theme theme) {
@@ -107,6 +110,11 @@ public class ThemedButton extends AbstractThemedButton {
             return this;
         }
 
+        public Builder activePredicate(Predicate<AbstractThemedButton> activePredicate) {
+            this.activePredicate = activePredicate;
+            return this;
+        }
+
         public Builder autoSize(boolean autoSize) {
             this.autoSize = autoSize;
             return this;
@@ -114,6 +122,7 @@ public class ThemedButton extends AbstractThemedButton {
 
         public ThemedButton build() {
             ThemedButton button = new ThemedButton(x, y, width, height, label, theme, onPress);
+            button.setActivePredicate(activePredicate);
             button.setAutoSize(autoSize);
             return button;
         }

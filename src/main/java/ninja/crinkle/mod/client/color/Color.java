@@ -4,7 +4,6 @@ import net.minecraft.ChatFormatting;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-import java.math.BigInteger;
 import java.util.Optional;
 
 public record Color(int color) {

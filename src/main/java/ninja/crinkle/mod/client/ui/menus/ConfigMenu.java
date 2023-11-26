@@ -50,6 +50,7 @@ public class ConfigMenu<E extends ICapabilityProvider> extends AbstractMenu {
 
     public record Entry<T extends Comparable<? super T>>(int lineNumber, int maxLength, Setting<T> setting) {
     }
+
     public static <E extends ICapabilityProvider> Builder<E> builder(Screen screen, Font font, Component title, Supplier<E> capabilityProvider) {
         return new Builder<>(screen, font, title, capabilityProvider);
     }
@@ -81,6 +82,9 @@ public class ConfigMenu<E extends ICapabilityProvider> extends AbstractMenu {
         saveButton.active = false;
         labels.forEach((c, l) -> l.setColor(Label.DEFAULT_COLOR));
         editBoxes.forEach((c, e) -> e.setTextColor(DEFAULT_EDIT_BOX_TEXT_COLOR));
+        configMenuEntries.forEach(e -> {
+
+        });
 
         // Check for validation
         final List<Component> validationErrors = configMenuEntries.stream()

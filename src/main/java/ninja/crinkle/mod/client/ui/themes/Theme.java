@@ -1,15 +1,7 @@
 package ninja.crinkle.mod.client.ui.themes;
 
-import com.mojang.blaze3d.platform.NativeImage;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.texture.DynamicTexture;
-import net.minecraft.client.renderer.texture.TextureManager;
-import net.minecraft.resources.ResourceLocation;
 import ninja.crinkle.mod.client.color.Color;
-import ninja.crinkle.mod.util.ClientUtil;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.Map;
 
 public class Theme {
@@ -21,18 +13,20 @@ public class Theme {
             ),
             Color.of(0xFFD7AEFF),
             Color.WHITE,
-            Color.of("#AA7FD6")
-    );
+            Color.of("#AA7FD6"),
+            Color.of("#4C4E52"));
     private final Map<BoxTheme.Size, BoxTheme> borderThemes;
     private final Color backgroundColor;
     private final Color foregroundColor;
     private final Color secondaryColor;
+    private final Color inactiveColor;
 
-    public Theme(Map<BoxTheme.Size, BoxTheme> borderThemes, Color backgroundColor, Color foregroundColor, Color secondaryColor) {
+    public Theme(Map<BoxTheme.Size, BoxTheme> borderThemes, Color backgroundColor, Color foregroundColor, Color secondaryColor, Color inactiveColor) {
         this.borderThemes = borderThemes;
         this.backgroundColor = backgroundColor;
         this.foregroundColor = foregroundColor;
         this.secondaryColor = secondaryColor;
+        this.inactiveColor = inactiveColor;
     }
 
     public BoxTheme getBorderTheme(BoxTheme.Size size) {
@@ -49,5 +43,9 @@ public class Theme {
 
     public Color getSecondaryColor() {
         return secondaryColor;
+    }
+
+    public Color getInactiveColor() {
+        return inactiveColor;
     }
 }

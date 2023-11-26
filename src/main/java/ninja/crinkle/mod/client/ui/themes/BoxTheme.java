@@ -17,16 +17,16 @@ import java.util.Objects;
 public final class BoxTheme {
     private static final ResourceLocation DEFAULT_TEXTURE = new ResourceLocation(CrinkleMod.MODID,
             "textures/gui/themes/gray.png");
-    public static BoxTheme GRAY_SMALL = new BoxTheme("gray_small", DEFAULT_TEXTURE,
+    public static final BoxTheme GRAY_SMALL = new BoxTheme("gray_small", DEFAULT_TEXTURE,
             1, 1, 1, 1, 1, 3, 3,
             9, 5, 14, 9
     );
-    public static BoxTheme GRAY_MEDIUM = new BoxTheme("gray_medium", DEFAULT_TEXTURE,
+    public static final BoxTheme GRAY_MEDIUM = new BoxTheme("gray_medium", DEFAULT_TEXTURE,
             2, 2, 2, 2, 1, 5, 5,
             9, 0, 14, 9
     );
 
-    public static BoxTheme GRAY_LARGE = new BoxTheme("gray_large", DEFAULT_TEXTURE,
+    public static final BoxTheme GRAY_LARGE = new BoxTheme("gray_large", DEFAULT_TEXTURE,
             4, 4, 4, 4, 1, 9, 9,
             0, 0, 14, 9
     );
@@ -44,7 +44,9 @@ public final class BoxTheme {
     private final int textureWidth;
     private final int textureHeight;
     private ResourceLocation invertedTexture;
+    private ResourceLocation inactiveTexture;
     private NativeImage invertedImage;
+    private NativeImage inactiveImage;
     private final Map<String, ResourceLocation> slicedTextures = new HashMap<>();
 
     public BoxTheme(String name, ResourceLocation texture, int cornerWidth, int cornerHeight,
@@ -139,6 +141,7 @@ public final class BoxTheme {
 
     private NativeImage fromResource(ResourceLocation resourceLocation) {
         if (resourceLocation.equals(invertedTexture)) return invertedImage;
+        if (resourceLocation.equals(inactiveTexture)) return inactiveImage;
         Minecraft minecraft = ClientUtil.getMinecraft();
         try {
             try (InputStream is = minecraft.getResourceManager().open(resourceLocation)) {
@@ -149,22 +152,22 @@ public final class BoxTheme {
         }
     }
 
-    private String getSlicedTexturePath(int width, int height, boolean inverted) {
-        return this.name() + "_" + width + "_" + height + "_" + inverted;
+    private String getSlicedTexturePath(int width, int height, TextureType type) {
+        return this.name() + "_" + width + "_" + height + "_" + type.name().toLowerCase();
     }
 
-    public ResourceLocation draw(int width, int height, boolean inverted) {
-        String key = getSlicedTexturePath(width, height, inverted);
+    public ResourceLocation draw(int width, int height, TextureType type) {
+        String key = getSlicedTexturePath(width, height, type);
         if (slicedTextures.containsKey(key)) {
             return slicedTextures.get(key);
         }
-        ResourceLocation texture = generateNineSliced(width, height, inverted);
+        ResourceLocation texture = generateNineSliced(width, height, type);
         slicedTextures.put(key, texture);
         return texture;
     }
 
-    private ResourceLocation generateNineSliced(int width, int height, boolean inverted) {
-        try (NativeImage texture = fromResource(inverted ? inverted() : texture())) {
+    private ResourceLocation generateNineSliced(int width, int height, TextureType type) {
+        try (NativeImage texture = fromResource(getTexture(type))) {
             NativeImage image = new NativeImage(width, height, false);
 
 
@@ -218,10 +221,25 @@ public final class BoxTheme {
 
 
             return ClientUtil.getMinecraft().getTextureManager().register(
-                    getSlicedTexturePath(width, height, inverted),
+                    getSlicedTexturePath(width, height, type),
                     new DynamicTexture(image)
             );
         }
+    }
+
+    private ResourceLocation getTexture(TextureType type) {
+        return switch (type) {
+            case INVERTED -> inverted();
+            case INACTIVE -> inactive();
+            default -> texture();
+        };
+    }
+
+    private ResourceLocation inactive() {
+        if (inactiveTexture == null || ClientUtil.getMinecraft().getResourceManager().getResource(inactiveTexture).isEmpty()) {
+            inactiveTexture = inactiveTexture();
+        }
+        return texture();
     }
 
     private ResourceLocation inverted() {
@@ -248,7 +266,31 @@ public final class BoxTheme {
             }
             invertedImage = image;
             // Create a dynamic texture
-            return textureManager.register(texture().getPath()+"_inverted", new DynamicTexture(image));
+            return textureManager.register(texture().getPath() + "_" + TextureType.INACTIVE.name().toLowerCase(), new DynamicTexture(image));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private ResourceLocation inactiveTexture() {
+        Minecraft minecraft = ClientUtil.getMinecraft();
+        TextureManager textureManager = minecraft.getTextureManager();
+        try (InputStream is = minecraft.getResourceManager().open(texture())) {
+            NativeImage image = NativeImage.read(is);
+            // Inactive should be grayscale
+            for (int x = 0; x < image.getWidth(); x++) {
+                for (int y = 0; y < image.getHeight(); y++) {
+                    int color = image.getPixelRGBA(x, y);
+                    int alpha = color & 0xFF000000;
+                    int rgb = color & 0x00FFFFFF;
+                    int gray = (int) (0.21 * ((rgb >> 16) & 0xFF) + 0.72 * ((rgb >> 8) & 0xFF) + 0.07 * (rgb & 0xFF));
+                    int grayColor = alpha | (gray << 16) | (gray << 8) | gray;
+                    image.setPixelRGBA(x, y, grayColor);
+                }
+            }
+            inactiveImage = image;
+            // Create a dynamic texture
+            return textureManager.register(texture().getPath() + "_inverted", new DynamicTexture(image));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -330,5 +372,11 @@ public final class BoxTheme {
         SMALL,
         MEDIUM,
         LARGE
+    }
+
+    public enum TextureType {
+        NORMAL,
+        INVERTED,
+        INACTIVE
     }
 }

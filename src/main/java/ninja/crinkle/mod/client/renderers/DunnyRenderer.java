@@ -8,7 +8,7 @@ import software.bernie.geckolib.model.DefaultedBlockGeoModel;
 import software.bernie.geckolib.renderer.GeoBlockRenderer;
 
 public class DunnyRenderer extends GeoBlockRenderer<DunnyBlockEntity> {
-    public DunnyRenderer(BlockEntityRendererProvider.Context context) {
+    public DunnyRenderer(BlockEntityRendererProvider.Context ignoredContext) {
         super(new DefaultedBlockGeoModel<>(new ResourceLocation(CrinkleMod.MODID, "dunny")));
     }
 }

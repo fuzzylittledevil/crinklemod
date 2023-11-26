@@ -36,7 +36,7 @@ public abstract class FlexContainerScreen extends Screen {
     }
 
     protected void flex() {
-        LOGGER.debug("Flexing screen");
+        //LOGGER.debug("Flexing screen");
         int maxX = 0;
         int maxY = 0;
         flexedWidgets.clear();

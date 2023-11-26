@@ -124,13 +124,13 @@ public class Label extends AbstractWidget {
 
     @Override
     protected void renderWidget(@NotNull GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
-        if(!visible) return;
+        if (!visible) return;
         if (wrapWidth == 0) {
             pGuiGraphics.drawString(font, value, getX(), getY(), color, dropShadow);
             return;
         }
         List<FormattedCharSequence> lines = font.split(value, wrapWidth);
-        for(int i = 0; i < lines.size(); i++) {
+        for (int i = 0; i < lines.size(); i++) {
             pGuiGraphics.drawString(font, lines.get(i), getX(), getY() + (i * font.lineHeight), color, dropShadow);
         }
     }

@@ -11,7 +11,6 @@ import net.minecraftforge.fml.DistExecutor;
 import ninja.crinkle.mod.CrinkleMod;
 import ninja.crinkle.mod.api.ServerUpdater;
 import ninja.crinkle.mod.client.ClientHooks;
-import ninja.crinkle.mod.client.color.Color;
 import ninja.crinkle.mod.client.ui.menus.AbstractMenu;
 import ninja.crinkle.mod.client.ui.menus.ConfigMenu;
 import ninja.crinkle.mod.client.ui.menus.status.*;
@@ -123,6 +122,10 @@ public class CrinkleScreen extends FlexContainerScreen {
                                                 s.syncer(p).ifPresent(ServerUpdater::syncServer);
                                                 CrinkleMod.EVENT_BUS.post(new AccidentEvent.Bladder(minecraft.player, amount, AccidentEvent.Side.CLIENT));
                                             },
+                                            b -> {
+                                                int amount = MetabolismSettings.BLADDER.get(minecraft.player);
+                                                return amount > 0;
+                                            },
                                             Tooltip.create(Component.translatable("gui.crinklemod.crinkle_screen.bladder.accident_button.tooltip"))
                                     ))
                                     .build())
@@ -141,6 +144,10 @@ public class CrinkleScreen extends FlexContainerScreen {
                                                 s.set(p, 0);
                                                 s.syncer(p).ifPresent(ServerUpdater::syncServer);
                                                 CrinkleMod.EVENT_BUS.post(new AccidentEvent.Bowels(minecraft.player, amount, AccidentEvent.Side.CLIENT));
+                                            },
+                                            b -> {
+                                                int amount = MetabolismSettings.BOWELS.get(minecraft.player);
+                                                return amount > 0;
                                             },
                                             Tooltip.create(Component.translatable("gui.crinklemod.crinkle_screen.bowel.accident_button.tooltip"))
                                     ))
@@ -173,7 +180,6 @@ public class CrinkleScreen extends FlexContainerScreen {
                                     .build())
                             .build();
                     mainMenu = StatusMenu.builder(this)
-                            .title(Component.empty())
                             .font(font)
                             .lineHeight(lineHeight)
                             .lineSpacing(lineSpacing)

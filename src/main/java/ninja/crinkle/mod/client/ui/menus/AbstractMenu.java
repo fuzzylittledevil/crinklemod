@@ -48,9 +48,11 @@ public abstract class AbstractMenu {
     public void addWidget(AbstractWidget widget) {
         children.add(widget);
     }
+
     public void addSubMenu(AbstractMenu menu) {
         subMenus.add(menu);
     }
+
     public void addAllSubMenus(List<AbstractMenu> menus) {
         subMenus.addAll(menus);
     }
@@ -62,6 +64,7 @@ public abstract class AbstractMenu {
     public void visitChildren(Consumer<AbstractWidget> visitor) {
         children.forEach(visitor);
     }
+
     public void visitSubMenus(Consumer<AbstractMenu> visitor) {
         subMenus.forEach(visitor);
     }
@@ -81,7 +84,8 @@ public abstract class AbstractMenu {
         return visible;
     }
 
-    public void tick() {}
+    public void tick() {
+    }
 
     public int getFontOffset() {
         return (getLineHeight() - getFont().lineHeight) / 2;

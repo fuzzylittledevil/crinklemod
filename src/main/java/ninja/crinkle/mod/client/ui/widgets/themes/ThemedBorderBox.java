@@ -14,6 +14,7 @@ public class ThemedBorderBox extends AbstractWidget {
     private final Theme theme;
     private final BoxTheme.Size borderThemeSize;
     private boolean inverted = false;
+
     public ThemedBorderBox(int x, int y, int width, int height, Component message, Theme theme,
                            BoxTheme.Size borderThemeSize) {
         super(x, y, width, height, message);
@@ -21,17 +22,20 @@ public class ThemedBorderBox extends AbstractWidget {
         this.borderThemeSize = borderThemeSize;
     }
 
-    private void renderBackground() {}
-
     @Override
     protected void renderWidget(@NotNull GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
         // Get RGBA from int
-        Color color = theme.getBackgroundColor();
+        Color color = active ? theme.getBackgroundColor() : theme.getInactiveColor();
         pGuiGraphics.setColor((float) color.getRed(), (float) color.getGreen(), (float) color.getBlue(), this.alpha);
         RenderSystem.enableBlend();
         RenderSystem.enableDepthTest();
         BoxTheme borderTheme = theme.getBorderTheme(borderThemeSize);
-        renderTexture(pGuiGraphics, borderTheme.draw(getWidth(), getHeight(), inverted), getX(), getY(), 0, 0,
+        BoxTheme.TextureType textureType = BoxTheme.TextureType.NORMAL;
+        if (!active)
+            textureType = BoxTheme.TextureType.INACTIVE;
+        else if (inverted)
+            textureType = BoxTheme.TextureType.INVERTED;
+        renderTexture(pGuiGraphics, borderTheme.draw(getWidth(), getHeight(), textureType), getX(), getY(), 0, 0,
                 0, getWidth(), getHeight(), getWidth(), getHeight());
         pGuiGraphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.disableBlend();

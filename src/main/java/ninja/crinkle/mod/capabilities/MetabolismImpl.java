@@ -7,8 +7,6 @@ import ninja.crinkle.mod.metabolism.MetabolismSettings;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
-import java.util.function.Function;
 
 import static ninja.crinkle.mod.util.MathUtil.clamp;
 import static ninja.crinkle.mod.util.MathUtil.round;

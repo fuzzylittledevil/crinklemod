@@ -22,7 +22,7 @@ public class ButtonBarEntry implements IEntry {
     public List<AbstractWidget> create(StatusMenu menu) {
         List<AbstractWidget> widgets = new ArrayList<>();
         int offset = 0;
-        for(Button button : buttons) {
+        for (Button button : buttons) {
             button.setY(menu.getTopPos() + menu.getLineYOffset(lineNumber));
             button.setX(menu.getLeftPos() + menu.getMargin() + offset);
             widgets.add(button);

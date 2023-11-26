@@ -13,7 +13,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
-import java.util.Optional;
 import java.util.function.Supplier;
 
 public class UndergarmentUpdateMessage {
@@ -24,7 +23,7 @@ public class UndergarmentUpdateMessage {
     private Integer maxSolids;
 
     UndergarmentUpdateMessage(@Nullable Integer liquids, @Nullable Integer solids,
-                                     @Nullable Integer maxLiquids, @Nullable Integer maxSolids) {
+                              @Nullable Integer maxLiquids, @Nullable Integer maxSolids) {
         this.liquids = liquids;
         this.solids = solids;
         this.maxLiquids = maxLiquids;
@@ -56,7 +55,8 @@ public class UndergarmentUpdateMessage {
         private Integer maxLiquids;
         private Integer maxSolids;
 
-        Builder() {}
+        Builder() {
+        }
 
         public Builder liquids(int liquids) {
             this.liquids = liquids;

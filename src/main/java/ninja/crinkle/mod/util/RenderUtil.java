@@ -1,8 +1,6 @@
 package ninja.crinkle.mod.util;
 
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.renderer.texture.DynamicTexture;
-import net.minecraft.resources.ResourceLocation;
 
 import java.awt.image.BufferedImage;
 

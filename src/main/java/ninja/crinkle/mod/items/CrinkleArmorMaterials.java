@@ -19,6 +19,7 @@ public enum CrinkleArmorMaterials implements StringRepresentable, ArmorMaterial 
             (map) -> map.put(ArmorItem.Type.LEGGINGS, 8)), 15, SoundEvents.ARMOR_EQUIP_LEATHER,
             8.0F, 0.5F, () -> Ingredient.of(Items.WHITE_WOOL));
 
+    @SuppressWarnings("deprecation")
     public static final StringRepresentable.EnumCodec<ArmorMaterials> CODEC = StringRepresentable.fromEnum(ArmorMaterials::values);
     private static final EnumMap<ArmorItem.Type, Integer> HEALTH_FUNCTION_FOR_TYPE = Util.make(new EnumMap<>(ArmorItem.Type.class), (map) -> {
         map.put(ArmorItem.Type.BOOTS, 13);
@@ -33,12 +34,13 @@ public enum CrinkleArmorMaterials implements StringRepresentable, ArmorMaterial 
     private final SoundEvent sound;
     private final float toughness;
     private final float knockbackResistance;
+    @SuppressWarnings("deprecation")
     private final LazyLoadedValue<Ingredient> repairIngredient;
 
-    private CrinkleArmorMaterials(String pName, int pDurabilityMultiplier,
-                                  EnumMap<ArmorItem.Type, Integer> pProtectionFunctionForType, int pEnchantmentValue,
-                                  SoundEvent pSound, float pToughness, float pKnockbackResistance,
-                                  Supplier<Ingredient> pRepairIngredient) {
+    CrinkleArmorMaterials(String pName, int pDurabilityMultiplier,
+                          EnumMap<ArmorItem.Type, Integer> pProtectionFunctionForType, int pEnchantmentValue,
+                          SoundEvent pSound, float pToughness, float pKnockbackResistance,
+                          Supplier<Ingredient> pRepairIngredient) {
         this.name = pName;
         this.durabilityMultiplier = pDurabilityMultiplier;
         this.protectionFunctionForType = pProtectionFunctionForType;
@@ -46,6 +48,7 @@ public enum CrinkleArmorMaterials implements StringRepresentable, ArmorMaterial 
         this.sound = pSound;
         this.toughness = pToughness;
         this.knockbackResistance = pKnockbackResistance;
+        //noinspection deprecation
         this.repairIngredient = new LazyLoadedValue<>(pRepairIngredient);
     }
 

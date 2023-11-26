@@ -1,7 +1,6 @@
 package ninja.crinkle.mod.events;
 
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.Event;
 import ninja.crinkle.mod.capabilities.MetabolismImpl;
 

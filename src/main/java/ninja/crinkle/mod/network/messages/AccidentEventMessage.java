@@ -49,7 +49,7 @@ public class AccidentEventMessage {
             return;
         }
         LOGGER.debug("Received {} accident event message from {} with amount {} from {}", this.type, player.getName().getString(), this.amount, side);
-        switch(this.type) {
+        switch (this.type) {
             case BLADDER -> CrinkleMod.EVENT_BUS.post(new AccidentEvent.Bladder(player, this.amount, side));
             case BOWELS -> CrinkleMod.EVENT_BUS.post(new AccidentEvent.Bowels(player, this.amount, side));
         }

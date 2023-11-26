@@ -15,8 +15,10 @@ public class CrinkleBlocks {
 
     public static final RegistryObject<Block> DUNNY_BLOCK = BLOCKS.register("dunny", DunnyBlock::new);
 
+    @SuppressWarnings("DataFlowIssue")
     public static final RegistryObject<BlockEntityType<DunnyBlockEntity>> DUNNY_BLOCK_ENTITY = BLOCK_ENTITIES.register("dunny",
-            () -> BlockEntityType.Builder.of(DunnyBlockEntity::new, DUNNY_BLOCK.get()).build(null));
+            () -> BlockEntityType.Builder.of(DunnyBlockEntity::new, DUNNY_BLOCK.get())
+                    .build(null));
 
     public static void register(IEventBus bus) {
         BLOCKS.register(bus);

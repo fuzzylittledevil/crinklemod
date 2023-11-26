@@ -2,7 +2,6 @@ package ninja.crinkle.mod.undergarment;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
-import ninja.crinkle.mod.api.ServerUpdater;
 import ninja.crinkle.mod.config.UndergarmentConfig;
 import ninja.crinkle.mod.network.messages.UndergarmentUpdateMessage;
 import ninja.crinkle.mod.settings.Setting;

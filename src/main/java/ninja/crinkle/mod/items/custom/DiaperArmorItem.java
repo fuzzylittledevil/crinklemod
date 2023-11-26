@@ -30,6 +30,7 @@ public class DiaperArmorItem extends ArmorItem implements GeoItem {
     private static final Logger LOGGER = LogUtils.getLogger();
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
     private String texture = "textures/armor/diaper.png";
+
     public DiaperArmorItem(ArmorMaterial pMaterial, Type pType, Properties pProperties) {
         super(pMaterial, pType, pProperties.rarity(Rarity.EPIC).durability(1000));
     }

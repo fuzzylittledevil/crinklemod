@@ -23,9 +23,9 @@ public class UndergarmentConfig {
     private static final String CONFIG_FILE_NAME = String.format("%s-undergarments.toml", CrinkleMod.MODID);
 
     public static class UndergarmentData {
-        public String name;
-        public int maxSolids;
-        public int maxLiquids;
+        public final String name;
+        public final int maxSolids;
+        public final int maxLiquids;
 
         public UndergarmentData(String name, int maxSolids, int maxLiquids) {
             this.name = name;

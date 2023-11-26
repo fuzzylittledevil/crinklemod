@@ -8,17 +8,14 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.client.event.ScreenEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import ninja.crinkle.mod.client.ui.screens.CrinkleScreen;
-import ninja.crinkle.mod.util.ClientUtil;
 import org.slf4j.Logger;
 
 public class CrinkleForgeBusClientEvents {
     private static final Logger LOGGER = LogUtils.getLogger();
+
     @SubscribeEvent
     public void addButtonsToInventory(ScreenEvent.Init.Pre event) {
         if (event.getScreen() instanceof AbstractContainerScreen<?> screen) {

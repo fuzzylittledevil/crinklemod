@@ -1,6 +1,5 @@
 package ninja.crinkle.mod.client.renderers;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
 import ninja.crinkle.mod.CrinkleMod;

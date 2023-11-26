@@ -1,12 +1,8 @@
 package ninja.crinkle.mod.client.ui.menus.status;
 
-import com.mojang.logging.LogUtils;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.network.chat.Component;
 import ninja.crinkle.mod.client.ui.menus.AbstractMenu;
-import ninja.crinkle.mod.client.ui.widgets.Label;
-import org.slf4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +29,7 @@ public class StatusMenu extends AbstractMenu {
     @Override
     public int getLineXOffset() {
         int offset = 0;
-        for(IEntry entry : entries) {
+        for (IEntry entry : entries) {
             int width = entry.getLineWidth(getFont());
             if (width > offset) offset = width;
         }
@@ -105,10 +101,6 @@ public class StatusMenu extends AbstractMenu {
 
         public Builder subMenu(AbstractMenu menu) {
             subMenus.add(menu);
-            return this;
-        }
-
-        public Builder title(Component title) {
             return this;
         }
 

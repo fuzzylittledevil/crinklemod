@@ -9,10 +9,13 @@ import ninja.crinkle.mod.client.ui.themes.Theme;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 public abstract class AbstractThemedButton extends ThemedBorderBox {
     private final Consumer<AbstractThemedButton> onPress;
     private boolean isClicked = false;
+    private Predicate<AbstractThemedButton> activePredicate;
+
     public AbstractThemedButton(int pX, int pY, int pWidth, int pHeight, Component pMessage, Theme theme,
                                 Consumer<AbstractThemedButton> onPress) {
         super(pX, pY, pWidth, pHeight, pMessage, theme, BoxTheme.Size.MEDIUM);
@@ -21,6 +24,8 @@ public abstract class AbstractThemedButton extends ThemedBorderBox {
 
     @Override
     protected void renderWidget(@NotNull GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
+        if (activePredicate != null)
+            this.active = activePredicate.test(this);
         if (!isHovered && isClicked) isClicked = false;
         setInverted(this.isClicked);
         super.renderWidget(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
@@ -60,5 +65,9 @@ public abstract class AbstractThemedButton extends ThemedBorderBox {
         isClicked = false;
         setFocused(false);
         return super.keyReleased(pKeyCode, pScanCode, pModifiers);
+    }
+
+    public void setActivePredicate(Predicate<AbstractThemedButton> activePredicate) {
+        this.activePredicate = activePredicate;
     }
 }

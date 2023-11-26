@@ -49,7 +49,7 @@ public class EquipmentSlotEntry implements IEntry {
                     .color(0xffffffff)
                     .build();
         }
-        if(tooltip != null)
+        if (tooltip != null)
             name.setTooltip(tooltip);
         widgets.add(name);
         return widgets;

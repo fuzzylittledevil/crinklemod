@@ -128,7 +128,6 @@ public class DunnyBlockEntity extends BlockEntity implements GeoBlockEntity {
     }
 
 
-
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllerRegistrar) {
         controllerRegistrar.add(new AnimationController<>(this, "dunny_controller", 0,

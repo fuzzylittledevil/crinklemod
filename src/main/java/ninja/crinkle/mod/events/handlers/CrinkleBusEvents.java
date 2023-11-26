@@ -6,9 +6,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.network.PacketDistributor;
 import ninja.crinkle.mod.CrinkleMod;
 import ninja.crinkle.mod.events.AccidentEvent;
@@ -17,23 +15,23 @@ import ninja.crinkle.mod.network.CrinkleChannel;
 import ninja.crinkle.mod.network.messages.AccidentEventMessage;
 import ninja.crinkle.mod.undergarment.Undergarment;
 import org.slf4j.Logger;
-import org.spongepowered.asm.mixin.MixinEnvironment;
 
 
 public class CrinkleBusEvents {
     private static final Logger LOGGER = LogUtils.getLogger();
+
     @SubscribeEvent
     public void propagateBladderAccident(AccidentEvent.Bladder event) {
         AccidentEvent.Side currentSide = event.getPlayer() instanceof ServerPlayer ?
                 AccidentEvent.Side.SERVER : AccidentEvent.Side.CLIENT;
-        if(currentSide != event.getSide()) {
+        if (currentSide != event.getSide()) {
             return;
         }
-        switch(event.getSide()) {
+        switch (event.getSide()) {
             case CLIENT -> CrinkleChannel.INSTANCE.sendToServer(
-                            new AccidentEventMessage(AccidentEventMessage.AccidentType.BLADDER, event.getAmount()));
+                    new AccidentEventMessage(AccidentEventMessage.AccidentType.BLADDER, event.getAmount()));
             case SERVER -> CrinkleChannel.INSTANCE.send(PacketDistributor.PLAYER.with(
-                    () -> (ServerPlayer) event.getPlayer()),
+                            () -> (ServerPlayer) event.getPlayer()),
                     new AccidentEventMessage(AccidentEventMessage.AccidentType.BLADDER, event.getAmount()));
         }
     }
@@ -42,14 +40,14 @@ public class CrinkleBusEvents {
     public void propagateBowelsAccident(AccidentEvent.Bowels event) {
         AccidentEvent.Side currentSide = event.getPlayer() instanceof ServerPlayer ?
                 AccidentEvent.Side.SERVER : AccidentEvent.Side.CLIENT;
-        if(currentSide != event.getSide()) {
+        if (currentSide != event.getSide()) {
             return;
         }
-        switch(event.getSide()) {
+        switch (event.getSide()) {
             case CLIENT -> CrinkleChannel.INSTANCE.sendToServer(
-                            new AccidentEventMessage(AccidentEventMessage.AccidentType.BOWELS, event.getAmount()));
+                    new AccidentEventMessage(AccidentEventMessage.AccidentType.BOWELS, event.getAmount()));
             case SERVER -> CrinkleChannel.INSTANCE.send(PacketDistributor.PLAYER.with(
-                    () -> (ServerPlayer) event.getPlayer()),
+                            () -> (ServerPlayer) event.getPlayer()),
                     new AccidentEventMessage(AccidentEventMessage.AccidentType.BOWELS, event.getAmount()));
         }
     }

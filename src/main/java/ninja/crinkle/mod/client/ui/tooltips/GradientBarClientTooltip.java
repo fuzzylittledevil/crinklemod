@@ -17,19 +17,19 @@ public class GradientBarClientTooltip implements ClientTooltipComponent {
 
     @Override
     public int getHeight() {
-        return tooltip.getHeight();
+        return tooltip.height();
     }
 
     @Override
     public int getWidth(@NotNull Font pFont) {
-        return tooltip.getWidth() + tooltip.getLabelWidth() + 2;
+        return tooltip.width() + tooltip.labelWidth() + 2;
     }
 
     @Override
     public void renderImage(@NotNull Font pFont, int pX, int pY, GuiGraphics pGuiGraphics) {
-        Component label = Component.literal(pFont.plainSubstrByWidth(tooltip.getLabel().getString(), tooltip.getLabelWidth()));
+        Component label = Component.literal(pFont.plainSubstrByWidth(tooltip.label().getString(), tooltip.labelWidth()));
         pGuiGraphics.drawString(pFont, label, pX, pY, 0xFFFFFF);
-        RenderUtil.drawGradient(pGuiGraphics, pX + tooltip.getLabelWidth() + 2, pY, tooltip.getWidth(), tooltip.getHeight(),
-                tooltip.getStartColor(), tooltip.getEndColor(), tooltip.getFillColor(), tooltip.getValue(), tooltip.getMax());
+        RenderUtil.drawGradient(pGuiGraphics, pX + tooltip.labelWidth() + 2, pY, tooltip.width(), tooltip.height(),
+                tooltip.startColor(), tooltip.endColor(), tooltip.fillColor(), tooltip.value(), tooltip.max());
     }
 }

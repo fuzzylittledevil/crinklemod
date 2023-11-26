@@ -267,13 +267,11 @@ public class Metabolism implements ServerUpdater {
 
     private void checkForBladderAccident() {
         if (getBladderFullness() < getBladderAccidentWarning()) return;
-        if (getBladderFullness() >= 0.999 || Math.random() < getBladderFullness()) {
+        if (Math.random() < getBladderFullness()) {
             int amount = (int) (getBladderAccidentAmountPercent() * getBladder());
             LOGGER.debug("Bladder accident: amount={} fullness={} warning={}", amount, getBladderFullness(), getBladderAccidentWarning());
             modifyBladder(-amount);
             CrinkleMod.EVENT_BUS.post(new AccidentEvent.Bladder(player, amount, AccidentEvent.Side.SERVER));
-        } else {
-
         }
     }
 
@@ -288,13 +286,14 @@ public class Metabolism implements ServerUpdater {
     }
 
     public void syncServer() {
-        // LOGGER.debug("Sending metabolism sync to server");
+        if (player instanceof ServerPlayer) return;
+        LOGGER.debug("Sending metabolism sync to server");
         getMetabolism().ifPresent(m -> CrinkleChannel.INSTANCE.sendToServer(new MetabolismUpdateMessage(m)));
     }
 
     public void syncClient() {
         if (player instanceof ServerPlayer serverPlayer) {
-            // LOGGER.debug("Sending metabolism sync to client");
+            LOGGER.debug("Sending metabolism sync to client");
             getMetabolism().ifPresent(m -> CrinkleChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> serverPlayer), new MetabolismUpdateMessage(m)));
         }
     }

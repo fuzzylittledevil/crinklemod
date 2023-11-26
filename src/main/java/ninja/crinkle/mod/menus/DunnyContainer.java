@@ -23,17 +23,17 @@ public class DunnyContainer extends AbstractContainerMenu {
         if (player.level().getBlockEntity(pos) instanceof DunnyBlockEntity processor) {
             addSlot(new SlotItemHandler(processor.getInputItems(), DunnyBlockEntity.SLOT_INPUT, 64, 24));
             addSlot(new SlotItemHandler(processor.getOutputItems(), DunnyBlockEntity.SLOT_OUTPUT, 108, 24));
-            addSlot(new SlotItemHandler(processor.getOutputItems(), DunnyBlockEntity.SLOT_OUTPUT+1, 126, 24));
-            addSlot(new SlotItemHandler(processor.getOutputItems(), DunnyBlockEntity.SLOT_OUTPUT+2, 144, 24));
-            addSlot(new SlotItemHandler(processor.getOutputItems(), DunnyBlockEntity.SLOT_OUTPUT+3, 108, 42));
-            addSlot(new SlotItemHandler(processor.getOutputItems(), DunnyBlockEntity.SLOT_OUTPUT+4, 126, 42));
-            addSlot(new SlotItemHandler(processor.getOutputItems(), DunnyBlockEntity.SLOT_OUTPUT+5, 144, 42));
+            addSlot(new SlotItemHandler(processor.getOutputItems(), DunnyBlockEntity.SLOT_OUTPUT + 1, 126, 24));
+            addSlot(new SlotItemHandler(processor.getOutputItems(), DunnyBlockEntity.SLOT_OUTPUT + 2, 144, 24));
+            addSlot(new SlotItemHandler(processor.getOutputItems(), DunnyBlockEntity.SLOT_OUTPUT + 3, 108, 42));
+            addSlot(new SlotItemHandler(processor.getOutputItems(), DunnyBlockEntity.SLOT_OUTPUT + 4, 126, 42));
+            addSlot(new SlotItemHandler(processor.getOutputItems(), DunnyBlockEntity.SLOT_OUTPUT + 5, 144, 42));
         }
         layoutPlayerInventorySlots(player.getInventory(), 10, 70);
     }
 
     private int addSlotRange(Container playerInventory, int index, int x, int y, int amount, int dx) {
-        for (int i = 0 ; i < amount ; i++) {
+        for (int i = 0; i < amount; i++) {
             addSlot(new Slot(playerInventory, index, x, y));
             x += dx;
             index++;
@@ -42,7 +42,7 @@ public class DunnyContainer extends AbstractContainerMenu {
     }
 
     private int addSlotBox(Container playerInventory, int index, int x, int y, int horAmount, int dx, int verAmount, int dy) {
-        for (int j = 0 ; j < verAmount ; j++) {
+        for (int j = 0; j < verAmount; j++) {
             index = addSlotRange(playerInventory, index, x, y, horAmount, dx);
             y += dy;
         }
@@ -70,7 +70,7 @@ public class DunnyContainer extends AbstractContainerMenu {
                     return ItemStack.EMPTY;
                 }
             }
-            if (!this.moveItemStackTo(stack, DunnyBlockEntity.SLOT_INPUT, DunnyBlockEntity.SLOT_INPUT+1, false)) {
+            if (!this.moveItemStackTo(stack, DunnyBlockEntity.SLOT_INPUT, DunnyBlockEntity.SLOT_INPUT + 1, false)) {
                 if (index < 27 + DunnyBlockEntity.SLOT_COUNT) {
                     if (!this.moveItemStackTo(stack, 27 + DunnyBlockEntity.SLOT_COUNT, 36 + DunnyBlockEntity.SLOT_COUNT, false)) {
                         return ItemStack.EMPTY;

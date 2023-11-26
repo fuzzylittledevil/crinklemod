@@ -13,13 +13,11 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LayeredCauldronBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.client.event.RenderTooltipEvent;
-import net.minecraftforge.client.event.ScreenEvent;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.Mod;
@@ -29,13 +27,13 @@ import ninja.crinkle.mod.commands.MetabolismCommand;
 import ninja.crinkle.mod.items.CrinkleItems;
 import ninja.crinkle.mod.metabolism.Metabolism;
 import ninja.crinkle.mod.undergarment.Undergarment;
-import ninja.crinkle.mod.util.ClientUtil;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.FORGE, modid = CrinkleMod.MODID)
 public class CrinkleForgeBusEvents {
     private static final Logger LOGGER = LogUtils.getLogger();
+
     @SubscribeEvent
     public static void onRightClickBlock(PlayerInteractEvent.RightClickBlock event) {
         BlockState state = event.getLevel().getBlockState(event.getPos());
@@ -49,7 +47,7 @@ public class CrinkleForgeBusEvents {
         }
         if (block.equals(Blocks.WATER_CAULDRON)) {
             Undergarment undergarment = Undergarment.of(event.getItemStack());
-            if(Undergarment.hasUndergarmentData(event.getItemStack())) {
+            if (Undergarment.hasUndergarmentData(event.getItemStack())) {
                 if (undergarment.getLiquids() > 0 || undergarment.getSolids() > 0) {
                     int amount = (undergarment.getLiquids() + undergarment.getSolids()) / 2;
                     undergarment.setLiquids(0);
