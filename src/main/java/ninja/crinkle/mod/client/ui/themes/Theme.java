@@ -7,9 +7,8 @@ import java.util.Map;
 public class Theme {
     public static final Theme DEFAULT = new Theme(
             Map.of(
-                    BoxTheme.Size.SMALL, BoxTheme.GRAY_SMALL,
-                    BoxTheme.Size.MEDIUM, BoxTheme.GRAY_MEDIUM,
-                    BoxTheme.Size.LARGE, BoxTheme.GRAY_LARGE
+                    BoxTheme.Size.MEDIUM, BoxTheme.BUTTON,
+                    BoxTheme.Size.LARGE, BoxTheme.PANEL
             ),
             Color.of(0xFFD7AEFF),
             Color.WHITE,

@@ -5,6 +5,7 @@ import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.network.chat.Component;
+import ninja.crinkle.mod.client.color.Color;
 import ninja.crinkle.mod.client.ui.elements.Text;
 import ninja.crinkle.mod.util.RenderUtil;
 import org.jetbrains.annotations.NotNull;
@@ -14,18 +15,22 @@ import java.util.function.Supplier;
 public class GradientBar extends AbstractWidget {
     private final Supplier<Number> valueSupplier;
     private final Supplier<Number> maxValueSupplier;
-    private final int colorFrom;
-    private final int colorTo;
-    private final int backgroundColor;
+    private final Color colorFrom;
+    private final Color colorTo;
+    private final Color backgroundColor;
+    private final int borderThickness;
+    private final Color borderColor;
     private final Text text;
     private final Text hoverText;
 
     protected GradientBar(int pX, int pY, int pWidth, int pHeight, Component pMessage, Supplier<Number> pValueSupplier,
-                          Supplier<Number> pMaxValueSupplier, int colorFrom, int colorTo, int backgroundColor,
-                          Text text, Text hoverText, Tooltip tooltip) {
+                          Supplier<Number> pMaxValueSupplier, Color colorFrom, Color colorTo, Color backgroundColor,
+                          int borderThickness, Color borderColor, Text text, Text hoverText, Tooltip tooltip) {
         super(pX, pY, pWidth, pHeight, pMessage);
         this.valueSupplier = pValueSupplier;
         this.maxValueSupplier = pMaxValueSupplier;
+        this.borderThickness = borderThickness;
+        this.borderColor = borderColor;
         this.text = text;
         this.hoverText = hoverText;
         this.colorFrom = colorFrom;
@@ -43,9 +48,11 @@ public class GradientBar extends AbstractWidget {
         private int y;
         private int width;
         private int height;
-        private int colorFrom;
-        private int colorTo;
-        private int backgroundColor;
+        private Color colorFrom;
+        private Color colorTo;
+        private Color backgroundColor;
+        private int borderThickness;
+        private Color borderColor;
         private final Component message;
         private Supplier<Number> valueSupplier;
         private Supplier<Number> maxValueSupplier;
@@ -88,22 +95,37 @@ public class GradientBar extends AbstractWidget {
                     .height(height);
         }
 
-        public Builder colorFrom(int colorFrom) {
+        public Builder colorFrom(Color colorFrom) {
             this.colorFrom = colorFrom;
             return this;
         }
 
-        public Builder colorTo(int colorTo) {
+        public Builder colorTo(Color colorTo) {
             this.colorTo = colorTo;
             return this;
         }
 
-        public Builder backgroundColor(int backgroundColor) {
+        public Builder backgroundColor(Color backgroundColor) {
             this.backgroundColor = backgroundColor;
             return this;
         }
 
-        public Builder gradientColor(int colorFrom, int colorTo, int backgroundColor) {
+        public Builder borderThickness(int borderThickness) {
+            this.borderThickness = borderThickness;
+            return this;
+        }
+
+        public Builder borderColor(Color borderColor) {
+            this.borderColor = borderColor;
+            return this;
+        }
+
+        public Builder border(int thickness, Color color) {
+            return borderThickness(thickness)
+                    .borderColor(color);
+        }
+
+        public Builder gradientColor(Color colorFrom, Color colorTo, Color backgroundColor) {
             return colorFrom(colorFrom)
                     .colorTo(colorTo)
                     .backgroundColor(backgroundColor);
@@ -136,7 +158,7 @@ public class GradientBar extends AbstractWidget {
 
         public GradientBar build() {
             return new GradientBar(x, y, width, height, message, valueSupplier, maxValueSupplier, colorFrom, colorTo,
-                    backgroundColor, text, hoverText, tooltip);
+                    backgroundColor, borderThickness, borderColor, text, hoverText, tooltip);
         }
     }
 
@@ -144,13 +166,19 @@ public class GradientBar extends AbstractWidget {
     protected void renderWidget(@NotNull GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
         int value = valueSupplier.get().intValue();
         int maxValue = maxValueSupplier.get().intValue();
-        RenderUtil.drawGradient(pGuiGraphics, getX(), getY(), width, height, colorFrom, colorTo, backgroundColor, value, maxValue);
-        if (isHovered()) {
-            if (hoverText != null) {
-                hoverText.draw(pGuiGraphics, getX() + (width - hoverText.getWidth()) / 2, getY() + height / 2 - hoverText.getFont().lineHeight / 2);
-            }
+        if (borderThickness > 0) {
+            pGuiGraphics.renderOutline(getX(), getY(), width, height, borderColor.color());
+        }
+        int x = getX() + borderThickness;
+        int y = getY() + borderThickness;
+        int w = width - borderThickness * 2;
+        int h = height - borderThickness * 2;
+        RenderUtil.drawGradient(pGuiGraphics, x, y, w, h, colorFrom, colorTo, backgroundColor, value, maxValue);
+        if (isHovered() && hoverText != null) {
+            hoverText.draw(pGuiGraphics, x + (w - hoverText.getWidth()) / 2,
+                    y + h / 2 - hoverText.getFont().lineHeight / 2);
         } else if (text != null)
-            text.draw(pGuiGraphics, getX() + (width - text.getWidth()) / 2, getY() + height / 2 - text.getFont().lineHeight / 2);
+            text.draw(pGuiGraphics, x + (w - text.getWidth()) / 2, y + h / 2 - text.getFont().lineHeight / 2);
     }
 
     @Override

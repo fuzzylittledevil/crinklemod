@@ -1,8 +1,10 @@
 package ninja.crinkle.mod.client.ui.screens;
 
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -11,16 +13,20 @@ import net.minecraftforge.fml.DistExecutor;
 import ninja.crinkle.mod.CrinkleMod;
 import ninja.crinkle.mod.api.ServerUpdater;
 import ninja.crinkle.mod.client.ClientHooks;
+import ninja.crinkle.mod.client.color.Color;
+import ninja.crinkle.mod.client.icons.Icons;
+import ninja.crinkle.mod.client.models.DiaperArmorModel;
+import ninja.crinkle.mod.client.textures.Textures;
+import ninja.crinkle.mod.client.textures.generators.DiaperTextureGenerator;
 import ninja.crinkle.mod.client.ui.menus.AbstractMenu;
 import ninja.crinkle.mod.client.ui.menus.ConfigMenu;
 import ninja.crinkle.mod.client.ui.menus.status.*;
 import ninja.crinkle.mod.client.ui.themes.Theme;
 import ninja.crinkle.mod.events.AccidentEvent;
-import ninja.crinkle.mod.icons.Icons;
 import ninja.crinkle.mod.metabolism.MetabolismSettings;
 import ninja.crinkle.mod.undergarment.Undergarment;
 import ninja.crinkle.mod.undergarment.UndergarmentSettings;
-import ninja.crinkle.mod.util.ColorUtil;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -31,7 +37,7 @@ public class CrinkleScreen extends FlexContainerScreen {
     private static final Component BLADDER_MENU_TITLE = Component.translatable("gui.crinklemod.metabolism_screen.bladder_menu.title");
     private static final Component BOWEL_MENU_TITLE = Component.translatable("gui.crinklemod.metabolism_screen.bowel_menu.title");
     private static final Component SOLIDS_MENU_TITLE = Component.translatable("gui.crinklemod.metabolism_screen.solids_menu.title");
-    private static final int LIQUIDS_COLOR = 0xffe0ffff;
+    private static final int LIQUIDS_COLOR = 0xff00ffff;
     private static final int SOLIDS_COLOR = 0xff90ee90;
     private static final int BLADDER_COLOR = 0xffffef00;
     private static final int BOWEL_COLOR = 0xFF836953;
@@ -77,7 +83,7 @@ public class CrinkleScreen extends FlexContainerScreen {
     protected void init() {
         super.init();
         final int lineSpacing = 5;
-        final int lineHeight = 15;
+        final int lineHeight = 20;
         setPadding(lineSpacing);
         Optional.ofNullable(DistExecutor.safeCallWhenOn(Dist.CLIENT, () -> ClientHooks::getMinecraft))
                 .ifPresent(minecraft -> {
@@ -95,24 +101,24 @@ public class CrinkleScreen extends FlexContainerScreen {
                                     .setting(MetabolismSettings.LIQUIDS)
                                     .onPress((menu) -> setCurrentMenu(liquidsMenu))
                                     .gradientStartColor(LIQUIDS_COLOR)
-                                    .gradientEndColor(ColorUtil.darken(LIQUIDS_COLOR, 0.5f))
-                                    .gradientBackgroundColor(ColorUtil.darken(LIQUIDS_COLOR, 0.25f))
+                                    .gradientEndColor(LIQUIDS_COLOR)
+                                    .gradientBackgroundColor(Color.BLACK.color())
                                     .build())
                             .entry(StatusBarEntry.intBuilder(() -> minecraft.player)
                                     .lineNumber(nextLine())
                                     .setting(MetabolismSettings.SOLIDS)
                                     .onPress((menu) -> setCurrentMenu(solidsMenu))
                                     .gradientStartColor(SOLIDS_COLOR)
-                                    .gradientEndColor(ColorUtil.darken(SOLIDS_COLOR, 0.5f))
-                                    .gradientBackgroundColor(ColorUtil.darken(SOLIDS_COLOR, 0.25f))
+                                    .gradientEndColor(SOLIDS_COLOR)
+                                    .gradientBackgroundColor(Color.BLACK.color())
                                     .build())
                             .entry(StatusBarEntry.intBuilder(() -> minecraft.player)
                                     .lineNumber(nextLine())
                                     .setting(MetabolismSettings.BLADDER)
                                     .onPress((menu) -> setCurrentMenu(bladderMenu))
                                     .gradientStartColor(BLADDER_COLOR)
-                                    .gradientEndColor(ColorUtil.darken(BLADDER_COLOR, 0.5f))
-                                    .gradientBackgroundColor(ColorUtil.darken(BLADDER_COLOR, 0.25f))
+                                    .gradientEndColor(BLADDER_COLOR)
+                                    .gradientBackgroundColor(Color.BLACK.color())
                                     .action(new EntryAction(
                                             Icons.DOWN_ARROW,
                                             (s, p) -> {
@@ -120,7 +126,8 @@ public class CrinkleScreen extends FlexContainerScreen {
                                                 if (amount == 0) return;
                                                 s.set(p, 0);
                                                 s.syncer(p).ifPresent(ServerUpdater::syncServer);
-                                                CrinkleMod.EVENT_BUS.post(new AccidentEvent.Bladder(minecraft.player, amount, AccidentEvent.Side.CLIENT));
+                                                CrinkleMod.EVENT_BUS.post(new AccidentEvent.Bladder(minecraft.player,
+                                                        amount, AccidentEvent.Side.CLIENT));
                                             },
                                             b -> {
                                                 int amount = MetabolismSettings.BLADDER.get(minecraft.player);
@@ -134,8 +141,8 @@ public class CrinkleScreen extends FlexContainerScreen {
                                     .setting(MetabolismSettings.BOWELS)
                                     .onPress((menu) -> setCurrentMenu(bowelMenu))
                                     .gradientStartColor(BOWEL_COLOR)
-                                    .gradientEndColor(ColorUtil.darken(BOWEL_COLOR, 0.5f))
-                                    .gradientBackgroundColor(ColorUtil.darken(BOWEL_COLOR, 0.25f))
+                                    .gradientEndColor(BOWEL_COLOR)
+                                    .gradientBackgroundColor(Color.BLACK.color())
                                     .action(new EntryAction(
                                             Icons.DOWN_ARROW,
                                             (s, p) -> {
@@ -143,7 +150,8 @@ public class CrinkleScreen extends FlexContainerScreen {
                                                 if (amount == 0) return;
                                                 s.set(p, 0);
                                                 s.syncer(p).ifPresent(ServerUpdater::syncServer);
-                                                CrinkleMod.EVENT_BUS.post(new AccidentEvent.Bowels(minecraft.player, amount, AccidentEvent.Side.CLIENT));
+                                                CrinkleMod.EVENT_BUS.post(new AccidentEvent.Bowels(minecraft.player,
+                                                        amount, AccidentEvent.Side.CLIENT));
                                             },
                                             b -> {
                                                 int amount = MetabolismSettings.BOWELS.get(minecraft.player);
@@ -162,21 +170,23 @@ public class CrinkleScreen extends FlexContainerScreen {
                             .lineHeight(lineHeight)
                             .lineSpacing(lineSpacing)
                             .spacer(4)
-                            .entry(StatusBarEntry.intBuilder(() -> Undergarment.getWornUndergarment(Objects.requireNonNull(minecraft.player)))
+                            .entry(StatusBarEntry.intBuilder(() ->
+                                            Undergarment.getWornUndergarment(Objects.requireNonNull(minecraft.player)))
                                     .lineNumber(nextLine())
                                     .setting(UndergarmentSettings.LIQUIDS)
                                     .onPress((menu) -> setCurrentMenu(undergarmentLiquidsMenu))
                                     .gradientStartColor(Undergarment.LIQUIDS_COLOR)
-                                    .gradientEndColor(ColorUtil.darken(Undergarment.LIQUIDS_COLOR, 0.5f))
-                                    .gradientBackgroundColor(ColorUtil.darken(Undergarment.LIQUIDS_COLOR, 0.25f))
+                                    .gradientEndColor(Undergarment.LIQUIDS_COLOR)
+                                    .gradientBackgroundColor(Color.BLACK.color())
                                     .build())
-                            .entry(StatusBarEntry.intBuilder(() -> Undergarment.getWornUndergarment(Objects.requireNonNull(minecraft.player)))
+                            .entry(StatusBarEntry.intBuilder(() ->
+                                            Undergarment.getWornUndergarment(Objects.requireNonNull(minecraft.player)))
                                     .lineNumber(nextLine())
                                     .setting(UndergarmentSettings.SOLIDS)
                                     .onPress((menu) -> setCurrentMenu(undergarmentSolidsMenu))
                                     .gradientStartColor(Undergarment.SOLIDS_COLOR)
-                                    .gradientEndColor(ColorUtil.darken(Undergarment.SOLIDS_COLOR, 0.5f))
-                                    .gradientBackgroundColor(ColorUtil.darken(Undergarment.SOLIDS_COLOR, 0.25f))
+                                    .gradientEndColor(Undergarment.SOLIDS_COLOR)
+                                    .gradientBackgroundColor(Color.BLACK.color())
                                     .build())
                             .build();
                     mainMenu = StatusMenu.builder(this)
@@ -262,6 +272,17 @@ public class CrinkleScreen extends FlexContainerScreen {
         super.onClose();
         Optional.ofNullable(DistExecutor.safeCallWhenOn(Dist.CLIENT, () -> ClientHooks::getMinecraft))
                 .ifPresent(minecraft -> minecraft.setScreen(previousScreen));
+    }
+
+    @Override
+    public void render(@NotNull GuiGraphics graphics, int pMouseX, int pMouseY, float pPartialTick) {
+        super.render(graphics, pMouseX, pMouseY, pPartialTick);
+        ItemStack wornItem = Undergarment.getWornUndergarment(Objects.requireNonNull(getMinecraft().player));
+        Undergarment u = Undergarment.of(wornItem);
+        DiaperTextureGenerator.Data data = new DiaperTextureGenerator.Data(wornItem.getDescriptionId(), new DiaperArmorModel(), u);
+        ResourceLocation original = new ResourceLocation(CrinkleMod.MODID, "armor/diaper_plain.png");
+        ResourceLocation loc = Textures.getInstance().getTexture(original, data);
+        graphics.blit(loc, 0, 0, 0, 0, 256, 256, 256, 256);
     }
 
     @Override

@@ -6,13 +6,13 @@ import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.network.chat.Component;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import ninja.crinkle.mod.api.ServerUpdater;
+import ninja.crinkle.mod.client.color.Color;
+import ninja.crinkle.mod.client.icons.Icons;
 import ninja.crinkle.mod.client.ui.elements.Text;
 import ninja.crinkle.mod.client.ui.menus.AbstractMenu;
-import ninja.crinkle.mod.client.ui.themes.BoxTheme;
 import ninja.crinkle.mod.client.ui.widgets.GradientBar;
 import ninja.crinkle.mod.client.ui.widgets.Label;
 import ninja.crinkle.mod.client.ui.widgets.themes.ThemedIconButton;
-import ninja.crinkle.mod.icons.Icons;
 import ninja.crinkle.mod.settings.Setting;
 
 import java.util.ArrayList;
@@ -96,6 +96,7 @@ public class StatusBarEntry<T extends Comparable<? super T>> implements IEntry {
                         setting.range().apply(provider.get()).asDouble().max())
                 .valueSupplier(() -> (Number) setting.get(provider.get()))
                 .tooltip(Tooltip.create(setting.tooltip()))
+                        .border(1, Color.BLACK)
                 .hoverText(Text.builder(menu.getFont(), hoverText(setting, provider))
                         .color(0xffffffff)
                         .dropShadow(true)
@@ -104,10 +105,10 @@ public class StatusBarEntry<T extends Comparable<? super T>> implements IEntry {
                         .color(0xffffffff)
                         .dropShadow(true)
                         .build())
-                .gradientColor(gradientStartColor, gradientEndColor, gradientBackgroundColor)
+                .gradientColor(Color.of(gradientStartColor), Color.of(gradientEndColor), Color.of(gradientBackgroundColor))
                 .build());
-        int buttonWidth = menu.getLineHeight() + menu.getTheme().getBorderTheme(BoxTheme.Size.MEDIUM).edgeWidth();
-        int buttonHeight = menu.getLineHeight() + menu.getTheme().getBorderTheme(BoxTheme.Size.MEDIUM).edgeHeight();
+        int buttonWidth = menu.getLineHeight();
+        int buttonHeight = menu.getLineHeight();
         ThemedIconButton configButton = ThemedIconButton.builder(menu.getTheme(), Icons.WRENCH)
                 .onPress(onPress == null ? b -> {
                 } : b -> onPress.accept(menu))

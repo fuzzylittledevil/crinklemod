@@ -15,6 +15,10 @@ public class MathUtil {
     }
 
     public static int twenties(int value) {
-        return (int) Math.round(value / 20.0) * 20;
+        return (value / 20) * 20;
+    }
+
+    public static double lerp(double a, double b, double t) {
+        return a + (b - a) * t;
     }
 }

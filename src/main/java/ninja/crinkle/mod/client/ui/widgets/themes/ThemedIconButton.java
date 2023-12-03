@@ -3,10 +3,10 @@ package ninja.crinkle.mod.client.ui.widgets.themes;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import ninja.crinkle.mod.client.color.Color;
+import ninja.crinkle.mod.client.icons.Icons;
 import ninja.crinkle.mod.client.renderers.IconRenderer;
 import ninja.crinkle.mod.client.ui.themes.BoxTheme;
 import ninja.crinkle.mod.client.ui.themes.Theme;
-import ninja.crinkle.mod.icons.Icons;
 import org.apache.commons.lang3.NotImplementedException;
 import org.jetbrains.annotations.NotNull;
 
@@ -95,7 +95,6 @@ public class ThemedIconButton extends ThemedButton {
         public ThemedIconButton build() {
             ThemedIconButton button = new ThemedIconButton(x, y, width, height, label, theme, onPress, icon);
             button.setActivePredicate(activePredicate);
-            button.setAutoSize(false);
             return button;
         }
     }

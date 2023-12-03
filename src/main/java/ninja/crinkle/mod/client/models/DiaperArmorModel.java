@@ -13,7 +13,7 @@ public class DiaperArmorModel extends GeoModel<DiaperArmorItem> {
 
     @Override
     public ResourceLocation getTextureResource(DiaperArmorItem animatable) {
-        return new ResourceLocation(CrinkleMod.MODID, animatable.getTexture());
+        return animatable.getTexture();
     }
 
     @Override

@@ -1,20 +1,17 @@
 package ninja.crinkle.mod.client.renderers;
 
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.resources.ResourceLocation;
-import ninja.crinkle.mod.CrinkleMod;
+import net.minecraft.client.renderer.texture.SpriteContents;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import ninja.crinkle.mod.client.color.Color;
-import ninja.crinkle.mod.icons.Icons;
+import ninja.crinkle.mod.client.icons.Icons;
 
 public class IconRenderer {
-    private static final ResourceLocation ICONS = new ResourceLocation(CrinkleMod.MODID, "textures/gui/themes/icons.png");
-    private static final int ICON_SIZE = 13;
-    private static final int TEXTURE_SIZE = 26;
-
-
+    @SuppressWarnings("resource")
     public static void renderIcon(GuiGraphics graphics, Icons icon, int x, int y) {
-        graphics.blit(ICONS, x, y, icon.getX() * ICON_SIZE, icon.getY() * ICON_SIZE,
-                ICON_SIZE, ICON_SIZE, TEXTURE_SIZE, TEXTURE_SIZE);
+        TextureAtlasSprite sprite = icon.getSprite();
+        SpriteContents contents = sprite.contents();
+        graphics.blit(x, y, 0, contents.width(), contents.height(), sprite);
     }
 
     public static void renderIcon(GuiGraphics graphics, Icons icon, int x, int y, Color color) {

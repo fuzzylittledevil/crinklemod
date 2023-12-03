@@ -35,7 +35,7 @@ public class ThemedBorderBox extends AbstractWidget {
             textureType = BoxTheme.TextureType.INACTIVE;
         else if (inverted)
             textureType = BoxTheme.TextureType.INVERTED;
-        renderTexture(pGuiGraphics, borderTheme.draw(getWidth(), getHeight(), textureType), getX(), getY(), 0, 0,
+        renderTexture(pGuiGraphics, borderTheme.generateTexture(getWidth(), getHeight(), textureType), getX(), getY(), 0, 0,
                 0, getWidth(), getHeight(), getWidth(), getHeight());
         pGuiGraphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.disableBlend();
@@ -49,10 +49,6 @@ public class ThemedBorderBox extends AbstractWidget {
 
     public Theme getTheme() {
         return theme;
-    }
-
-    public boolean isInverted() {
-        return inverted;
     }
 
     public void setInverted(boolean inverted) {

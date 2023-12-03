@@ -8,9 +8,9 @@ import net.minecraft.world.item.ItemStack;
 import ninja.crinkle.mod.CrinkleMod;
 import ninja.crinkle.mod.capabilities.IUndergarment;
 import ninja.crinkle.mod.capabilities.UndergarmentImpl;
+import ninja.crinkle.mod.client.color.Color;
 import ninja.crinkle.mod.config.UndergarmentConfig;
 import ninja.crinkle.mod.tooltips.GradientBarTooltip;
-import ninja.crinkle.mod.util.ColorUtil;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -103,15 +103,23 @@ public class Undergarment {
         capability.save(itemStack);
     }
 
+    public double getLiquidsPercent() {
+        return (double) getLiquids() / (double) getMaxLiquids();
+    }
+
+    public double getSolidsPercent() {
+        return (double) getSolids() / (double) getMaxSolids();
+    }
+
     public GradientBarTooltip getLiquidsTooltip() {
         return new GradientBarTooltip(UndergarmentSettings.LIQUIDS.label(), getLiquids(), getMaxLiquids(),
-                        LIQUIDS_COLOR, ColorUtil.darken(LIQUIDS_COLOR, 0.5f),
-                        ColorUtil.darken(LIQUIDS_COLOR, 0.25f), 9, 60, 40);
+                        LIQUIDS_COLOR, Color.brightness(LIQUIDS_COLOR, 0.5f),
+                        Color.brightness(LIQUIDS_COLOR, 0.25f), 9, 60, 40);
     }
 
     public GradientBarTooltip getSolidsTooltip() {
         return new GradientBarTooltip(UndergarmentSettings.SOLIDS.label(), getSolids(), getMaxSolids(),
-                SOLIDS_COLOR, ColorUtil.darken(SOLIDS_COLOR, 0.5f),
-                ColorUtil.darken(SOLIDS_COLOR, 0.25f), 9, 60, 40);
+                SOLIDS_COLOR, Color.brightness(SOLIDS_COLOR, 0.5f),
+                Color.brightness(SOLIDS_COLOR, 0.25f), 9, 60, 40);
     }
 }

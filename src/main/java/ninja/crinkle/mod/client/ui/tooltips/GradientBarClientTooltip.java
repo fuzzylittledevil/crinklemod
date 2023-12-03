@@ -4,6 +4,7 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.network.chat.Component;
+import ninja.crinkle.mod.client.color.Color;
 import ninja.crinkle.mod.tooltips.GradientBarTooltip;
 import ninja.crinkle.mod.util.RenderUtil;
 import org.jetbrains.annotations.NotNull;
@@ -30,6 +31,6 @@ public class GradientBarClientTooltip implements ClientTooltipComponent {
         Component label = Component.literal(pFont.plainSubstrByWidth(tooltip.label().getString(), tooltip.labelWidth()));
         pGuiGraphics.drawString(pFont, label, pX, pY, 0xFFFFFF);
         RenderUtil.drawGradient(pGuiGraphics, pX + tooltip.labelWidth() + 2, pY, tooltip.width(), tooltip.height(),
-                tooltip.startColor(), tooltip.endColor(), tooltip.fillColor(), tooltip.value(), tooltip.max());
+                Color.of(tooltip.startColor()), Color.of(tooltip.endColor()), Color.of(tooltip.fillColor()), tooltip.value(), tooltip.max());
     }
 }
