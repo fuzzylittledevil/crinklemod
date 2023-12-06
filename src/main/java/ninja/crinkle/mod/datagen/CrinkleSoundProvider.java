@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.stream.IntStream;
 
 public class CrinkleSoundProvider extends SoundDefinitionsProvider {
-    private static final String PREFIX="crinkle0";
+    private static final String PREFIX="crinkle";
     private static final int COUNT = 6;
     /**
      * Creates a new instance of this data provider.
@@ -30,7 +30,7 @@ public class CrinkleSoundProvider extends SoundDefinitionsProvider {
         List<SoundDefinition.Sound> sounds = new ArrayList<>();
         IntStream.range(0, COUNT).forEach(i ->
                 sounds.add(
-                        sound(new ResourceLocation(CrinkleMod.MODID, PREFIX + i))
+                        sound(new ResourceLocation(CrinkleMod.MODID, String.format("%s%02d", PREFIX, i)))
                                 .preload()
                 ));
         this.add("crinkle_sound", definition()
