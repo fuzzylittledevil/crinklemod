@@ -19,6 +19,7 @@ public class CrinkleDataGeneration {
         generator.addProvider(event.includeServer(), blockTags);
         generator.addProvider(event.includeClient(), new CrinkleItemModelProvider(packOutput, event.getExistingFileHelper()));
         generator.addProvider(event.includeServer(), new CrinkleRecipes(packOutput));
+        generator.addProvider(event.includeClient(), new CrinkleSoundProvider(packOutput, event.getExistingFileHelper()));
         generator.addProvider(event.includeServer(), new ForgeAdvancementProvider(packOutput,
                 lookupProvider,
                 event.getExistingFileHelper(),

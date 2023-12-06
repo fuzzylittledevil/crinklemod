@@ -49,7 +49,6 @@ public class Undergarment {
             }
             return i;
         }
-        LOGGER.debug("No undergarment found for player: {}", player);
         return ItemStack.EMPTY;
     }
 

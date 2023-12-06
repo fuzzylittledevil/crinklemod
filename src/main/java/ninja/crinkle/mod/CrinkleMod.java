@@ -18,6 +18,7 @@ import ninja.crinkle.mod.items.CrinkleItems;
 import ninja.crinkle.mod.items.CrinkleTabs;
 import ninja.crinkle.mod.menus.CrinkleMenus;
 import ninja.crinkle.mod.network.CrinkleChannel;
+import ninja.crinkle.mod.sounds.CrinkleSounds;
 import software.bernie.geckolib.GeckoLib;
 
 /**
@@ -48,6 +49,7 @@ public class CrinkleMod {
 
         // Common
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+        CrinkleSounds.register(modEventBus);
         CrinkleBlocks.register(modEventBus);
         CrinkleItems.register(modEventBus);
         CrinkleTabs.register(modEventBus);

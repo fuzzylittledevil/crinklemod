@@ -1,0 +1,31 @@
+{
+  "crinkle_sound": {
+    "sounds": [
+      {
+        "name": "crinklemod:crinkle00",
+        "preload": true
+      },
+      {
+        "name": "crinklemod:crinkle01",
+        "preload": true
+      },
+      {
+        "name": "crinklemod:crinkle02",
+        "preload": true
+      },
+      {
+        "name": "crinklemod:crinkle03",
+        "preload": true
+      },
+      {
+        "name": "crinklemod:crinkle04",
+        "preload": true
+      },
+      {
+        "name": "crinklemod:crinkle05",
+        "preload": true
+      }
+    ],
+    "subtitle": "sound.crinklemod.crinkle_sound.subtitle"
+  }
+}

@@ -5,6 +5,8 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.network.PacketDistributor;
@@ -73,6 +75,8 @@ public class CrinkleBusEvents {
             } else {
                 undergarment.modifyLiquids(event.getAmount());
             }
+        } else {
+            event.getPlayer().playSound(SoundEvents.BOTTLE_EMPTY, 0.5F, (float) (0.5 + Math.random()));
         }
     }
 
@@ -96,6 +100,8 @@ public class CrinkleBusEvents {
             } else {
                 undergarment.modifySolids(event.getAmount());
             }
+        } else {
+            event.getPlayer().playSound(SoundEvents.CHICKEN_EGG, 0.5F, (float)(0.5 + Math.random()));
         }
     }
 

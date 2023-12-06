@@ -7,11 +7,31 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
+import net.minecraft.client.player.Input;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec2;
+import net.minecraftforge.client.event.MovementInputUpdateEvent;
 import net.minecraftforge.client.event.ScreenEvent;
+import net.minecraftforge.client.event.sound.PlaySoundEvent;
+import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.entity.EntityEvent;
+import net.minecraftforge.event.entity.living.LivingEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import ninja.crinkle.mod.client.ui.screens.CrinkleScreen;
+import ninja.crinkle.mod.sounds.CrinkleSounds;
+import ninja.crinkle.mod.undergarment.Undergarment;
+import ninja.crinkle.mod.util.ClientUtil;
 import org.slf4j.Logger;
+
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Random;
 
 public class CrinkleForgeBusClientEvents {
     private static final Logger LOGGER = LogUtils.getLogger();
@@ -31,6 +51,21 @@ public class CrinkleForgeBusClientEvents {
                     .bounds(leftPos, topPos, width, height)
                     .build();
             event.addListener(button);
+        }
+    }
+
+    @SubscribeEvent
+    public void handleCrinkles(PlaySoundEvent event) {
+        Minecraft minecraft = ClientUtil.getMinecraft();
+        if (minecraft == null || minecraft.level == null || minecraft.player == null || event.getSound() == null)
+            return;
+        BlockState blockState = minecraft.level.getBlockState(minecraft.player.blockPosition().below());
+        if (blockState.getSoundType().getStepSound().getLocation().equals(event.getSound().getLocation())
+                && Undergarment.getWornUndergarment(minecraft.player) != ItemStack.EMPTY) {
+            Random random = new Random();
+            minecraft.player.playSound(CrinkleSounds.CRINKLE_SOUND.get(),
+                    0.5f + random.nextFloat(0.5f),
+                    0.75f + random.nextFloat(0.5f));
         }
     }
 }

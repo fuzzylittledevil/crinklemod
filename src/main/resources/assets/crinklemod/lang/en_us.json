@@ -93,5 +93,6 @@
   "setting.crinklemod.metabolism.bowel_accident_amount_percent.label": "Amount %",
   "setting.crinklemod.metabolism.bowel_accident_amount_percent.tooltip": "The percentage of your bowels to lose when having an accident.",
   "setting.crinklemod.metabolism.bladder_accident_saves.label": "Accident Saves",
-  "setting.crinklemod.metabolism.bladder_accident_saves.tooltip": "The number of times you've avoided having an accident."
+  "setting.crinklemod.metabolism.bladder_accident_saves.tooltip": "The number of times you've avoided having an accident.",
+  "sound.crinklemod.crinkle_sound.subtitle": "*crinkle*"
 }
