@@ -2,7 +2,9 @@ package ninja.crinkle.mod.config;
 
 import com.electronwill.nightconfig.core.Config;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.food.Foods;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModLoadingContext;
@@ -36,6 +38,9 @@ public class ConsumableConfig {
         public final int liquids;
 
         public ConsumableData(String name, int solids, int liquids) {
+            if (!name.contains(":")) {
+                name = "minecraft:" + name;
+            }
             this.name = name;
             this.solids = solids;
             this.liquids = liquids;
@@ -58,12 +63,50 @@ public class ConsumableConfig {
     private static final String CONFIG_FILE_NAME = String.format("%s-consumables.toml", CrinkleMod.MODID);
     private static final ForgeConfigSpec.Builder BUILDER = new ForgeConfigSpec.Builder();
     private static final ForgeConfigSpec.ConfigValue<List<? extends Config>> CONSUMABLE_ITEMS = BUILDER
-            .comment("A list of consumables and their associated data.")
+            .comment("A list of consumables and their associated data. Name format: \"modid:item_id\"")
             .defineListAllowEmpty("consumable",
                     List.of(
-                            new ConsumableData("minecraft:potato", 200, 25).toConfig(),
-                            new ConsumableData("minecraft:apple", 175, 50).toConfig(),
-                            new ConsumableData("minecraft:milk_bucket", 200, 800).toConfig()
+                            // Add liquids to these foods
+                            new ConsumableData(Items.APPLE.toString(),
+                                    Foods.APPLE.getNutrition() * 20,
+                                    Foods.APPLE.getNutrition() * 10).toConfig(),
+                            new ConsumableData(Items.GOLDEN_APPLE.toString(),
+                                    Foods.GOLDEN_APPLE.getNutrition() * 20,
+                                    Foods.GOLDEN_APPLE.getNutrition() * 10).toConfig(),
+                            new ConsumableData(Items.ENCHANTED_GOLDEN_APPLE.toString(),
+                                    Foods.ENCHANTED_GOLDEN_APPLE.getNutrition() * 20,
+                                    Foods.ENCHANTED_GOLDEN_APPLE.getNutrition() * 10).toConfig(),
+                            new ConsumableData(Items.MELON_SLICE.toString(),
+                                    Foods.MELON_SLICE.getNutrition() * 20,
+                                    Foods.MELON_SLICE.getNutrition() * 15).toConfig(),
+                            new ConsumableData(Items.SWEET_BERRIES.toString(),
+                                    Foods.SWEET_BERRIES.getNutrition() * 20,
+                                    Foods.SWEET_BERRIES.getNutrition() * 15).toConfig(),
+                            new ConsumableData(Items.BEETROOT_SOUP.toString(),
+                                    Foods.BEETROOT_SOUP.getNutrition() * 20,
+                                    Foods.BEETROOT_SOUP.getNutrition() * 25).toConfig(),
+                            new ConsumableData(Items.CHORUS_FRUIT.toString(),
+                                    Foods.CHORUS_FRUIT.getNutrition() * 20,
+                                    Foods.CHORUS_FRUIT.getNutrition() * 15).toConfig(),
+
+                            // Fewer liquids for these dry foods
+                            new ConsumableData(Items.BREAD.toString(),
+                                    Foods.BREAD.getNutrition() * 20,
+                                    Foods.BREAD.getNutrition() * 2).toConfig(),
+                            new ConsumableData(Items.COOKIE.toString(),
+                                    Foods.COOKIE.getNutrition() * 20,
+                                    Foods.COOKIE.getNutrition() * 2).toConfig(),
+                            new ConsumableData(Items.PUMPKIN_PIE.toString(),
+                                    Foods.PUMPKIN_PIE.getNutrition() * 20,
+                                    Foods.PUMPKIN_PIE.getNutrition() * 2).toConfig(),
+                            new ConsumableData(Items.DRIED_KELP.toString(),
+                                    Foods.DRIED_KELP.getNutrition() * 20,
+                                    0).toConfig(),
+
+
+                            // Milk does a metabolism good.
+                            new ConsumableData(Items.MILK_BUCKET.toString(),
+                                    200, 800).toConfig()
                     ),
                     ConfigUtil.getItemNameValidator("name")
             );

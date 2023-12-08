@@ -311,8 +311,8 @@ public class Metabolism implements ServerUpdater {
             modifySolids(ConsumableConfig.consumables.get(item.getItem()).solids);
         } else {
             Optional.ofNullable(item.getFoodProperties(player)).ifPresent(foodProperties -> {
-                modifySolids(foodProperties.getNutrition());
-                modifyLiquids((int) (foodProperties.getNutrition() / 4f));
+                modifySolids(foodProperties.getNutrition() * 20);
+                modifyLiquids(foodProperties.getNutrition() * 5);
             });
         }
         syncClient();
