@@ -22,6 +22,14 @@ public class ThemedIconButton extends ThemedButton {
         this.setLabel(null);
     }
 
+    public static Builder builder(Theme theme, Icons icon) {
+        return new Builder(theme, icon);
+    }
+
+    public static ThemedButton.Builder builder(Theme ignoredTheme) {
+        throw new NotImplementedException("Use ThemedIconButton.builder(Theme theme, Icon icon) instead");
+    }
+
     @Override
     protected void renderWidget(@NotNull GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
         super.renderWidget(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
@@ -33,24 +41,16 @@ public class ThemedIconButton extends ThemedButton {
         }
     }
 
-    public static Builder builder(Theme theme, Icons icon) {
-        return new Builder(theme, icon);
-    }
-
-    public static ThemedButton.Builder builder(Theme ignoredTheme) {
-        throw new NotImplementedException("Use ThemedIconButton.builder(Theme theme, Icon icon) instead");
-    }
-
     public static class Builder {
+        private final Theme theme;
+        private final Icons icon;
         private int x;
         private int y;
         private int width;
         private int height;
         private Component label;
-        private final Theme theme;
         private Consumer<AbstractThemedButton> onPress;
         private Predicate<AbstractThemedButton> activePredicate;
-        private final Icons icon;
 
         public Builder(Theme theme, Icons icon) {
             this.theme = theme;
@@ -75,6 +75,13 @@ public class ThemedIconButton extends ThemedButton {
         public Builder height(int height) {
             this.height = height;
             return this;
+        }
+
+        public Builder bounds(int x, int y, int width, int height) {
+            return this.x(x)
+                    .y(y)
+                    .width(width)
+                    .height(height);
         }
 
         public Builder label(Component label) {

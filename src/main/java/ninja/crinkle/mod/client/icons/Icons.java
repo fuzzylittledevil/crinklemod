@@ -7,10 +7,22 @@ import ninja.crinkle.mod.client.textures.SpriteLoaderType;
 import ninja.crinkle.mod.client.textures.Textures;
 
 public enum Icons {
-    RESET(new ResourceLocation(CrinkleMod.MODID, "gui/icons/reset")),
-    WRENCH(new ResourceLocation(CrinkleMod.MODID, "gui/icons/wrench")),
+    BACK(new ResourceLocation(CrinkleMod.MODID, "gui/icons/back")),
+    BLADDER(new ResourceLocation(CrinkleMod.MODID, "gui/icons/bladder")),
+    DOWN(new ResourceLocation(CrinkleMod.MODID, "gui/icons/down")),
     GEAR(new ResourceLocation(CrinkleMod.MODID, "gui/icons/gear")),
-    DOWN_ARROW(new ResourceLocation(CrinkleMod.MODID, "gui/icons/down"));
+    MESSINESS(new ResourceLocation(CrinkleMod.MODID, "gui/icons/messiness")),
+    RESET(new ResourceLocation(CrinkleMod.MODID, "gui/icons/reset")),
+    SAVE(new ResourceLocation(CrinkleMod.MODID, "gui/icons/save")),
+    SIPPY_CUP(new ResourceLocation(CrinkleMod.MODID, "gui/icons/sippycup")),
+    STEM_GLASS(new ResourceLocation(CrinkleMod.MODID, "gui/icons/stemglass")),
+    TUMMY(new ResourceLocation(CrinkleMod.MODID, "gui/icons/tummy")),
+    WARNING1(new ResourceLocation(CrinkleMod.MODID, "gui/icons/warning1")),
+    WARNING2(new ResourceLocation(CrinkleMod.MODID, "gui/icons/warning2")),
+    WARNING3(new ResourceLocation(CrinkleMod.MODID, "gui/icons/warning3")),
+    WETNESS(new ResourceLocation(CrinkleMod.MODID, "gui/icons/wetness")),
+    WRENCH(new ResourceLocation(CrinkleMod.MODID, "gui/icons/wrench"))
+    ;
 
 
     private final ResourceLocation location;

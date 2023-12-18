@@ -4,7 +4,6 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -15,9 +14,6 @@ import ninja.crinkle.mod.api.ServerUpdater;
 import ninja.crinkle.mod.client.ClientHooks;
 import ninja.crinkle.mod.client.color.Color;
 import ninja.crinkle.mod.client.icons.Icons;
-import ninja.crinkle.mod.client.models.DiaperArmorModel;
-import ninja.crinkle.mod.client.textures.Textures;
-import ninja.crinkle.mod.client.textures.generators.DiaperTextureGenerator;
 import ninja.crinkle.mod.client.ui.menus.AbstractMenu;
 import ninja.crinkle.mod.client.ui.menus.ConfigMenu;
 import ninja.crinkle.mod.client.ui.menus.status.*;
@@ -120,7 +116,7 @@ public class CrinkleScreen extends FlexContainerScreen {
                                     .gradientEndColor(BLADDER_COLOR)
                                     .gradientBackgroundColor(Color.BLACK.color())
                                     .action(new EntryAction(
-                                            Icons.DOWN_ARROW,
+                                            Icons.DOWN,
                                             (s, p) -> {
                                                 int amount = s.getInt(p);
                                                 if (amount == 0) return;
@@ -144,7 +140,7 @@ public class CrinkleScreen extends FlexContainerScreen {
                                     .gradientEndColor(BOWEL_COLOR)
                                     .gradientBackgroundColor(Color.BLACK.color())
                                     .action(new EntryAction(
-                                            Icons.DOWN_ARROW,
+                                            Icons.DOWN,
                                             (s, p) -> {
                                                 int amount = s.getInt(p);
                                                 if (amount == 0) return;

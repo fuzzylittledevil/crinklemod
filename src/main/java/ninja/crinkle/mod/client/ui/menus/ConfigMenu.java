@@ -1,15 +1,16 @@
 package ninja.crinkle.mod.client.ui.menus;
 
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import ninja.crinkle.mod.api.ServerUpdater;
+import ninja.crinkle.mod.client.icons.Icons;
 import ninja.crinkle.mod.client.ui.screens.FlexContainerScreen;
 import ninja.crinkle.mod.client.ui.widgets.Label;
+import ninja.crinkle.mod.client.ui.widgets.themes.ThemedIconButton;
 import ninja.crinkle.mod.settings.Setting;
 
 import java.util.*;
@@ -19,13 +20,10 @@ import java.util.function.Supplier;
 public class ConfigMenu<E extends ICapabilityProvider> extends AbstractMenu {
 
     private static final Component UNSAVED_CHANGES_LABEL = Component.translatable("gui.crinklemod.shared.unsaved_changes.label");
-    private static final Component SAVE_BUTTON = Component.translatable("gui.crinklemod.shared.save_button.title");
-    private static final Component RESET_BUTTON = Component.translatable("gui.crinklemod.shared.reset_button.title");
-    private static final Component BACK_BUTTON = Component.translatable("gui.crinklemod.shared.back_button.title");
     private static final int CHANGED_TEXT_COLOR = 0xff008080;
     private static final int INVALID_TEXT_COLOR = 0xff800000;
     private static final int DEFAULT_EDIT_BOX_TEXT_COLOR = 0xffffffff;
-    private static final int BUTTON_WIDTH = 40;
+    private static final int BUTTON_SIZE = 20;
     private static final int EDIT_BOX_WIDTH = 80;
     private final Component title;
     private final Consumer<AbstractMenu> onClose;
@@ -34,7 +32,7 @@ public class ConfigMenu<E extends ICapabilityProvider> extends AbstractMenu {
     private final Map<Entry<?>, EditBox> editBoxes = new HashMap<>();
     private final Map<Entry<?>, Label> labels = new HashMap<>();
     private Label notificationLabel;
-    private Button saveButton;
+    private ThemedIconButton saveButton;
 
     protected ConfigMenu(Builder<E> builder, Screen screen) {
         super(screen, builder.leftPos, builder.topPos, builder.spacer, builder.lineSpacing, builder.margin, builder.lineHeight,
@@ -115,7 +113,7 @@ public class ConfigMenu<E extends ICapabilityProvider> extends AbstractMenu {
                 .color(0xffffffff)
                 .build());
         notificationLabel = Label.builder(getFont(), Component.empty())
-                .pos(getLeftPos() + getMargin(), getTopPos() + getLineYOffset(lastLineNumber + 2))
+                .pos(getLeftPos() + getMargin(), getTopPos() + getLineYOffset(lastLineNumber + 2) + getLineSpacing())
                 .wrapWidth(150)
                 .dropShadow(false)
                 .build();
@@ -140,7 +138,9 @@ public class ConfigMenu<E extends ICapabilityProvider> extends AbstractMenu {
             addWidget(editBox);
             editBoxes.put(c, editBox);
         });
-        saveButton = Button.builder(SAVE_BUTTON, b -> {
+
+        saveButton = ThemedIconButton.builder(getTheme(), Icons.SAVE)
+                .onPress(b -> {
                     clearNotifications();
                     configMenuEntries.forEach(c -> {
                         if (!editBoxes.get(c).getValue().isEmpty()) {
@@ -149,10 +149,12 @@ public class ConfigMenu<E extends ICapabilityProvider> extends AbstractMenu {
                         }
                     });
                 })
-                .bounds(getLeftPos() + getMargin(), getTopPos() + getLineYOffset(lastLineNumber + 1), BUTTON_WIDTH, getLineHeight())
+                .bounds(getLeftPos() + getMargin(), getTopPos() + getLineYOffset(lastLineNumber + 1),
+                        BUTTON_SIZE, BUTTON_SIZE)
                 .build();
         addWidget(saveButton);
-        addWidget(Button.builder(RESET_BUTTON, b -> {
+        addWidget(ThemedIconButton.builder(getTheme(), Icons.RESET)
+                .onPress(b -> {
                     clearNotifications();
                     configMenuEntries.forEach(c -> {
                         c.setting().set(entitySupplier.get(), c.setting().getDefault(entitySupplier.get()));
@@ -160,13 +162,16 @@ public class ConfigMenu<E extends ICapabilityProvider> extends AbstractMenu {
                         c.setting().syncer(entitySupplier.get()).ifPresent(ServerUpdater::syncServer);
                     });
                 })
-                .bounds(getLeftPos() + getMargin() + BUTTON_WIDTH + getSpacer(), getTopPos() + getLineYOffset(lastLineNumber + 1), BUTTON_WIDTH, getLineHeight())
+                .bounds(getLeftPos() + getMargin() + BUTTON_SIZE + getSpacer(),
+                        getTopPos() + getLineYOffset(lastLineNumber + 1), BUTTON_SIZE, BUTTON_SIZE)
                 .build());
-        addWidget(Button.builder(BACK_BUTTON, b -> {
+        addWidget(ThemedIconButton.builder(getTheme(), Icons.BACK)
+                .onPress(b -> {
                     clearNotifications();
                     onClose.accept(this);
                 })
-                .bounds(getLeftPos() + getMargin() + (BUTTON_WIDTH * 2) + (getSpacer() * 2), getTopPos() + getLineYOffset(lastLineNumber + 1), BUTTON_WIDTH, getLineHeight())
+                .bounds(getLeftPos() + getMargin() + (BUTTON_SIZE * 2) + (getSpacer() * 2),
+                        getTopPos() + getLineYOffset(lastLineNumber + 1), BUTTON_SIZE, BUTTON_SIZE)
                 .build());
     }
 
