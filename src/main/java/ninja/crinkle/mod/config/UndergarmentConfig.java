@@ -45,10 +45,10 @@ public class UndergarmentConfig {
     private static final ForgeConfigSpec.Builder BUILDER = new ForgeConfigSpec.Builder();
     private static final ForgeConfigSpec.ConfigValue<List<? extends Config>> UNDERGARMENTS = BUILDER
             .comment("A list of undergarments and their associated data.")
-            .defineListAllowEmpty("undergarment",
+            .defineList("undergarment",
                     List.of(
-                            new UndergarmentData("minecraft:leather_leggings", 100, 100).toConfig(),
-                            new UndergarmentData(CrinkleMod.MODID + ":diaper", 2000, 2000).toConfig()
+                            new UndergarmentData(CrinkleMod.MODID + ":diaper", 1000, 2000).toConfig(),
+                            new UndergarmentData(CrinkleMod.MODID + ":diaper_little_pawz", 1000, 2000).toConfig()
                     ),
                     ConfigUtil.getItemNameValidator("name")
             );

@@ -8,6 +8,7 @@ import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.registries.RegistryObject;
 import ninja.crinkle.mod.CrinkleMod;
 import ninja.crinkle.mod.items.CrinkleItems;
+import ninja.crinkle.mod.items.custom.DiaperArmorItem;
 
 public class CrinkleItemModelProvider extends ItemModelProvider {
     public CrinkleItemModelProvider(PackOutput output, ExistingFileHelper existingFileHelper) {
@@ -16,7 +17,8 @@ public class CrinkleItemModelProvider extends ItemModelProvider {
 
     @Override
     protected void registerModels() {
-        simpleArmorItem(CrinkleItems.DIAPER);
+        simpleArmorItem(CrinkleItems.DIAPER_PLAIN);
+        simpleArmorItem(CrinkleItems.DIAPER_LITTLE_PAWZ);
     }
 
     private void simpleArmorItem(RegistryObject<Item> armor) {

@@ -18,7 +18,8 @@ public class CrinkleTabs {
                     .icon(() -> new ItemStack(CrinkleItems.DUNNY_BLOCK_ITEM.get()))
                     .displayItems((p, o) -> {
                         o.accept(CrinkleItems.DUNNY_BLOCK_ITEM.get());
-                        o.accept(CrinkleItems.DIAPER.get());
+                        o.accept(CrinkleItems.DIAPER_PLAIN.get());
+                        o.accept(CrinkleItems.DIAPER_LITTLE_PAWZ.get());
                     })
                     .title(Component.translatable("tab.crinklemod.crinkle"))
                     .build());

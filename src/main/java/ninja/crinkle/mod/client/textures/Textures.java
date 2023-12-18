@@ -30,17 +30,29 @@ public class Textures {
             "armor/diaper_plain",
             new DiaperTextureGenerator(
                     Undergarment::getLiquidsPercent,
-                    Color.of(Undergarment.LIQUIDS_COLOR),
+                    DiaperTextureGenerator.WET_COLORS,
                     DiaperTextureGenerator.Part.FRONT_TOP,
                     DiaperTextureGenerator.Part.FRONT_BOTTOM,
                     DiaperTextureGenerator.Part.BOTTOM)
                     .andThen(new DiaperTextureGenerator(
                             Undergarment::getSolidsPercent,
-                            Color.of(Undergarment.SOLIDS_COLOR),
+                            DiaperTextureGenerator.MESS_COLORS,
                             DiaperTextureGenerator.Part.BACK_TOP,
                             DiaperTextureGenerator.Part.BACK_BOTTOM)
-                    )
-    );
+                    ),
+            "armor/diaper_little_pawz",
+            new DiaperTextureGenerator(
+                    Undergarment::getLiquidsPercent,
+                    DiaperTextureGenerator.WET_COLORS,
+                    DiaperTextureGenerator.Part.FRONT_TOP,
+                    DiaperTextureGenerator.Part.FRONT_BOTTOM,
+                    DiaperTextureGenerator.Part.BOTTOM)
+                    .andThen(new DiaperTextureGenerator(
+                            Undergarment::getSolidsPercent,
+                            DiaperTextureGenerator.MESS_COLORS,
+                            DiaperTextureGenerator.Part.BACK_TOP,
+                            DiaperTextureGenerator.Part.BACK_BOTTOM)
+                    ));
     private static Textures INSTANCE;
     private final Map<SpriteLoaderType, CrinkleSpriteLoader> loaders = new EnumMap<>(SpriteLoaderType.class);
     private final Map<String, ResourceLocation> dynamicTextures = new HashMap<>();

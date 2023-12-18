@@ -277,12 +277,6 @@ public class CrinkleScreen extends FlexContainerScreen {
     @Override
     public void render(@NotNull GuiGraphics graphics, int pMouseX, int pMouseY, float pPartialTick) {
         super.render(graphics, pMouseX, pMouseY, pPartialTick);
-        ItemStack wornItem = Undergarment.getWornUndergarment(Objects.requireNonNull(getMinecraft().player));
-        Undergarment u = Undergarment.of(wornItem);
-        DiaperTextureGenerator.Data data = new DiaperTextureGenerator.Data(wornItem.getDescriptionId(), new DiaperArmorModel(), u);
-        ResourceLocation original = new ResourceLocation(CrinkleMod.MODID, "armor/diaper_plain");
-        ResourceLocation loc = Textures.getInstance().getTexture(original, data);
-        graphics.blit(loc, 0, 0, 0, 0, 256, 256, 256, 256);
     }
 
     @Override

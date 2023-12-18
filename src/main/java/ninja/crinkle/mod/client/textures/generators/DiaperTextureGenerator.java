@@ -11,17 +11,34 @@ import org.slf4j.Logger;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.cache.object.GeoVertex;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.EnumSet;
-import java.util.List;
+import java.util.*;
 import java.util.function.Function;
 
+/**
+ * The DiaperTextureGenerator class is responsible for generating diaper textures based on the fullness of the diaper.
+ * It implements the TextureGenerator interface and specifically generates textures for Undergarment objects.
+ */
 public class DiaperTextureGenerator implements TextureGenerator<Undergarment> {
     private static final Logger LOGGER = LogUtils.getLogger();
     private final EnumSet<Part> parts = EnumSet.noneOf(Part.class);
-    private final Color fillColor;
     private final Function<Undergarment, Double> percentFunction;
+    private final Map<Integer, Color> fillColors;
+    public static final Map<Integer, Color> WET_COLORS = Map.of(
+            0, Color.TRANSPARENT,
+            20, Color.of("#f6f5af"),
+            40, Color.of("#f9f7b8"),
+            60, Color.of("#fdfcc2"),
+            80, Color.of("#fefdcb"),
+            100, Color.of("#fefdda")
+    );
+    public static final Map<Integer, Color> MESS_COLORS = Map.of(
+            0, Color.TRANSPARENT,
+            20, Color.of("#c2b98e"),
+            40, Color.of("#c9c19a"),
+            60, Color.of("#d0c8a2"),
+            80, Color.of("#e2d9b1"),
+            100, Color.of("#f4edcb")
+    );
 
     public enum Part {
         FRONT_TOP("front", 1.0),
@@ -59,10 +76,11 @@ public class DiaperTextureGenerator implements TextureGenerator<Undergarment> {
         }
     }
 
-    public DiaperTextureGenerator(Function<Undergarment, Double> percentFunction, Color fillColor, Part... parts) {
+    public DiaperTextureGenerator(Function<Undergarment, Double> percentFunction, Map<Integer, Color> fillColors,
+                                  Part... parts) {
         this.percentFunction = percentFunction;
         this.parts.addAll(List.of(parts));
-        this.fillColor = fillColor;
+        this.fillColors = fillColors;
     }
 
 
@@ -72,8 +90,9 @@ public class DiaperTextureGenerator implements TextureGenerator<Undergarment> {
         image.copyFrom(pImage);
         Data data = (Data) pData;
         double fullness = percentFunction.apply(data.undergarment());
-        BakedGeoModel model = data.model().getBakedModel(data.model().getModelResource(null));
         if (fullness == 0) return image;
+        BakedGeoModel model = data.model().getBakedModel(data.model().getModelResource(null));
+        Color fillColor = fillColors.get(MathUtil.twenties((int) (fullness * 100)));
         parts.forEach(part -> model.getBone(part.getBone()).ifPresentOrElse(b -> b.getCubes().forEach(c ->
                 List.of(c.quads()).forEach(f -> {
                     List<GeoVertex> vertices = new ArrayList<>(List.of(f.vertices()));
@@ -87,8 +106,7 @@ public class DiaperTextureGenerator implements TextureGenerator<Undergarment> {
                     int height = (int) ((v2.texV() - v1.texV()) * image.getHeight());
                     for (int i = 0; i < width; i++) {
                         for (int j = 0; j < height; j++) {
-                            image.blendPixel(x + i, y + j, fillColor.brightness(part.getBrightness())
-                                    .withAlpha(fullness).ABGR());
+                            image.blendPixel(x + i, y + j, fillColor.withAlpha(0.75).ABGR());
                         }
                     }
                 })), () -> LOGGER.warn("Could not find bone: {}", part.getBone())));

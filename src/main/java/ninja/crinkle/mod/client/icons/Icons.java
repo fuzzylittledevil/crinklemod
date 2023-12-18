@@ -12,6 +12,7 @@ public enum Icons {
     GEAR(new ResourceLocation(CrinkleMod.MODID, "gui/icons/gear")),
     DOWN_ARROW(new ResourceLocation(CrinkleMod.MODID, "gui/icons/down"));
 
+
     private final ResourceLocation location;
 
     Icons(ResourceLocation location) {

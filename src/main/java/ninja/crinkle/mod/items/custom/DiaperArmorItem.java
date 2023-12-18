@@ -1,6 +1,5 @@
 package ninja.crinkle.mod.items.custom;
 
-import com.mojang.logging.LogUtils;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -10,7 +9,6 @@ import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
-import ninja.crinkle.mod.CrinkleMod;
 import ninja.crinkle.mod.client.models.DiaperArmorModel;
 import ninja.crinkle.mod.client.renderers.DiaperArmorRenderer;
 import ninja.crinkle.mod.client.textures.Textures;
@@ -18,7 +16,6 @@ import ninja.crinkle.mod.client.textures.generators.DiaperTextureGenerator;
 import ninja.crinkle.mod.undergarment.Undergarment;
 import ninja.crinkle.mod.util.MathUtil;
 import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
 import software.bernie.geckolib.animatable.GeoItem;
 import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
@@ -29,16 +26,19 @@ import software.bernie.geckolib.core.animation.RawAnimation;
 import software.bernie.geckolib.core.object.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
+import java.util.Optional;
 import java.util.function.Consumer;
 
 public class DiaperArmorItem extends ArmorItem implements GeoItem {
-    private static final Logger LOGGER = LogUtils.getLogger();
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
-    private final ResourceLocation defaultTexture = new ResourceLocation(CrinkleMod.MODID, "armor/diaper_plain");
-    private ResourceLocation texture = defaultTexture;
+    private final ResourceLocation defaultTexture;
+    private final DiaperVariant variant;
+    private ResourceLocation texture;
 
-    public DiaperArmorItem(ArmorMaterial pMaterial, Type pType, Properties pProperties) {
-        super(pMaterial, pType, pProperties.rarity(Rarity.EPIC).durability(1000));
+    public DiaperArmorItem(ArmorMaterial pMaterial, @NotNull DiaperVariant variant, @NotNull Properties pProperties) {
+        super(pMaterial, ArmorItem.Type.LEGGINGS, pProperties.rarity(Rarity.EPIC).durability(1000));
+        this.defaultTexture = variant.getTexture();
+        this.variant = variant;
     }
 
     @Override
@@ -88,6 +88,10 @@ public class DiaperArmorItem extends ArmorItem implements GeoItem {
     }
 
     public ResourceLocation getTexture() {
-        return texture;
+        return Optional.ofNullable(texture).orElse(defaultTexture);
+    }
+
+    public DiaperVariant getVariant() {
+        return variant;
     }
 }
