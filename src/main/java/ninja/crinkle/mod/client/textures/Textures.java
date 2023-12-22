@@ -1,7 +1,6 @@
 package ninja.crinkle.mod.client.textures;
 
 import com.mojang.blaze3d.platform.NativeImage;
-import com.mojang.logging.LogUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -15,11 +14,11 @@ import ninja.crinkle.mod.client.textures.generators.TextureGenerator;
 import ninja.crinkle.mod.undergarment.Undergarment;
 import ninja.crinkle.mod.util.ClientUtil;
 import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
 
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class Textures {
     private static final Map<String, TextureGenerator<?>> textureGenerators = Map.of(
@@ -31,12 +30,14 @@ public class Textures {
             new DiaperTextureGenerator(
                     Undergarment::getLiquidsPercent,
                     DiaperTextureGenerator.WET_COLORS,
+                    Set.of(Color.WHITE),
                     DiaperTextureGenerator.Part.FRONT_TOP,
                     DiaperTextureGenerator.Part.FRONT_BOTTOM,
                     DiaperTextureGenerator.Part.BOTTOM)
                     .andThen(new DiaperTextureGenerator(
                             Undergarment::getSolidsPercent,
                             DiaperTextureGenerator.MESS_COLORS,
+                            Set.of(Color.WHITE),
                             DiaperTextureGenerator.Part.BACK_TOP,
                             DiaperTextureGenerator.Part.BACK_BOTTOM)
                     ),
@@ -44,12 +45,18 @@ public class Textures {
             new DiaperTextureGenerator(
                     Undergarment::getLiquidsPercent,
                     DiaperTextureGenerator.WET_COLORS,
+                    Set.of(Color.WHITE,
+                            Color.of(0xFFDFDFE0),
+                            Color.of(0xFFBDBDBD)),
                     DiaperTextureGenerator.Part.FRONT_TOP,
                     DiaperTextureGenerator.Part.FRONT_BOTTOM,
                     DiaperTextureGenerator.Part.BOTTOM)
                     .andThen(new DiaperTextureGenerator(
                             Undergarment::getSolidsPercent,
                             DiaperTextureGenerator.MESS_COLORS,
+                            Set.of(Color.WHITE,
+                                    Color.of(0xFFDFDFE0),
+                                    Color.of(0xFFBDBDBD)),
                             DiaperTextureGenerator.Part.BACK_TOP,
                             DiaperTextureGenerator.Part.BACK_BOTTOM)
                     ));
@@ -72,17 +79,17 @@ public class Textures {
         return INSTANCE;
     }
 
-    public void releaseAll() {
-        dynamicTextures.values().forEach(ClientUtil.getMinecraft().getTextureManager()::release);
-        dynamicTextures.clear();
-    }
-
-    public void release(String pName) {
-        ResourceLocation location = dynamicTextures.remove(pName);
-        if (location != null) {
-            ClientUtil.getMinecraft().getTextureManager().release(location);
-        }
-    }
+//    public void releaseAll() {
+//        dynamicTextures.values().forEach(ClientUtil.getMinecraft().getTextureManager()::release);
+//        dynamicTextures.clear();
+//    }
+//
+//    public void release(String pName) {
+//        ResourceLocation location = dynamicTextures.remove(pName);
+//        if (location != null) {
+//            ClientUtil.getMinecraft().getTextureManager().release(location);
+//        }
+//    }
 
     public CrinkleSpriteLoader getSpriteLoader(SpriteLoaderType pType) {
         return loaders.get(pType);

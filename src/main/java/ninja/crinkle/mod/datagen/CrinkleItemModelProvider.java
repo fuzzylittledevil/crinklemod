@@ -8,7 +8,6 @@ import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.registries.RegistryObject;
 import ninja.crinkle.mod.CrinkleMod;
 import ninja.crinkle.mod.items.CrinkleItems;
-import ninja.crinkle.mod.items.custom.DiaperArmorItem;
 
 public class CrinkleItemModelProvider extends ItemModelProvider {
     public CrinkleItemModelProvider(PackOutput output, ExistingFileHelper existingFileHelper) {

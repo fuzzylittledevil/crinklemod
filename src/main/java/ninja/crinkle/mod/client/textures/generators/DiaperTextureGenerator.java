@@ -6,6 +6,7 @@ import ninja.crinkle.mod.client.color.Color;
 import ninja.crinkle.mod.client.models.DiaperArmorModel;
 import ninja.crinkle.mod.undergarment.Undergarment;
 import ninja.crinkle.mod.util.MathUtil;
+import org.apache.logging.log4j.util.TriConsumer;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
@@ -23,6 +24,7 @@ public class DiaperTextureGenerator implements TextureGenerator<Undergarment> {
     private final EnumSet<Part> parts = EnumSet.noneOf(Part.class);
     private final Function<Undergarment, Double> percentFunction;
     private final Map<Integer, Color> fillColors;
+    private final Set<Color> toReplace;
     public static final Map<Integer, Color> WET_COLORS = Map.of(
             0, Color.TRANSPARENT,
             20, Color.of("#f6f5af"),
@@ -41,28 +43,23 @@ public class DiaperTextureGenerator implements TextureGenerator<Undergarment> {
     );
 
     public enum Part {
-        FRONT_TOP("front", 1.0),
-        FRONT_BOTTOM("front_bottom", 0.95),
-        BACK_TOP("back", 1.0),
-        BACK_BOTTOM("back_bottom", 0.95),
-        BOTTOM("bottom", 0.9),
+        FRONT_TOP("front"),
+        FRONT_BOTTOM("front_bottom"),
+        BACK_TOP("back"),
+        BACK_BOTTOM("back_bottom"),
+        BOTTOM("bottom"),
         ;
 
         private final String bone;
-        private final double brightness;
 
-        Part(String pBone, double brightness) {
+        Part(String pBone) {
             this.bone = pBone;
-            this.brightness = brightness;
         }
 
         public String getBone() {
             return bone;
         }
 
-        public double getBrightness() {
-            return brightness;
-        }
     }
 
     public record Data(String name, DiaperArmorModel model, Undergarment undergarment) implements TextureData {
@@ -77,22 +74,16 @@ public class DiaperTextureGenerator implements TextureGenerator<Undergarment> {
     }
 
     public DiaperTextureGenerator(Function<Undergarment, Double> percentFunction, Map<Integer, Color> fillColors,
-                                  Part... parts) {
+                                  Set<Color> toReplace, Part... parts) {
         this.percentFunction = percentFunction;
         this.parts.addAll(List.of(parts));
         this.fillColors = fillColors;
+        this.toReplace = toReplace;
     }
 
-
-    @Override
-    public @NotNull NativeImage apply(@NotNull NativeImage pImage, @NotNull TextureData pData) {
-        NativeImage image = new NativeImage(pImage.getWidth(), pImage.getHeight(), false);
-        image.copyFrom(pImage);
-        Data data = (Data) pData;
-        double fullness = percentFunction.apply(data.undergarment());
-        if (fullness == 0) return image;
-        BakedGeoModel model = data.model().getBakedModel(data.model().getModelResource(null));
-        Color fillColor = fillColors.get(MathUtil.twenties((int) (fullness * 100)));
+    private void applyPixels(NativeImage pImage, Data pData,
+                             TriConsumer<NativeImage, Integer, Integer> applyFunction) {
+        BakedGeoModel model = pData.model().getBakedModel(pData.model().getModelResource(null));
         parts.forEach(part -> model.getBone(part.getBone()).ifPresentOrElse(b -> b.getCubes().forEach(c ->
                 List.of(c.quads()).forEach(f -> {
                     List<GeoVertex> vertices = new ArrayList<>(List.of(f.vertices()));
@@ -100,16 +91,41 @@ public class DiaperTextureGenerator implements TextureGenerator<Undergarment> {
                             thenComparingDouble(GeoVertex::texV));
                     GeoVertex v1 = vertices.get(0);
                     GeoVertex v2 = vertices.get(vertices.size() - 1);
-                    int x = (int) (v1.texU() * image.getWidth());
-                    int y = (int) (v1.texV() * image.getHeight());
-                    int width = (int) ((v2.texU() - v1.texU()) * image.getWidth());
-                    int height = (int) ((v2.texV() - v1.texV()) * image.getHeight());
+                    int x = (int) (v1.texU() * pImage.getWidth());
+                    int y = (int) (v1.texV() * pImage.getHeight());
+                    int width = (int) ((v2.texU() - v1.texU()) * pImage.getWidth());
+                    int height = (int) ((v2.texV() - v1.texV()) * pImage.getHeight());
                     for (int i = 0; i < width; i++) {
                         for (int j = 0; j < height; j++) {
-                            image.blendPixel(x + i, y + j, fillColor.withAlpha(0.75).ABGR());
+                            applyFunction.accept(pImage, x + i, y + j);
                         }
                     }
                 })), () -> LOGGER.warn("Could not find bone: {}", part.getBone())));
+    }
+
+    @Override
+    public @NotNull NativeImage apply(@NotNull NativeImage pImage, @NotNull TextureData pData) {
+        Data data = (Data) pData;
+        double fullness = percentFunction.apply(data.undergarment());
+        if (fullness == 0) return pImage;
+
+        // First we create a NativeImage of just the diaper usage
+        NativeImage image;
+        try (NativeImage base = new NativeImage(pImage.getWidth(), pImage.getHeight(), false)) {
+            Color fillColor = fillColors.get(MathUtil.twenties((int) (fullness * 100)));
+            applyPixels(base, data, (img, x, y) -> img.setPixelRGBA(x, y, fillColor.ABGR()));
+
+            // Next, we copy the incoming texture over the diaper usage, white pixels only
+            image = new NativeImage(pImage.getWidth(), pImage.getHeight(), false);
+            image.copyFrom(pImage);
+            applyPixels(image, data, (img, x, y) -> {
+                int pixel = img.getPixelRGBA(x, y);
+                if (toReplace.stream().anyMatch(c -> c.ABGR() == pixel)) {
+                    Color basePixel = Color.of(base.getPixelRGBA(x, y));
+                    img.setPixelRGBA(x, y, basePixel.withAlpha(1.0).color());
+                }
+            });
+        }
         return image;
     }
 }

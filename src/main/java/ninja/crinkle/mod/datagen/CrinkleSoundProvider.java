@@ -6,7 +6,6 @@ import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.common.data.SoundDefinition;
 import net.minecraftforge.common.data.SoundDefinitionsProvider;
 import ninja.crinkle.mod.CrinkleMod;
-import ninja.crinkle.mod.sounds.CrinkleSounds;
 
 import java.util.ArrayList;
 import java.util.List;
