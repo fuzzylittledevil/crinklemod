@@ -1,14 +1,12 @@
 package ninja.crinkle.mod.events.handlers;
 
 import com.mojang.datafixers.util.Either;
-import com.mojang.logging.LogUtils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LayeredCauldronBlock;
@@ -29,12 +27,9 @@ import ninja.crinkle.mod.items.custom.DiaperArmorItem;
 import ninja.crinkle.mod.metabolism.Metabolism;
 import ninja.crinkle.mod.undergarment.Undergarment;
 import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.FORGE, modid = CrinkleMod.MODID)
 public class CrinkleForgeBusEvents {
-    private static final Logger LOGGER = LogUtils.getLogger();
-
     @SubscribeEvent
     public static void onRightClickBlock(PlayerInteractEvent.RightClickBlock event) {
         BlockState state = event.getLevel().getBlockState(event.getPos());
@@ -115,12 +110,8 @@ public class CrinkleForgeBusEvents {
      */
     @SubscribeEvent
     public static void onLivingEntityUseItem(LivingEntityUseItemEvent.@NotNull Finish event) {
-        try (Level level = event.getEntity().level()) {
-            if (level.isClientSide) return;
-        } catch (Exception e) {
-            LOGGER.error("Error occurred while trying to get the level of the entity", e);
-            return;
-        }
+        if (event.getEntity().level().isClientSide()) return;
+
         if (event.getEntity() instanceof Player player)
             Metabolism.of(player).consume(event.getItem());
     }
