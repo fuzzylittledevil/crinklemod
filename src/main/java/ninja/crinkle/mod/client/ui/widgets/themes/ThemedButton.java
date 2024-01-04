@@ -15,9 +15,9 @@ import java.util.function.Predicate;
 public class ThemedButton extends AbstractThemedButton {
     private Component label;
 
-    public ThemedButton(int pX, int pY, int pWidth, int pHeight, Component pMessage, Theme theme,
+    public ThemedButton(int pX, int pY, int pWidth, int pHeight, Component pMessage, Theme pTheme,
                         Consumer<AbstractThemedButton> onPress) {
-        super(pX, pY, pWidth, pHeight, pMessage, theme, onPress);
+        super(pX, pY, pWidth, pHeight, pMessage, pTheme, onPress);
         setLabel(pMessage);
     }
 

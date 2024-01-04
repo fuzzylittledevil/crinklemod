@@ -90,6 +90,11 @@ public class Label extends AbstractWidget {
         }
     }
 
+    @Override
+    public int getWidth() {
+        return wrapWidth == 0 ? font.width(value) : wrapWidth;
+    }
+
     public int getColor() {
         return color;
     }

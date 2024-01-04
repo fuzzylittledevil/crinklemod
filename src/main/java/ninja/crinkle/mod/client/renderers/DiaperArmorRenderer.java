@@ -8,7 +8,6 @@ import software.bernie.geckolib.renderer.GeoArmorRenderer;
 public class DiaperArmorRenderer extends GeoArmorRenderer<DiaperArmorItem> {
     public DiaperArmorRenderer() {
         super(new DiaperArmorModel());
-
     }
 
     @Override

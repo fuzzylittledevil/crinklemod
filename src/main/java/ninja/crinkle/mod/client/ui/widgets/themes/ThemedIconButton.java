@@ -34,7 +34,7 @@ public class ThemedIconButton extends ThemedButton {
     protected void renderWidget(@NotNull GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
         super.renderWidget(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
         if (icon != null) {
-            BoxTheme borderTheme = getTheme().getBorderTheme(BoxTheme.Size.MEDIUM);
+            BoxTheme borderTheme = getTheme().getBorderTheme(BoxTheme.Type.BUTTON);
             Color color = active ? getTheme().getSecondaryColor() : getTheme().getInactiveColor();
             IconRenderer.renderIcon(pGuiGraphics, icon, getX() + borderTheme.edgeWidth(),
                     getY() + borderTheme.edgeHeight(), color.withAlpha(this.alpha));

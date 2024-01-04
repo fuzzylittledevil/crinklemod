@@ -16,9 +16,15 @@ public abstract class AbstractThemedButton extends ThemedBorderBox {
     private boolean isClicked = false;
     private Predicate<AbstractThemedButton> activePredicate;
 
-    public AbstractThemedButton(int pX, int pY, int pWidth, int pHeight, Component pMessage, Theme theme,
+    public AbstractThemedButton(int pX, int pY, int pWidth, int pHeight, Component pMessage, Theme pTheme,
                                 Consumer<AbstractThemedButton> onPress) {
-        super(pX, pY, pWidth, pHeight, pMessage, theme, BoxTheme.Size.MEDIUM);
+        super(pX, pY, pWidth, pHeight, pMessage, pTheme, BoxTheme.Type.BUTTON);
+        this.onPress = onPress;
+    }
+
+    public AbstractThemedButton(int pX, int pY, int pWidth, int pHeight, Component pMessage, Theme pTheme,
+                                Consumer<AbstractThemedButton> onPress, BoxTheme.Type type) {
+        super(pX, pY, pWidth, pHeight, pMessage, pTheme, type);
         this.onPress = onPress;
     }
 
@@ -53,7 +59,8 @@ public abstract class AbstractThemedButton extends ThemedBorderBox {
             return false;
         } else if (CommonInputs.selected(pKeyCode)) {
             this.playDownSound(Minecraft.getInstance().getSoundManager());
-            this.onPress.accept(this);
+            if (this.onPress != null)
+                this.onPress.accept(this);
             return true;
         } else {
             return false;

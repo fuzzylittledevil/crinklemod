@@ -12,14 +12,14 @@ import org.jetbrains.annotations.NotNull;
 
 public class ThemedBorderBox extends AbstractWidget {
     private final Theme theme;
-    private final BoxTheme.Size borderThemeSize;
+    private final BoxTheme.Type borderThemeType;
     private boolean inverted = false;
 
     public ThemedBorderBox(int x, int y, int width, int height, Component message, Theme theme,
-                           BoxTheme.Size borderThemeSize) {
+                           BoxTheme.Type borderThemeType) {
         super(x, y, width, height, message);
         this.theme = theme;
-        this.borderThemeSize = borderThemeSize;
+        this.borderThemeType = borderThemeType;
     }
 
     @Override
@@ -29,7 +29,7 @@ public class ThemedBorderBox extends AbstractWidget {
         pGuiGraphics.setColor((float) color.getRed(), (float) color.getGreen(), (float) color.getBlue(), this.alpha);
         RenderSystem.enableBlend();
         RenderSystem.enableDepthTest();
-        BoxTheme borderTheme = theme.getBorderTheme(borderThemeSize);
+        BoxTheme borderTheme = theme.getBorderTheme(borderThemeType);
         BoxTheme.TextureType textureType = BoxTheme.TextureType.NORMAL;
         if (!active)
             textureType = BoxTheme.TextureType.INACTIVE;

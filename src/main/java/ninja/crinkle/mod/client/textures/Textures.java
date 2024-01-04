@@ -26,6 +26,9 @@ public class Textures {
             "gui/button_background", new BoxThemeTextureGenerator(),
             "gui/button_background_inverted", new BoxThemeTextureGenerator(),
             "gui/button_background_inactive", new BoxThemeTextureGenerator(),
+            "gui/checkbox_background", new BoxThemeTextureGenerator(),
+            "gui/checkbox_background_inverted", new BoxThemeTextureGenerator(),
+            "gui/checkbox_background_inactive", new BoxThemeTextureGenerator(),
             "armor/diaper_plain",
             new DiaperTextureGenerator(
                     Undergarment::getLiquidsPercent,

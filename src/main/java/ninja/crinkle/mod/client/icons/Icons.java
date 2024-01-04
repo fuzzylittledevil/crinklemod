@@ -9,6 +9,7 @@ import ninja.crinkle.mod.client.textures.Textures;
 public enum Icons {
     BACK(new ResourceLocation(CrinkleMod.MODID, "gui/icons/back")),
     BLADDER(new ResourceLocation(CrinkleMod.MODID, "gui/icons/bladder")),
+    CHECKMARK(new ResourceLocation(CrinkleMod.MODID, "gui/icons/checkmark")),
     DOWN(new ResourceLocation(CrinkleMod.MODID, "gui/icons/down")),
     GEAR(new ResourceLocation(CrinkleMod.MODID, "gui/icons/gear")),
     MESSINESS(new ResourceLocation(CrinkleMod.MODID, "gui/icons/messiness")),

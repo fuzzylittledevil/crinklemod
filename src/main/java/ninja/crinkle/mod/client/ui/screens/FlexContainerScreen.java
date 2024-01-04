@@ -28,7 +28,7 @@ public abstract class FlexContainerScreen extends Screen {
     public FlexContainerScreen(Component title, Theme theme) {
         super(title);
         this.theme = theme;
-        this.borderBox = new ThemedBorderBox(0, 0, 0, 0, title, theme, BoxTheme.Size.LARGE);
+        this.borderBox = new ThemedBorderBox(0, 0, 0, 0, title, theme, BoxTheme.Type.PANEL);
     }
 
     public void setPadding(int padding) {
@@ -61,10 +61,10 @@ public abstract class FlexContainerScreen extends Screen {
                 widget.setY(widget.getY() + containerInfo.topPos);
             }
         }
-        BoxTheme borderTheme = theme.getBorderTheme(BoxTheme.Size.LARGE);
+        BoxTheme borderTheme = theme.getBorderTheme(BoxTheme.Type.PANEL);
         containerInfo.width += borderTheme.edgeWidth() + containerInfo.padding;
         containerInfo.height += borderTheme.edgeHeight() + containerInfo.padding;
-        borderBox = new ThemedBorderBox(containerInfo.leftPos, containerInfo.topPos, containerInfo.width, containerInfo.height, title, theme, BoxTheme.Size.LARGE);
+        borderBox = new ThemedBorderBox(containerInfo.leftPos, containerInfo.topPos, containerInfo.width, containerInfo.height, title, theme, BoxTheme.Type.PANEL);
     }
 
     public void refreshFlex() {

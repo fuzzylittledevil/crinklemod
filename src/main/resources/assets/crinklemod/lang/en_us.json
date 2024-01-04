@@ -81,6 +81,8 @@
   "gui.crinklemod.status.config_tooltip": "Configure values",
   "gui.crinklemod.status.equipment_slot.title": "Pants:",
   "gui.crinklemod.status.equipment_slot.tooltip": "These are your pants! Do with them what you will.",
+  "gui.crinklemod.status.checkbox.debug.title": "Debug Mode",
+  "gui.crinklemod.status.checkbox.debug.tooltip": "Enable debug mode.",
   "setting.crinklemod.metabolism.bladder_accident_warning.label": "Accident Warning",
   "setting.crinklemod.metabolism.bladder_accident_warning.tooltip": "The fullness threshold for when bladder accidents begin.",
   "setting.crinklemod.metabolism.bowel_accident_warning.label": "Accident Warning",

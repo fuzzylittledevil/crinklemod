@@ -9,34 +9,46 @@ import java.util.Optional;
 public record Color(int color) {
     public static final Color WHITE = new Color(0xFFFFFFFF);
     public static final Color BLACK = new Color(0xFF000000);
-    public static final Color TRANSPARENT = new Color(0);
-//    public static final Color DEFAULT_TEXT = new Color(0xFF404040);
+    // public static final Color TRANSPARENT = new Color(0);
+    public static final Color DEFAULT_TEXT = new Color(0xFF404040);
 
-    public static Color of(ChatFormatting formatting) {
+    @Contract("_ -> new")
+    public static @NotNull Color of(@NotNull ChatFormatting formatting) {
         return new Color(Optional.ofNullable(formatting.getColor()).orElseThrow());
     }
 
-    public static Color of(int color) {
+    @Contract("_ -> new")
+    public static @NotNull Color of(int color) {
         return new Color(color);
     }
 
-    public static Color of(double red, double green, double blue) {
+    @Contract("_ -> new")
+    public static @NotNull Color ofABGR(int color) {
+        return new Color(((color & 0xFF000000) | ((color & 0x00FF0000) >> 16) | (color & 0x0000FF00) | ((color & 0x000000FF) << 16)));
+    }
+
+    @Contract("_, _, _ -> new")
+    public static @NotNull Color of(double red, double green, double blue) {
         return Color.of(red, green, blue, 255);
     }
 
-    public static Color of(double red, double green, double blue, double alpha) {
+    @Contract("_, _, _, _ -> new")
+    public static @NotNull Color of(double red, double green, double blue, double alpha) {
         return new Color((int) (alpha * 255) << 24 | (int) (red * 255) << 16 | (int) (green * 255) << 8 | (int) (blue * 255));
     }
 
-    public static Color of(int red, int green, int blue) {
+    @Contract("_, _, _ -> new")
+    public static @NotNull Color of(int red, int green, int blue) {
         return Color.of(red, green, blue, 255);
     }
 
-    public static Color of(int red, int green, int blue, int alpha) {
+    @Contract("_, _, _, _ -> new")
+    public static @NotNull Color of(int red, int green, int blue, int alpha) {
         return new Color(alpha << 24 | red << 16 | green << 8 | blue);
     }
 
-    public static Color of(String hex) {
+    @Contract("_ -> new")
+    public static @NotNull Color of(@NotNull String hex) {
         if (hex.startsWith("0x")) hex = hex.substring(2);
         if (hex.startsWith("#")) hex = hex.substring(1);
         int color = Integer.parseInt(hex, 16);

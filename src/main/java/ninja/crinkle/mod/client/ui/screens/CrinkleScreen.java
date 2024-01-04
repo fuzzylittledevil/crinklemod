@@ -1,6 +1,7 @@
 package ninja.crinkle.mod.client.ui.screens;
 
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Checkbox;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
@@ -18,7 +19,10 @@ import ninja.crinkle.mod.client.ui.menus.AbstractMenu;
 import ninja.crinkle.mod.client.ui.menus.ConfigMenu;
 import ninja.crinkle.mod.client.ui.menus.status.*;
 import ninja.crinkle.mod.client.ui.themes.Theme;
+import ninja.crinkle.mod.client.ui.widgets.Label;
+import ninja.crinkle.mod.client.ui.widgets.themes.ThemedCheckbox;
 import ninja.crinkle.mod.events.AccidentEvent;
+import ninja.crinkle.mod.items.custom.DiaperArmorItem;
 import ninja.crinkle.mod.metabolism.MetabolismSettings;
 import ninja.crinkle.mod.undergarment.Undergarment;
 import ninja.crinkle.mod.undergarment.UndergarmentSettings;
@@ -48,6 +52,7 @@ public class CrinkleScreen extends FlexContainerScreen {
     private ConfigMenu<Player> bowelMenu;
     private ConfigMenu<ItemStack> undergarmentLiquidsMenu;
     private ConfigMenu<ItemStack> undergarmentSolidsMenu;
+    private boolean showDiaperTextureDebug = false;
     private int currentLine = 0;
 
     public CrinkleScreen(Screen previousScreen) {
@@ -80,6 +85,7 @@ public class CrinkleScreen extends FlexContainerScreen {
         super.init();
         final int lineSpacing = 5;
         final int lineHeight = 20;
+        final int componentWidth = 20;
         setPadding(lineSpacing);
         Optional.ofNullable(DistExecutor.safeCallWhenOn(Dist.CLIENT, () -> ClientHooks::getMinecraft))
                 .ifPresent(minecraft -> {
@@ -161,6 +167,9 @@ public class CrinkleScreen extends FlexContainerScreen {
                     EquipmentSlotEntry equipmentSlotEntry = new EquipmentSlotEntry(nextLine(), EquipmentSlot.LEGS,
                             Component.translatable("gui.crinklemod.status.equipment_slot.title"),
                             Tooltip.create(Component.translatable("gui.crinklemod.status.equipment_slot.tooltip")));
+                    Checkbox debugMode = new Checkbox(0, 0, componentWidth, lineHeight, Component
+                            .translatable("gui.crinklemod.status.checkbox.debug.title"),
+                            showDiaperTextureDebug, false);
                     undergarmentMenu = StatusMenu.builder(this)
                             .font(font)
                             .lineHeight(lineHeight)
@@ -183,6 +192,20 @@ public class CrinkleScreen extends FlexContainerScreen {
                                     .gradientStartColor(Undergarment.SOLIDS_COLOR)
                                     .gradientEndColor(Undergarment.SOLIDS_COLOR)
                                     .gradientBackgroundColor(Color.BLACK.color())
+                                    .build())
+                            .entry(CheckboxEntry.builder(nextLine())
+                                    .checkbox(ThemedCheckbox.builder(getTheme(), Component
+                                                    .translatable("gui.crinklemod.status.checkbox.debug.title"),
+                                                    c -> showDiaperTextureDebug = c.isSelected())
+                                            .bounds(0, 0, componentWidth, lineHeight)
+                                            .selected(showDiaperTextureDebug)
+                                            .label(Label.builder(getMinecraft().font, Component
+                                                            .translatable("gui.crinklemod.status.checkbox.debug.title"))
+                                                    .color(getTheme().getForegroundColor().color())
+                                                    .build(), true)
+                                            .tooltip(Tooltip.create(Component
+                                                    .translatable("gui.crinklemod.status.checkbox.debug.tooltip")))
+                                            .build())
                                     .build())
                             .build();
                     mainMenu = StatusMenu.builder(this)
@@ -273,6 +296,13 @@ public class CrinkleScreen extends FlexContainerScreen {
     @Override
     public void render(@NotNull GuiGraphics graphics, int pMouseX, int pMouseY, float pPartialTick) {
         super.render(graphics, pMouseX, pMouseY, pPartialTick);
+        if (!showDiaperTextureDebug) return;
+        ItemStack item = Undergarment.getWornUndergarment(Objects.requireNonNull(getMinecraft().player));
+        if (item != ItemStack.EMPTY && item.getItem() instanceof DiaperArmorItem diaper) {
+            graphics.blit(diaper.getTexture(), 0, 0, 0, 0, 256, 256);
+            graphics.drawString(getMinecraft().font, Component.literal(diaper.getTexture().getPath()),
+                    0, 260, Color.WHITE.color(), true);
+        }
     }
 
     @Override

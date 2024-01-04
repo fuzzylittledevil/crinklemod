@@ -26,7 +26,7 @@ public class DiaperTextureGenerator implements TextureGenerator<Undergarment> {
     private final Map<Integer, Color> fillColors;
     private final Set<Color> toReplace;
     public static final Map<Integer, Color> WET_COLORS = Map.of(
-            0, Color.TRANSPARENT,
+            0, Color.WHITE,
             20, Color.of("#f6f5af"),
             40, Color.of("#f9f7b8"),
             60, Color.of("#fdfcc2"),
@@ -34,7 +34,7 @@ public class DiaperTextureGenerator implements TextureGenerator<Undergarment> {
             100, Color.of("#fefdda")
     );
     public static final Map<Integer, Color> MESS_COLORS = Map.of(
-            0, Color.TRANSPARENT,
+            0, Color.WHITE,
             20, Color.of("#c2b98e"),
             40, Color.of("#c9c19a"),
             60, Color.of("#d0c8a2"),
@@ -107,22 +107,21 @@ public class DiaperTextureGenerator implements TextureGenerator<Undergarment> {
     public @NotNull NativeImage apply(@NotNull NativeImage pImage, @NotNull TextureData pData) {
         Data data = (Data) pData;
         double fullness = percentFunction.apply(data.undergarment());
-        if (fullness == 0) return pImage;
 
         // First we create a NativeImage of just the diaper usage
         NativeImage image;
-        try (NativeImage base = new NativeImage(pImage.getWidth(), pImage.getHeight(), false)) {
-            Color fillColor = fillColors.get(MathUtil.twenties((int) (fullness * 100)));
+        try (NativeImage base = new NativeImage(pImage.getWidth(), pImage.getHeight(), true)) {
+            Color fillColor = fillColors.get(MathUtil.twenties((int) (Math.ceil(fullness) * 100)));
             applyPixels(base, data, (img, x, y) -> img.setPixelRGBA(x, y, fillColor.ABGR()));
 
-            // Next, we copy the incoming texture over the diaper usage, white pixels only
-            image = new NativeImage(pImage.getWidth(), pImage.getHeight(), false);
+            // Next, we copy the incoming texture over the diaper usage
+            image = new NativeImage(pImage.getWidth(), pImage.getHeight(), true);
             image.copyFrom(pImage);
             applyPixels(image, data, (img, x, y) -> {
                 int pixel = img.getPixelRGBA(x, y);
                 if (toReplace.stream().anyMatch(c -> c.ABGR() == pixel)) {
-                    Color basePixel = Color.of(base.getPixelRGBA(x, y));
-                    img.setPixelRGBA(x, y, basePixel.withAlpha(1.0).color());
+                    Color basePixel = Color.ofABGR(base.getPixelRGBA(x, y));
+                    img.setPixelRGBA(x, y, basePixel.withAlpha(1.0).ABGR());
                 }
             });
         }
