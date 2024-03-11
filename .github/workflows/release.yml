@@ -1,0 +1,20 @@
+name: Release
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      -   name: Checkout
+          uses: actions/checkout@v2
+      -   name: Bump Version
+          id: bump
+          uses: Plugily-Projects/version-bump-action@v6
+          with:
+            github-token: ${{ secrets.github_token }}
+            git-committer: 'BOT'
+            auto-version-bump: true
+      -   name: Print Version
+          run: "echo 'New Version: ${{steps.bump.outputs.version}}'"
