@@ -25,10 +25,11 @@ version:
       when: never
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
   script:
-    - "#!/bin/bash"
     - export MOD_VERSION=$(grep mod_version gradle.properties | cut -d'=' -f2)
-    - IFS='.' read -r v1 v2 v3 <<< "$MOD_VERSION"
-    - export NEW_MOD_VERSION="$v1.$v2.$((v3+1))"
+    - major=$(echo $MOD_VERSION | cut -d'.' -f1)
+    - minor=$(echo $MOD_VERSION | cut -d'.' -f2)
+    - patch=$(echo $MOD_VERSION | cut -d'.' -f3)
+    - export NEW_MOD_VERSION="$major.$minor.$((patch+1))"
     - echo "MOD_VERSION=${NEW_MOD_VERSION}" >> version.env
     - echo "OLD_VERSION=${MOD_VERSION}" >> version.env
   artifacts:
