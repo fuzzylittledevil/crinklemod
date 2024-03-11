@@ -80,7 +80,7 @@ commit_version:
     - git config --global user.name "GitLab CI"
     - git config --global user.email "fuzzy.little.devil+ci@gmail.com"
     - git config --global url.https://.insteadOf git://
-    - git remote set-url origin https://${GITLAB_CI_USER}:${GITLAB_CI_TOKEN}@gitlab.com/fuzzy.little.devil/crinklemod.git
+    - git remote set-url origin https://${GITLAB_CI_USER}:${GITLAB_CI_TOKEN}@gitlab.com/crinkle-ninja/crinklemod.git
     - git add gradle.properties
     - git commit -m "[skip ci] Bump version to $MOD_VERSION"
     - git push -u origin HEAD:main
@@ -108,4 +108,4 @@ release:
     assets:
       links:
         - name: "CrinkleMod v$MOD_VERSION Jar"
-          url: "https://gitlab.com/fuzzy.little.devil/crinklemod/-/jobs/${JAR_JOB_ID}/artifacts/file/crinklemod-$MOD_VERSION.jar"
+          url: "https://gitlab.com/crinkle-ninja/crinklemod/-/jobs/${JAR_JOB_ID}/artifacts/file/crinklemod-$MOD_VERSION.jar"
