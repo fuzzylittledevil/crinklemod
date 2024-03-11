@@ -37,18 +37,14 @@ public class MetabolismCommand {
                                 .executes(c -> resetData(c.getSource(), c.getSource().getPlayerOrException(), getPlayer(c, "target")))))
                 .then(literal("set")
                         .requires(source -> source.hasPermission(LEVEL_GAMEMASTERS))
-                        .then(command(MetabolismSettings.LIQUIDS))
-                        .then(command(MetabolismSettings.SOLIDS))
-                        .then(command(MetabolismSettings.BLADDER))
-                        .then(command(MetabolismSettings.BOWELS))
-                        .then(command(MetabolismSettings.MAX_LIQUIDS))
-                        .then(command(MetabolismSettings.MAX_SOLIDS))
-                        .then(command(MetabolismSettings.LIQUIDS_RATE))
-                        .then(command(MetabolismSettings.SOLIDS_RATE))
-                        .then(command(MetabolismSettings.BLADDER_CAPACITY))
-                        .then(command(MetabolismSettings.BOWEL_CAPACITY))
-                        .then(command(MetabolismSettings.BLADDER_ACCIDENT_WARNING))
-                        .then(command(MetabolismSettings.BOWEL_ACCIDENT_WARNING))
+                        .then(command(MetabolismSettings.ENABLED))
+                        .then(command(MetabolismSettings.TIMER))
+                        .then(command(MetabolismSettings.NUMBER_ONE_ROLLS))
+                        .then(command(MetabolismSettings.NUMBER_ONE_SAFE_ROLLS))
+                        .then(command(MetabolismSettings.NUMBER_ONE_CHANCE))
+                        .then(command(MetabolismSettings.NUMBER_TWO_ROLLS))
+                        .then(command(MetabolismSettings.NUMBER_TWO_SAFE_ROLLS))
+                        .then(command(MetabolismSettings.NUMBER_TWO_CHANCE))
                 ));
         dispatcher.register(literal("met").redirect(node));
     }
@@ -84,10 +80,14 @@ public class MetabolismCommand {
 
     private int resetData(@NotNull CommandSourceStack source, ServerPlayer instigator, @NotNull ServerPlayer target) {
         Metabolism m = Metabolism.of(target);
-        m.setBowels(0);
-        m.setBladder(0);
-        m.setSolids(0);
-        m.setLiquids(0);
+        m.setEnabled(MetabolismSettings.ENABLED.getDefault(target));
+        m.setTimer(MetabolismSettings.TIMER.getDefault(target));
+        m.setNumberOneRolls(MetabolismSettings.NUMBER_ONE_ROLLS.getDefault(target));
+        m.setNumberOneSafeRolls(MetabolismSettings.NUMBER_ONE_SAFE_ROLLS.getDefault(target));
+        m.setNumberOneChance(MetabolismSettings.NUMBER_ONE_CHANCE.getDefault(target));
+        m.setNumberTwoRolls(MetabolismSettings.NUMBER_TWO_ROLLS.getDefault(target));
+        m.setNumberTwoSafeRolls(MetabolismSettings.NUMBER_TWO_SAFE_ROLLS.getDefault(target));
+        m.setNumberTwoChance(MetabolismSettings.NUMBER_TWO_CHANCE.getDefault(target));
         m.syncClient();
         source.sendSuccess(() -> instigator.equals(target) ?
                         Component.translatable("command.crinklemod.metabolism.reset.self.success") :
@@ -99,14 +99,40 @@ public class MetabolismCommand {
     private int status(CommandSourceStack source, ServerPlayer instigator, @NotNull Player target) {
         Metabolism m = Metabolism.of(target);
         List<Component> components = new ArrayList<>();
-        components.add(Component.literal(String.format("Liquids: %d / %d (Rate: %d)", m.getLiquids(),
-                m.getMaxLiquids(), m.getLiquidsRate())));
-        components.add(Component.literal(String.format("Solids: %d / %d (Rate: %d)", m.getSolids(),
-                m.getMaxSolids(), m.getSolidsRate())));
-        components.add(Component.literal(String.format("Liquids: %d / %d (Cont: %.4f)",
-                m.getBladder(), m.getBladderCapacity(), m.getBladderAccidentWarning())));
-        components.add(Component.literal(String.format("Bowels: %d / %d (Cont: %.4f)",
-                m.getBowels(), m.getBowelCapacity(), m.getBowelAccidentWarning())));
+        long nextTickSeconds = m.getTimer() - (target.getCommandSenderWorld().getGameTime() / 20) % m.getTimer();
+        components.add(Component.literal(String.format("%s: %s",
+                Component.translatable("setting.crinklemod.metabolism.enabled.label").getString(),
+                m.isEnabled())));
+        components.add(Component.literal(String.format("%s: %d seconds",
+                Component.translatable("setting.crinklemod.metabolism.timer.label").getString(),
+                m.getTimer())));
+        components.add(Component.literal(String.format("%s: %d seconds",
+                Component.translatable("setting.crinklemod.metabolism.nextTick.label").getString(),
+                nextTickSeconds)));
+        components.add(Component.literal(String.format("%s: %d",
+                Component.translatable("setting.crinklemod.metabolism.numberOneRolls.label").getString(),
+                m.getNumberOneRolls())));
+        components.add(Component.literal(String.format("%s: %d",
+                Component.translatable("setting.crinklemod.metabolism.numberOneSafeRolls.label").getString(),
+                m.getNumberOneSafeRolls())));
+        components.add(Component.literal(String.format("%s: %.2f",
+                Component.translatable("setting.crinklemod.metabolism.numberOneChance.label").getString(),
+                m.getNumberOneChance())));
+        components.add(Component.literal(String.format("%s: %d",
+                Component.translatable("setting.crinklemod.metabolism.numberOneDesperationLevel.label").getString(),
+                m.getNumberOneDesperationLevel())));
+        components.add(Component.literal(String.format("%s: %d",
+                Component.translatable("setting.crinklemod.metabolism.numberTwoRolls.label").getString(),
+                m.getNumberTwoRolls())));
+        components.add(Component.literal(String.format("%s: %d",
+                Component.translatable("setting.crinklemod.metabolism.numberTwoSafeRolls.label").getString(),
+                m.getNumberTwoSafeRolls())));
+        components.add(Component.literal(String.format("%s: %.2f",
+                Component.translatable("setting.crinklemod.metabolism.numberTwoChance.label").getString(),
+                m.getNumberTwoChance())));
+        components.add(Component.literal(String.format("%s: %d",
+                Component.translatable("setting.crinklemod.metabolism.numberTwoDesperationLevel.label").getString(),
+                m.getNumberTwoDesperationLevel())));
         source.sendSuccess(() -> Component.literal(target.getDisplayName().getString()), false);
         components.forEach(instigator::sendSystemMessage);
         return Command.SINGLE_SUCCESS;

@@ -1,7 +1,6 @@
 package ninja.crinkle.mod.client.ui.screens;
 
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.Checkbox;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
@@ -10,20 +9,15 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.DistExecutor;
-import ninja.crinkle.mod.CrinkleMod;
-import ninja.crinkle.mod.api.ServerUpdater;
 import ninja.crinkle.mod.client.ClientHooks;
 import ninja.crinkle.mod.client.color.Color;
-import ninja.crinkle.mod.client.icons.Icons;
 import ninja.crinkle.mod.client.ui.menus.AbstractMenu;
 import ninja.crinkle.mod.client.ui.menus.ConfigMenu;
 import ninja.crinkle.mod.client.ui.menus.status.*;
 import ninja.crinkle.mod.client.ui.themes.Theme;
 import ninja.crinkle.mod.client.ui.widgets.Label;
 import ninja.crinkle.mod.client.ui.widgets.themes.ThemedCheckbox;
-import ninja.crinkle.mod.events.AccidentEvent;
 import ninja.crinkle.mod.items.custom.DiaperArmorItem;
-import ninja.crinkle.mod.metabolism.MetabolismSettings;
 import ninja.crinkle.mod.undergarment.Undergarment;
 import ninja.crinkle.mod.undergarment.UndergarmentSettings;
 import org.jetbrains.annotations.NotNull;
@@ -98,78 +92,11 @@ public class CrinkleScreen extends FlexContainerScreen {
                                     .lineNumber(nextLine())
                                     .color(getTheme().getForegroundColor().color())
                                     .build())
-                            .entry(StatusBarEntry.intBuilder(() -> minecraft.player)
-                                    .lineNumber(nextLine())
-                                    .setting(MetabolismSettings.LIQUIDS)
-                                    .onPress((menu) -> setCurrentMenu(liquidsMenu))
-                                    .gradientStartColor(LIQUIDS_COLOR)
-                                    .gradientEndColor(LIQUIDS_COLOR)
-                                    .gradientBackgroundColor(Color.BLACK.color())
-                                    .build())
-                            .entry(StatusBarEntry.intBuilder(() -> minecraft.player)
-                                    .lineNumber(nextLine())
-                                    .setting(MetabolismSettings.SOLIDS)
-                                    .onPress((menu) -> setCurrentMenu(solidsMenu))
-                                    .gradientStartColor(SOLIDS_COLOR)
-                                    .gradientEndColor(SOLIDS_COLOR)
-                                    .gradientBackgroundColor(Color.BLACK.color())
-                                    .build())
-                            .entry(StatusBarEntry.intBuilder(() -> minecraft.player)
-                                    .lineNumber(nextLine())
-                                    .setting(MetabolismSettings.BLADDER)
-                                    .onPress((menu) -> setCurrentMenu(bladderMenu))
-                                    .gradientStartColor(BLADDER_COLOR)
-                                    .gradientEndColor(BLADDER_COLOR)
-                                    .gradientBackgroundColor(Color.BLACK.color())
-                                    .action(new EntryAction(
-                                            Icons.DOWN,
-                                            (s, p) -> {
-                                                int amount = s.getInt(p);
-                                                if (amount == 0) return;
-                                                s.set(p, 0);
-                                                s.syncer(p).ifPresent(ServerUpdater::syncServer);
-                                                CrinkleMod.EVENT_BUS.post(new AccidentEvent.Bladder(minecraft.player,
-                                                        amount, AccidentEvent.Side.CLIENT));
-                                            },
-                                            b -> {
-                                                int amount = MetabolismSettings.BLADDER.get(minecraft.player);
-                                                return amount > 0;
-                                            },
-                                            Tooltip.create(Component.translatable("gui.crinklemod.crinkle_screen.bladder.accident_button.tooltip"))
-                                    ))
-                                    .build())
-                            .entry(StatusBarEntry.intBuilder(() -> minecraft.player)
-                                    .lineNumber(nextLine())
-                                    .setting(MetabolismSettings.BOWELS)
-                                    .onPress((menu) -> setCurrentMenu(bowelMenu))
-                                    .gradientStartColor(BOWEL_COLOR)
-                                    .gradientEndColor(BOWEL_COLOR)
-                                    .gradientBackgroundColor(Color.BLACK.color())
-                                    .action(new EntryAction(
-                                            Icons.DOWN,
-                                            (s, p) -> {
-                                                int amount = s.getInt(p);
-                                                if (amount == 0) return;
-                                                s.set(p, 0);
-                                                s.syncer(p).ifPresent(ServerUpdater::syncServer);
-                                                CrinkleMod.EVENT_BUS.post(new AccidentEvent.Bowels(minecraft.player,
-                                                        amount, AccidentEvent.Side.CLIENT));
-                                            },
-                                            b -> {
-                                                int amount = MetabolismSettings.BOWELS.get(minecraft.player);
-                                                return amount > 0;
-                                            },
-                                            Tooltip.create(Component.translatable("gui.crinklemod.crinkle_screen.bowel.accident_button.tooltip"))
-                                    ))
-                                    .build())
                             .build();
                     // Creating this here so nextLine() still works
                     EquipmentSlotEntry equipmentSlotEntry = new EquipmentSlotEntry(nextLine(), EquipmentSlot.LEGS,
                             Component.translatable("gui.crinklemod.status.equipment_slot.title"),
                             Tooltip.create(Component.translatable("gui.crinklemod.status.equipment_slot.tooltip")));
-                    Checkbox debugMode = new Checkbox(0, 0, componentWidth, lineHeight, Component
-                            .translatable("gui.crinklemod.status.checkbox.debug.title"),
-                            showDiaperTextureDebug, false);
                     undergarmentMenu = StatusMenu.builder(this)
                             .font(font)
                             .lineHeight(lineHeight)
@@ -219,46 +146,6 @@ public class CrinkleScreen extends FlexContainerScreen {
                             .build();
                     mainMenu.visitAll(this::addRenderableWidget);
                     setCurrentMenu(mainMenu);
-                    liquidsMenu = ConfigMenu.builder(this, font, LIQUIDS_MENU_TITLE, () -> (Player) minecraft.player)
-                            .origin(0, 0)
-                            .onClose(m -> setCurrentMenu(mainMenu))
-                            .entry(new ConfigMenu.Entry<>(1, 10, MetabolismSettings.LIQUIDS))
-                            .entry(new ConfigMenu.Entry<>(2, 10, MetabolismSettings.MAX_LIQUIDS))
-                            .entry(new ConfigMenu.Entry<>(3, 10, MetabolismSettings.LIQUIDS_RATE))
-                            .visible(false)
-                            .build();
-                    liquidsMenu.visitAll(this::addRenderableWidget);
-                    solidsMenu = ConfigMenu.builder(this, font, SOLIDS_MENU_TITLE, () -> (Player) minecraft.player)
-                            .origin(0, 0)
-                            .onClose(m -> setCurrentMenu(mainMenu))
-                            .entry(new ConfigMenu.Entry<>(1, 10, MetabolismSettings.SOLIDS))
-                            .entry(new ConfigMenu.Entry<>(2, 10, MetabolismSettings.MAX_SOLIDS))
-                            .entry(new ConfigMenu.Entry<>(3, 10, MetabolismSettings.SOLIDS_RATE))
-                            .visible(false)
-                            .build();
-                    solidsMenu.visitAll(this::addRenderableWidget);
-                    bladderMenu = ConfigMenu.builder(this, font, BLADDER_MENU_TITLE, () -> (Player) minecraft.player)
-                            .origin(0, 0)
-                            .onClose(m -> setCurrentMenu(mainMenu))
-                            .entry(new ConfigMenu.Entry<>(1, 10, MetabolismSettings.BLADDER))
-                            .entry(new ConfigMenu.Entry<>(2, 10, MetabolismSettings.BLADDER_CAPACITY))
-                            .entry(new ConfigMenu.Entry<>(3, 10, MetabolismSettings.BLADDER_ACCIDENT_WARNING))
-                            .entry(new ConfigMenu.Entry<>(4, 10, MetabolismSettings.BLADDER_ACCIDENT_FREQUENCY))
-                            .entry(new ConfigMenu.Entry<>(5, 10, MetabolismSettings.BLADDER_ACCIDENT_AMOUNT_PERCENT))
-                            .visible(false)
-                            .build();
-                    bladderMenu.visitAll(this::addRenderableWidget);
-                    bowelMenu = ConfigMenu.builder(this, font, BOWEL_MENU_TITLE, () -> (Player) minecraft.player)
-                            .origin(0, 0)
-                            .onClose(m -> setCurrentMenu(mainMenu))
-                            .entry(new ConfigMenu.Entry<>(1, 10, MetabolismSettings.BOWELS))
-                            .entry(new ConfigMenu.Entry<>(2, 10, MetabolismSettings.BOWEL_CAPACITY))
-                            .entry(new ConfigMenu.Entry<>(3, 10, MetabolismSettings.BOWEL_ACCIDENT_WARNING))
-                            .entry(new ConfigMenu.Entry<>(4, 10, MetabolismSettings.BOWEL_ACCIDENT_FREQUENCY))
-                            .entry(new ConfigMenu.Entry<>(5, 10, MetabolismSettings.BOWEL_ACCIDENT_AMOUNT_PERCENT))
-                            .visible(false)
-                            .build();
-                    bowelMenu.visitAll(this::addRenderableWidget);
                     undergarmentLiquidsMenu = ConfigMenu.builder(this, font, LIQUIDS_MENU_TITLE, () -> Undergarment.getWornUndergarment(Objects.requireNonNull(minecraft.player)))
                             .origin(0, 0)
                             .onClose(m -> setCurrentMenu(mainMenu))

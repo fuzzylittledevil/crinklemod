@@ -11,10 +11,13 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.network.PacketDistributor;
 import ninja.crinkle.mod.CrinkleMod;
 import ninja.crinkle.mod.events.AccidentEvent;
+import ninja.crinkle.mod.events.CrinkleEvent;
+import ninja.crinkle.mod.events.DesperationEvent;
 import ninja.crinkle.mod.events.LeakEvent;
 import ninja.crinkle.mod.network.CrinkleChannel;
 import ninja.crinkle.mod.network.messages.AccidentEventMessage;
 import ninja.crinkle.mod.undergarment.Undergarment;
+import ninja.crinkle.mod.util.MathUtil;
 import org.slf4j.Logger;
 
 
@@ -23,8 +26,8 @@ public class CrinkleBusEvents {
 
     @SubscribeEvent
     public void propagateBladderAccident(AccidentEvent.Bladder event) {
-        AccidentEvent.Side currentSide = event.getPlayer() instanceof ServerPlayer ?
-                AccidentEvent.Side.SERVER : AccidentEvent.Side.CLIENT;
+        CrinkleEvent.Side currentSide = event.getPlayer() instanceof ServerPlayer ?
+                CrinkleEvent.Side.SERVER : CrinkleEvent.Side.CLIENT;
         if (currentSide != event.getSide()) {
             return;
         }
@@ -39,8 +42,8 @@ public class CrinkleBusEvents {
 
     @SubscribeEvent
     public void propagateBowelsAccident(AccidentEvent.Bowels event) {
-        AccidentEvent.Side currentSide = event.getPlayer() instanceof ServerPlayer ?
-                AccidentEvent.Side.SERVER : AccidentEvent.Side.CLIENT;
+        CrinkleEvent.Side currentSide = event.getPlayer() instanceof ServerPlayer ?
+                CrinkleEvent.Side.SERVER : CrinkleEvent.Side.CLIENT;
         if (currentSide != event.getSide()) {
             return;
         }
@@ -50,6 +53,26 @@ public class CrinkleBusEvents {
             case SERVER -> CrinkleChannel.INSTANCE.send(PacketDistributor.PLAYER.with(
                             () -> (ServerPlayer) event.getPlayer()),
                     new AccidentEventMessage(AccidentEventMessage.AccidentType.BOWELS, event.getAmount()));
+        }
+    }
+
+    @SubscribeEvent
+    public void onBladderDesperation(DesperationEvent.Bladder event) {
+        if (event.getPlayer() instanceof ServerPlayer) {
+            Style style = Style.EMPTY.withColor(ChatFormatting.YELLOW);
+            event.getPlayer().sendSystemMessage(
+                    Component.translatable("event.crinklemod.undergarment.bladder.desperation.text."
+                                    + event.getLevel()).withStyle(style));
+        }
+    }
+
+    @SubscribeEvent
+    public void onBowelsDesperation(DesperationEvent.Bowels event) {
+        if (event.getPlayer() instanceof ServerPlayer) {
+            Style style = Style.EMPTY.withColor(ChatFormatting.DARK_GREEN);
+            event.getPlayer().sendSystemMessage(
+                    Component.translatable("event.crinklemod.undergarment.bowel.desperation.text."
+                                    + event.getLevel()).withStyle(style));
         }
     }
 

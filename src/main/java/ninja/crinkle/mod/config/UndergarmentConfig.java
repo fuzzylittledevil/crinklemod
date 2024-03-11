@@ -47,8 +47,8 @@ public class UndergarmentConfig {
             .comment("A list of undergarments and their associated data.")
             .defineList("undergarment",
                     List.of(
-                            new UndergarmentData(CrinkleMod.MODID + ":diaper", 1000, 2000).toConfig(),
-                            new UndergarmentData(CrinkleMod.MODID + ":diaper_little_pawz", 1000, 2000).toConfig()
+                            new UndergarmentData(CrinkleMod.MODID + ":diaper", 3, 5).toConfig(),
+                            new UndergarmentData(CrinkleMod.MODID + ":diaper_little_pawz", 3, 5).toConfig()
                     ),
                     ConfigUtil.getItemNameValidator("name")
             );

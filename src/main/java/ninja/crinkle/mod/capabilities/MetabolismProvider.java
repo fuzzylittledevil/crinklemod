@@ -12,6 +12,7 @@ import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import ninja.crinkle.mod.CrinkleMod;
+import ninja.crinkle.mod.capabilities.versioning.MetabolismVersions;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -28,8 +29,13 @@ public class MetabolismProvider implements ICapabilityProvider, INBTSerializable
     private static final Logger LOGGER = LogUtils.getLogger();
     public static final String NAME = "metabolism";
     public static final ResourceLocation IDENTIFIER = new ResourceLocation(CrinkleMod.MODID, NAME);
+    private final Player player;
     private final IMetabolism storage = new MetabolismImpl();
     private final LazyOptional<IMetabolism> instance = LazyOptional.of(() -> storage);
+
+    public MetabolismProvider(Player player) {
+        this.player = player;
+    }
 
     /**
      * Get the capability of an entity.
@@ -63,7 +69,7 @@ public class MetabolismProvider implements ICapabilityProvider, INBTSerializable
      */
     @Override
     public void deserializeNBT(CompoundTag nbt) {
-        storage.deserializeNBT(nbt);
+        storage.deserializeNBT(MetabolismVersions.performUpgrades(this.player, nbt));
     }
 
     /**
@@ -73,8 +79,9 @@ public class MetabolismProvider implements ICapabilityProvider, INBTSerializable
      * @see net.minecraftforge.event.AttachCapabilitiesEvent
      */
     public static void attach(final @NotNull AttachCapabilitiesEvent<Entity> event) {
-        if(!(event.getObject() instanceof Player)) return;
-        LOGGER.debug("Attaching metabolism capability to player");
-        event.addCapability(IDENTIFIER, new MetabolismProvider());
+        if (event.getObject() instanceof Player player) {
+            LOGGER.debug("Attaching metabolism capability to player");
+            event.addCapability(IDENTIFIER, new MetabolismProvider(player));
+        }
     }
 }

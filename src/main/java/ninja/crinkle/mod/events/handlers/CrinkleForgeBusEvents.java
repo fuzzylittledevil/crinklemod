@@ -4,7 +4,6 @@ import com.mojang.datafixers.util.Either;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
@@ -14,7 +13,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.client.event.RenderTooltipEvent;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -100,38 +98,6 @@ public class CrinkleForgeBusEvents {
     public static void onCommandsRegister(@NotNull RegisterCommandsEvent event) {
         new MetabolismCommand(event.getDispatcher());
         ConfigCommand.register(event.getDispatcher());
-    }
-
-    /**
-     * Hook on when a living entity uses an item. This is used to consume items that are used as food or drink.
-     *
-     * @param event The event
-     * @see LivingEntityUseItemEvent.Finish
-     */
-    @SubscribeEvent
-    public static void onLivingEntityUseItem(LivingEntityUseItemEvent.@NotNull Finish event) {
-        if (event.getEntity().level().isClientSide()) return;
-
-        if (event.getEntity() instanceof Player player)
-            Metabolism.of(player).consume(event.getItem());
-    }
-
-    @SubscribeEvent
-    public static void onMousePressedPre(PlayerInteractEvent.RightClickItem event) {
-        ItemStack stack = event.getItemStack();
-        Player player = event.getEntity();
-        Metabolism metabolism = Metabolism.of(player);
-        if (stack.isEdible() && !player.getFoodData().needsFood()) {
-            if (metabolism.getStomachFullness() > 0.9f) {
-                event.setCanceled(true);
-                event.setCancellationResult(InteractionResult.FAIL);
-                if (event.getSide() == LogicalSide.CLIENT)
-                    player.sendSystemMessage(Component.translatable("action.crinklemod.metabolism.stomach.full.text"));
-                return;
-            }
-            player.getFoodData().setFoodLevel(player.getFoodData().getFoodLevel() - 1);
-        }
-
     }
 
     /**

@@ -8,15 +8,15 @@ import ninja.crinkle.mod.capabilities.MetabolismImpl;
  * An accident event that is fired when a player has an accident.
  *
  * @author Galen
- * @see net.minecraftforge.eventbus.api.Event
+ * @see Event
  * @see MetabolismImpl
  */
-public abstract class AccidentEvent extends CrinkleEvent {
-    private final int amount;
+public abstract class DesperationEvent extends CrinkleEvent {
+    private final int level;
 
-    public AccidentEvent(Player player, int amount, Side side) {
+    public DesperationEvent(Player player, int level, Side side) {
         super(side, player);
-        this.amount = amount;
+        this.level = level;
     }
 
     /**
@@ -24,33 +24,33 @@ public abstract class AccidentEvent extends CrinkleEvent {
      *
      * @return The amount of liquids or solids that were lost
      */
-    public int getAmount() {
-        return amount;
+    public int getLevel() {
+        return level;
     }
 
     /**
      * An accident event that is fired when a player has a bladder accident.
      */
-    public static class Bladder extends AccidentEvent {
-        public Bladder(Player player, int amount, Side side) {
-            super(player, amount, side);
+    public static class Bladder extends DesperationEvent {
+        public Bladder(Player player, int level, Side side) {
+            super(player, level, side);
         }
     }
 
     /**
      * An accident event that is fired when a player has a bowel accident.
      */
-    public static class Bowels extends AccidentEvent {
-        public Bowels(Player player, int amount, Side side) {
-            super(player, amount, side);
+    public static class Bowels extends DesperationEvent {
+        public Bowels(Player player, int level, Side side) {
+            super(player, level, side);
         }
     }
 
     @Override
     public String toString() {
-        return "AccidentEvent{" +
+        return "DesperationEvent{" +
                 "side=" + getSide() +
-                ", amount=" + getAmount() +
+                ", level=" + getLevel() +
                 ", player=" + getPlayer() +
                 '}';
     }

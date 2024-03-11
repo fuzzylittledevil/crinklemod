@@ -1,170 +1,80 @@
 package ninja.crinkle.mod.metabolism;
 
 import net.minecraft.network.chat.Component;
-import ninja.crinkle.mod.config.MetabolismConfig;
 import ninja.crinkle.mod.settings.Setting;
 
-
 public class MetabolismSettings {
-    public static final Setting<Integer> LIQUIDS = Setting.intBuilder("liquids")
-            .range(p -> 0, p -> Metabolism.of(p).getMaxLiquids())
-            .label(Component.translatable("setting.crinklemod.metabolism.liquids.label"))
-            .tooltip(Component.translatable("setting.crinklemod.metabolism.liquids.tooltip"))
+    public static final Setting<Boolean> ENABLED = Setting.booleanBuilder("enabled")
+            .label(Component.translatable("setting.crinklemod.metabolism.enabled.label"))
+            .tooltip(Component.translatable("setting.crinklemod.metabolism.enabled.tooltip"))
+            .defaultValue(false)
+            .getter(p -> Metabolism.of(p).isEnabled())
+            .setter((p, v) -> Metabolism.of(p).setEnabled(v))
+            .synchronizer(Metabolism::of)
+            .build();
+    public static final Setting<Integer> TIMER = Setting.intBuilder("timer")
+            .range(p -> 10, p -> Integer.MAX_VALUE)
+            .label(Component.translatable("setting.crinklemod.metabolism.timer.label"))
+            .tooltip(Component.translatable("setting.crinklemod.metabolism.timer.tooltip"))
+            .defaultValue(60)
+            .getter(p -> Metabolism.of(p).getTimer())
+            .setter((p, v) -> Metabolism.of(p).setTimer(v))
+            .synchronizer(Metabolism::of)
+            .build();
+    public static final Setting<Integer> NUMBER_ONE_ROLLS = Setting.intBuilder("numberOneRolls")
+            .range(p -> 0, p -> Integer.MAX_VALUE)
+            .label(Component.translatable("setting.crinklemod.metabolism.numberOneRolls.label"))
+            .tooltip(Component.translatable("setting.crinklemod.metabolism.numberOneRolls.tooltip"))
             .defaultValue(0)
-            .getter(p -> Metabolism.of(p).getLiquids())
-            .setter((p, v) -> Metabolism.of(p).setLiquids(v))
+            .getter(p -> Metabolism.of(p).getNumberOneRolls())
+            .setter((p, v) -> Metabolism.of(p).setNumberOneRolls(v))
+            .synchronizer(Metabolism::of)
+            .build();
+    public static final Setting<Integer> NUMBER_ONE_SAFE_ROLLS = Setting.intBuilder("numberOneSafeRolls")
+            .range(p -> 0, p -> Integer.MAX_VALUE)
+            .label(Component.translatable("setting.crinklemod.metabolism.numberOneSafeRolls.label"))
+            .tooltip(Component.translatable("setting.crinklemod.metabolism.numberOneSafeRolls.tooltip"))
+            .defaultValue(5)
+            .getter(p -> Metabolism.of(p).getNumberOneSafeRolls())
+            .setter((p, v) -> Metabolism.of(p).setNumberOneSafeRolls(v))
+            .synchronizer(Metabolism::of)
+            .build();
+    public static final Setting<Double> NUMBER_ONE_CHANCE = Setting.doubleBuilder("numberOneChance")
+            .range(p -> 0.0, p -> 1.0)
+            .label(Component.translatable("setting.crinklemod.metabolism.numberOneChance.label"))
+            .tooltip(Component.translatable("setting.crinklemod.metabolism.numberOneChance.tooltip"))
+            .defaultValue(0.5)
+            .getter(p -> Metabolism.of(p).getNumberOneChance())
+            .setter((p, v) -> Metabolism.of(p).setNumberOneChance(v))
             .synchronizer(Metabolism::of)
             .build();
 
-    public static final Setting<Integer> SOLIDS = Setting.intBuilder("solids")
-            .range(p -> 0, p -> Metabolism.of(p).getMaxSolids())
-            .label(Component.translatable("setting.crinklemod.metabolism.solids.label"))
-            .tooltip(Component.translatable("setting.crinklemod.metabolism.solids.tooltip"))
+    public static final Setting<Integer> NUMBER_TWO_ROLLS = Setting.intBuilder("numberTwoRolls")
+            .range(p -> 0, p -> Integer.MAX_VALUE)
+            .label(Component.translatable("setting.crinklemod.metabolism.numberTwoRolls.label"))
+            .tooltip(Component.translatable("setting.crinklemod.metabolism.numberTwoRolls.tooltip"))
             .defaultValue(0)
-            .getter(p -> Metabolism.of(p).getSolids())
-            .setter((p, v) -> Metabolism.of(p).setSolids(v))
-            .synchronizer(Metabolism::of)
-
-            .build();
-
-    public static final Setting<Integer> BLADDER = Setting.intBuilder("bladder")
-            .range(p -> 0, p -> Metabolism.of(p).getBladderCapacity())
-            .label(Component.translatable("setting.crinklemod.metabolism.bladder.label"))
-            .tooltip(Component.translatable("setting.crinklemod.metabolism.bladder.tooltip"))
-            .defaultValue(0)
-            .getter(p -> Metabolism.of(p).getBladder())
-            .setter((p, v) -> Metabolism.of(p).setBladder(v))
+            .getter(p -> Metabolism.of(p).getNumberTwoRolls())
+            .setter((p, v) -> Metabolism.of(p).setNumberTwoRolls(v))
             .synchronizer(Metabolism::of)
             .build();
-
-    public static final Setting<Integer> BOWELS = Setting.intBuilder("bowels")
-            .range(p -> 0, p -> Metabolism.of(p).getBowelCapacity())
-            .label(Component.translatable("setting.crinklemod.metabolism.bowels.label"))
-            .tooltip(Component.translatable("setting.crinklemod.metabolism.bowels.tooltip"))
-            .defaultValue(0)
-            .getter(p -> Metabolism.of(p).getBowels())
-            .setter((p, v) -> Metabolism.of(p).setBowels(v))
-            .synchronizer(Metabolism::of)
-            .build();
-
-    public static final Setting<Integer> MAX_LIQUIDS = Setting.intBuilder("maxLiquids")
+    public static final Setting<Integer> NUMBER_TWO_SAFE_ROLLS = Setting.intBuilder("numberTwoSafeRolls")
             .range(p -> 0, p -> Integer.MAX_VALUE)
-            .label(Component.translatable("setting.crinklemod.metabolism.max_liquids.label"))
-            .tooltip(Component.translatable("setting.crinklemod.metabolism.max_liquids.tooltip"))
-            .defaultValue(p -> MetabolismConfig.maxLiquids)
-            .getter(p -> Metabolism.of(p).getMaxLiquids())
-            .setter((p, v) -> Metabolism.of(p).setMaxLiquids(v))
+            .label(Component.translatable("setting.crinklemod.metabolism.numberTwoSafeRolls.label"))
+            .tooltip(Component.translatable("setting.crinklemod.metabolism.numberTwoSafeRolls.tooltip"))
+            .defaultValue(3)
+            .getter(p -> Metabolism.of(p).getNumberTwoSafeRolls())
+            .setter((p, v) -> Metabolism.of(p).setNumberTwoSafeRolls(v))
             .synchronizer(Metabolism::of)
             .build();
 
-    public static final Setting<Integer> MAX_SOLIDS = Setting.intBuilder("maxSolids")
-            .range(p -> 0, p -> Integer.MAX_VALUE)
-            .label(Component.translatable("setting.crinklemod.metabolism.max_solids.label"))
-            .tooltip(Component.translatable("setting.crinklemod.metabolism.max_solids.tooltip"))
-            .defaultValue(p -> MetabolismConfig.maxSolids)
-            .getter(p -> Metabolism.of(p).getMaxSolids())
-            .setter((p, v) -> Metabolism.of(p).setMaxSolids(v))
+    public static final Setting<Double> NUMBER_TWO_CHANCE = Setting.doubleBuilder("numberTwoChance")
+            .range(p -> 0.0, p -> 1.0)
+            .label(Component.translatable("setting.crinklemod.metabolism.numberTwoChance.label"))
+            .tooltip(Component.translatable("setting.crinklemod.metabolism.numberTwoChance.tooltip"))
+            .defaultValue(0.5)
+            .getter(p -> Metabolism.of(p).getNumberTwoChance())
+            .setter((p, v) -> Metabolism.of(p).setNumberTwoChance(v))
             .synchronizer(Metabolism::of)
             .build();
-
-    public static final Setting<Integer> BLADDER_CAPACITY = Setting.intBuilder("bladderCapacity")
-            .range(p -> 0, p -> Integer.MAX_VALUE)
-            .label(Component.translatable("setting.crinklemod.metabolism.bladder_capacity.label"))
-            .tooltip(Component.translatable("setting.crinklemod.metabolism.bladder_capacity.tooltip"))
-            .defaultValue(p -> MetabolismConfig.bladderCapacity)
-            .getter(p -> Metabolism.of(p).getBladderCapacity())
-            .setter((p, v) -> Metabolism.of(p).setBladderCapacity(v))
-            .synchronizer(Metabolism::of)
-            .build();
-
-    public static final Setting<Integer> BOWEL_CAPACITY = Setting.intBuilder("bowelCapacity")
-            .range(p -> 0, p -> Integer.MAX_VALUE)
-            .label(Component.translatable("setting.crinklemod.metabolism.bowel_capacity.label"))
-            .tooltip(Component.translatable("setting.crinklemod.metabolism.bowel_capacity.tooltip"))
-            .defaultValue(p -> MetabolismConfig.bowelCapacity)
-            .getter(p -> Metabolism.of(p).getBowelCapacity())
-            .setter((p, v) -> Metabolism.of(p).setBowelCapacity(v))
-            .synchronizer(Metabolism::of)
-            .build();
-
-    public static final Setting<Integer> LIQUIDS_RATE = Setting.intBuilder("liquidsRate")
-            .range(p -> 0, p -> Integer.MAX_VALUE)
-            .label(Component.translatable("setting.crinklemod.metabolism.liquids_rate.label"))
-            .tooltip(Component.translatable("setting.crinklemod.metabolism.liquids_rate.tooltip"))
-            .defaultValue(p -> MetabolismConfig.liquidsRate)
-            .getter(p -> Metabolism.of(p).getLiquidsRate())
-            .setter((p, v) -> Metabolism.of(p).setLiquidsRate(v))
-            .synchronizer(Metabolism::of)
-            .build();
-
-    public static final Setting<Integer> SOLIDS_RATE = Setting.intBuilder("solidsRate")
-            .range(p -> 0, p -> Integer.MAX_VALUE)
-            .label(Component.translatable("setting.crinklemod.metabolism.solids_rate.label"))
-            .tooltip(Component.translatable("setting.crinklemod.metabolism.solids_rate.tooltip"))
-            .defaultValue(p -> MetabolismConfig.solidsRate)
-            .getter(p -> Metabolism.of(p).getSolidsRate())
-            .setter((p, v) -> Metabolism.of(p).setSolidsRate(v))
-            .synchronizer(Metabolism::of)
-            .build();
-
-    public static final Setting<Double> BLADDER_ACCIDENT_WARNING = Setting.doubleBuilder("bladderAccidentWarning")
-            .range(p -> 0.1, p -> 1.0)
-            .label(Component.translatable("setting.crinklemod.metabolism.bladder_accident_warning.label"))
-            .tooltip(Component.translatable("setting.crinklemod.metabolism.bladder_accident_warning.tooltip"))
-            .defaultValue(p -> MetabolismConfig.bladderAccidentWarning)
-            .getter(p -> Metabolism.of(p).getBladderAccidentWarning())
-            .setter((p, v) -> Metabolism.of(p).setBladderAccidentWarning(v))
-            .synchronizer(Metabolism::of)
-            .build();
-
-    public static final Setting<Double> BOWEL_ACCIDENT_WARNING = Setting.doubleBuilder("bowelAccidentWarning")
-            .range(p -> 0.1, p -> 1.0)
-            .label(Component.translatable("setting.crinklemod.metabolism.bowel_accident_warning.label"))
-            .tooltip(Component.translatable("setting.crinklemod.metabolism.bowel_accident_warning.tooltip"))
-            .defaultValue(p -> MetabolismConfig.bowelAccidentWarning)
-            .getter(p -> Metabolism.of(p).getBowelAccidentWarning())
-            .setter((p, v) -> Metabolism.of(p).setBowelAccidentWarning(v))
-            .synchronizer(Metabolism::of)
-            .build();
-
-    public static final Setting<Integer> BLADDER_ACCIDENT_FREQUENCY = Setting.intBuilder("bladderAccidentFrequency")
-            .range(p -> 1, p -> Integer.MAX_VALUE)
-            .label(Component.translatable("setting.crinklemod.metabolism.bladder_accident_frequency.label"))
-            .tooltip(Component.translatable("setting.crinklemod.metabolism.bladder_accident_frequency.tooltip"))
-            .defaultValue(p -> MetabolismConfig.bladderAccidentFrequency)
-            .getter(p -> Metabolism.of(p).getBladderAccidentFrequency())
-            .setter((p, v) -> Metabolism.of(p).setBladderAccidentFrequency(v))
-            .synchronizer(Metabolism::of)
-            .build();
-
-    public static final Setting<Integer> BOWEL_ACCIDENT_FREQUENCY = Setting.intBuilder("bowelAccidentFrequency")
-            .range(p -> 1, p -> Integer.MAX_VALUE)
-            .label(Component.translatable("setting.crinklemod.metabolism.bowel_accident_frequency.label"))
-            .tooltip(Component.translatable("setting.crinklemod.metabolism.bowel_accident_frequency.tooltip"))
-            .defaultValue(p -> MetabolismConfig.bowelAccidentFrequency)
-            .getter(p -> Metabolism.of(p).getBowelAccidentFrequency())
-            .setter((p, v) -> Metabolism.of(p).setBowelAccidentFrequency(v))
-            .synchronizer(Metabolism::of)
-            .build();
-
-    public static final Setting<Double> BLADDER_ACCIDENT_AMOUNT_PERCENT = Setting.doubleBuilder("bladderAccidentAmountPercent")
-            .range(p -> 0.01, p -> 1.0)
-            .label(Component.translatable("setting.crinklemod.metabolism.bladder_accident_amount_percent.label"))
-            .tooltip(Component.translatable("setting.crinklemod.metabolism.bladder_accident_amount_percent.tooltip"))
-            .defaultValue(p -> MetabolismConfig.bladderAccidentAmountPercent)
-            .getter(p -> Metabolism.of(p).getBladderAccidentAmountPercent())
-            .setter((p, v) -> Metabolism.of(p).setBladderAccidentAmountPercent(v))
-            .synchronizer(Metabolism::of)
-            .build();
-
-    public static final Setting<Double> BOWEL_ACCIDENT_AMOUNT_PERCENT = Setting.doubleBuilder("bowelAccidentAmountPercent")
-            .range(p -> 0.01, p -> 1.0)
-            .label(Component.translatable("setting.crinklemod.metabolism.bowel_accident_amount_percent.label"))
-            .tooltip(Component.translatable("setting.crinklemod.metabolism.bowel_accident_amount_percent.tooltip"))
-            .defaultValue(p -> MetabolismConfig.bowelAccidentAmountPercent)
-            .getter(p -> Metabolism.of(p).getBowelAccidentAmountPercent())
-            .setter((p, v) -> Metabolism.of(p).setBowelAccidentAmountPercent(v))
-            .synchronizer(Metabolism::of)
-            .build();
-
 }
