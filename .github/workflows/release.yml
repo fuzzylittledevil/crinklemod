@@ -4,7 +4,7 @@ on:
     types:
       - closed
     branches:
-      - release/*
+      - main
   workflow_dispatch:
 
 permissions:
@@ -26,8 +26,6 @@ jobs:
           github-token: ${{ secrets.github_token }}
           auto-version-bump: false
           git-committer: 'BOT'
-      - name: Print Version
-        run: "echo 'New Version: ${{steps.bump.outputs.version}}'"
   jar:
     name: Build Jar
     needs: bump
