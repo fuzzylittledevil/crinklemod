@@ -4,18 +4,8 @@ on:
     types:
       - closed
     branches:
-      - main
+      - release/*
   workflow_dispatch:
-    inputs:
-      version-mode:
-        description: 'The version mode to use'
-        required: true
-        default: 'patch'
-        options:
-          - 'major'
-          - 'minor'
-          - 'patch'
-          - 'auto'
 
 permissions:
   contents: write
@@ -27,17 +17,17 @@ jobs:
     outputs:
       version: ${{ steps.bump.outputs.version }}
     steps:
-      -   name: Checkout
-          uses: actions/checkout@v2
-      -   name: Bump Version
-          id: bump
-          uses: crinkle-ninja/version-bump-action@v9
-          with:
-            github-token: ${{ secrets.github_token }}
-            auto-version-bump-mode: ${{ github.event.inputs.version-mode }}
-            git-committer: 'BOT'
-      -   name: Print Version
-          run: "echo 'New Version: ${{steps.bump.outputs.version}}'"
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Bump Version
+        id: bump
+        uses: crinkle-ninja/version-bump-action@v9
+        with:
+          github-token: ${{ secrets.github_token }}
+          auto-version-bump: false
+          git-committer: 'BOT'
+      - name: Print Version
+        run: "echo 'New Version: ${{steps.bump.outputs.version}}'"
   jar:
     name: Build Jar
     needs: bump
