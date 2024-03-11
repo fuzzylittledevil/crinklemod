@@ -1,11 +1,21 @@
 name: Release
 on:
+  pull_request:
+    types:
+      - closed
+    branches:
+      - main
   workflow_dispatch:
+
 permissions:
   contents: write
+
 jobs:
-  build:
+  bump:
+    name: Bump Version
     runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.bump.outputs.version }}
     steps:
       -   name: Checkout
           uses: actions/checkout@v2
@@ -14,7 +24,64 @@ jobs:
           uses: crinkle-ninja/version-bump-action@v9
           with:
             github-token: ${{ secrets.github_token }}
+            auto-version-bump: false
+            auto-version-bump-release: true
             git-committer: 'BOT'
-            auto-version-bump: true
       -   name: Print Version
           run: "echo 'New Version: ${{steps.bump.outputs.version}}'"
+  jar:
+    name: Build Jar
+    needs: bump
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Set up JDK 17
+        uses: actions/setup-java@v2
+        with:
+          java-version: 17
+          distribution: 'adopt'
+      - name: Build with Gradle
+        uses: gradle/gradle-build-action@v2
+        with:
+          arguments: jar
+      - name: Upload Jar
+        uses: actions/upload-artifact@v4
+        with:
+          name: crinklemod-${{needs.bump.outputs.version}}.jar
+          path: build/reobfJar/output.jar
+          if-no-files-found: error
+          overwrite: true
+  release:
+    needs:
+      - bump
+      - jar
+    name: Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.github_token }}
+        with:
+          tag_name: ${{needs.bump.outputs.version}}
+          release_name: Release ${{needs.bump.outputs.version}}
+          draft: false
+          prerelease: false
+      - name: Download Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: crinklemod-${{needs.bump.outputs.version}}.jar
+          path: build/reobfJar/output.jar
+      - name: Upload Jar
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.github_token }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: build/reobfJar/output.jar
+          asset_name: crinklemod-${{needs.bump.outputs.version}}.jar
+          asset_content_type: application/java-archive
