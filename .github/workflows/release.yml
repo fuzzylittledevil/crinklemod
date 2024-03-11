@@ -6,6 +6,16 @@ on:
     branches:
       - main
   workflow_dispatch:
+    inputs:
+      version-mode:
+        description: 'The version mode to use'
+        required: true
+        default: 'patch'
+        options:
+          - 'major'
+          - 'minor'
+          - 'patch'
+          - 'auto'
 
 permissions:
   contents: write
@@ -24,8 +34,7 @@ jobs:
           uses: crinkle-ninja/version-bump-action@v9
           with:
             github-token: ${{ secrets.github_token }}
-            auto-version-bump: false
-            auto-version-bump-release: true
+            auto-version-bump-mode: ${{ github.event.inputs.version-mode }}
             git-committer: 'BOT'
       -   name: Print Version
           run: "echo 'New Version: ${{steps.bump.outputs.version}}'"
@@ -75,13 +84,13 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: crinklemod-${{needs.bump.outputs.version}}.jar
-          path: build/reobfJar/output.jar
+          path: artifacts/
       - name: Upload Jar
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.github_token }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: build/reobfJar/output.jar
+          asset_path: artifacts/output.jar
           asset_name: crinklemod-${{needs.bump.outputs.version}}.jar
           asset_content_type: application/java-archive
