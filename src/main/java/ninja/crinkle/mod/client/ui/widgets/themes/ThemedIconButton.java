@@ -1,6 +1,7 @@
 package ninja.crinkle.mod.client.ui.widgets.themes;
 
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.network.chat.Component;
 import ninja.crinkle.mod.client.color.Color;
 import ninja.crinkle.mod.client.icons.Icons;
@@ -49,6 +50,7 @@ public class ThemedIconButton extends ThemedButton {
         private int width;
         private int height;
         private Component label;
+        private Component tooltip;
         private Consumer<AbstractThemedButton> onPress;
         private Predicate<AbstractThemedButton> activePredicate;
 
@@ -89,6 +91,11 @@ public class ThemedIconButton extends ThemedButton {
             return this;
         }
 
+        public Builder tooltip(Component tooltip) {
+            this.tooltip = tooltip;
+            return this;
+        }
+
         public Builder onPress(Consumer<AbstractThemedButton> onPress) {
             this.onPress = onPress;
             return this;
@@ -102,6 +109,8 @@ public class ThemedIconButton extends ThemedButton {
         public ThemedIconButton build() {
             ThemedIconButton button = new ThemedIconButton(x, y, width, height, label, theme, onPress, icon);
             button.setActivePredicate(activePredicate);
+            if (tooltip != null)
+                button.setTooltip(Tooltip.create(tooltip));
             return button;
         }
     }

@@ -3,16 +3,18 @@ package ninja.crinkle.mod.client.ui.menus.status;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
+import ninja.crinkle.mod.client.ui.themes.Theme;
+import ninja.crinkle.mod.client.ui.widgets.themes.ThemedButton;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ButtonBarEntry implements IEntry {
     private final int lineNumber;
-    private final List<Button> buttons = new ArrayList<>();
+    private final List<ThemedButton> buttons = new ArrayList<>();
     private final int buttonSpacing;
 
-    public ButtonBarEntry(int lineNumber, List<Button> buttons, int buttonSpacing) {
+    public ButtonBarEntry(int lineNumber, List<ThemedButton> buttons, int buttonSpacing) {
         this.lineNumber = lineNumber;
         this.buttons.addAll(buttons);
         this.buttonSpacing = buttonSpacing;
@@ -22,7 +24,7 @@ public class ButtonBarEntry implements IEntry {
     public List<AbstractWidget> create(StatusMenu menu) {
         List<AbstractWidget> widgets = new ArrayList<>();
         int offset = 0;
-        for (Button button : buttons) {
+        for (ThemedButton button : buttons) {
             button.setY(menu.getTopPos() + menu.getLineYOffset(lineNumber));
             button.setX(menu.getLeftPos() + menu.getMargin() + offset);
             widgets.add(button);
@@ -43,14 +45,14 @@ public class ButtonBarEntry implements IEntry {
 
     public static class Builder {
         private final int lineNumber;
-        private final List<Button> buttons = new ArrayList<>();
+        private final List<ThemedButton> buttons = new ArrayList<>();
         private int buttonSpacing = 4;
 
         public Builder(int lineNumber) {
             this.lineNumber = lineNumber;
         }
 
-        public Builder button(Button button) {
+        public Builder button(ThemedButton button) {
             buttons.add(button);
             return this;
         }

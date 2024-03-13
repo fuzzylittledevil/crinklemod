@@ -140,6 +140,7 @@ public class ConfigMenu<E extends ICapabilityProvider> extends AbstractMenu {
         });
 
         saveButton = ThemedIconButton.builder(getTheme(), Icons.SAVE)
+                .tooltip(Component.translatable("gui.crinklemod.shared.save_tooltip"))
                 .onPress(b -> {
                     clearNotifications();
                     configMenuEntries.forEach(c -> {
@@ -154,6 +155,7 @@ public class ConfigMenu<E extends ICapabilityProvider> extends AbstractMenu {
                 .build();
         addWidget(saveButton);
         addWidget(ThemedIconButton.builder(getTheme(), Icons.RESET)
+                .tooltip(Component.translatable("gui.crinklemod.shared.reset_tooltip"))
                 .onPress(b -> {
                     clearNotifications();
                     configMenuEntries.forEach(c -> {
@@ -166,6 +168,7 @@ public class ConfigMenu<E extends ICapabilityProvider> extends AbstractMenu {
                         getTopPos() + getLineYOffset(lastLineNumber + 1), BUTTON_SIZE, BUTTON_SIZE)
                 .build());
         addWidget(ThemedIconButton.builder(getTheme(), Icons.BACK)
+                .tooltip(Component.translatable("gui.crinklemod.shared.back_tooltip"))
                 .onPress(b -> {
                     clearNotifications();
                     onClose.accept(this);
