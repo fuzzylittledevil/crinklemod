@@ -46,6 +46,7 @@ public class MetabolismImpl implements IMetabolism {
     public CompoundTag serializeNBT() {
         CompoundTag tag = new CompoundTag();
         tag.putString(MetabolismVersions.TAG_VERSION, version.name());
+        tag.putBoolean(MetabolismSettings.ENABLED.key(), isEnabled());
         tag.putInt(MetabolismSettings.TIMER.key(), getTimer());
         tag.putInt(MetabolismSettings.NUMBER_ONE_ROLLS.key(), getNumberOneRolls());
         tag.putInt(MetabolismSettings.NUMBER_ONE_SAFE_ROLLS.key(), this.getNumberOneSafeRolls());
@@ -64,6 +65,7 @@ public class MetabolismImpl implements IMetabolism {
     @Override
     public void deserializeNBT(@NotNull CompoundTag nbt) {
         version = MetabolismVersions.fromNBT(nbt);
+        safeSet(nbt, MetabolismSettings.ENABLED.key(), (tag, key) -> setEnabled(tag.getBoolean(key)));
         safeSet(nbt, MetabolismSettings.TIMER.key(), (tag, key) -> setTimer(tag.getInt(key)));
         safeSet(nbt, MetabolismSettings.NUMBER_ONE_ROLLS.key(), (tag, key) -> setNumberOneRolls(tag.getInt(key)));
         safeSet(nbt, MetabolismSettings.NUMBER_ONE_SAFE_ROLLS.key(), (tag, key) -> setNumberOneSafeRolls(tag.getInt(key)));

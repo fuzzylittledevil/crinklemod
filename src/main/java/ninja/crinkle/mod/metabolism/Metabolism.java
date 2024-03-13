@@ -1,6 +1,7 @@
 package ninja.crinkle.mod.metabolism;
 
 import com.mojang.logging.LogUtils;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
@@ -10,6 +11,7 @@ import ninja.crinkle.mod.api.ServerUpdater;
 import ninja.crinkle.mod.capabilities.IMetabolism;
 import ninja.crinkle.mod.capabilities.MetabolismCapabilities;
 import ninja.crinkle.mod.events.AccidentEvent;
+import ninja.crinkle.mod.events.CrinkleEvent;
 import ninja.crinkle.mod.events.DesperationEvent;
 import ninja.crinkle.mod.network.CrinkleChannel;
 import ninja.crinkle.mod.network.messages.MetabolismUpdateMessage;
@@ -63,14 +65,15 @@ public class Metabolism implements ServerUpdater {
 
     private boolean isMetabolismEnabled() {
         return getMetabolism().isPresent() && getTimer() > 0
+                && isEnabled()
                 && !Undergarment.getWornUndergarment(player).isEmpty()
                 && (getNumberOneChance() > 0 || getNumberTwoChance() > 0);
     }
 
     private int getDesperationLevel(int rolls, int safeRolls, double chance) {
         int dangerRolls = rolls - safeRolls;
-        if (dangerRolls <= 0) return 0;
-        return MathUtil.clamp((int) Math.round(dangerRolls * (1 + chance)), 1, 5);
+        if (dangerRolls < 0) return -1;
+        return MathUtil.clamp((int) Math.round(dangerRolls * (1 + chance)), 0, 4);
     }
 
     public int getNumberOneDesperationLevel() {
@@ -91,15 +94,15 @@ public class Metabolism implements ServerUpdater {
                 m.setNumberOneRolls(m.getNumberOneRolls() + 1);
                 if (m.getNumberOneRolls() >= getNumberOneSafeRolls()) {
                     double roll = Math.random();
-                    int desperationLevel = getNumberOneDesperationLevel();
-                    if (m.getNumberOneRolls() > getNumberOneSafeRolls()
+                    int desperationLevel = getNumberOneDesperationLevel() == -1 ? 0 : getNumberOneDesperationLevel();
+                    if (m.getNumberOneRolls() >= getNumberOneSafeRolls()
                             && (roll - (double) (desperationLevel * 2) / 100) < m.getNumberOneChance()) {
                         CrinkleMod.EVENT_BUS.post(
                                 new AccidentEvent.Bladder(player, 1, AccidentEvent.Side.SERVER));
                         m.setNumberOneRolls(0);
                     } else {
                         CrinkleMod.EVENT_BUS.post(
-                                new DesperationEvent.Bladder(player, desperationLevel, DesperationEvent.Side.SERVER));
+                                new DesperationEvent.Bladder(player, getNumberOneDesperationLevel(), DesperationEvent.Side.SERVER));
                     }
                 }
             }
@@ -108,16 +111,15 @@ public class Metabolism implements ServerUpdater {
                 m.setNumberTwoRolls(m.getNumberTwoRolls() + 1);
                 if (m.getNumberTwoRolls() >= getNumberTwoSafeRolls()) {
                     double roll = Math.random();
-                    int desperationLevel = getNumberTwoDesperationLevel();
-                    if (m.getNumberTwoRolls() > getNumberTwoSafeRolls()
+                    int desperationLevel = getNumberTwoDesperationLevel() == -1 ? 0 : getNumberTwoDesperationLevel();
+                    if (m.getNumberTwoRolls() >= getNumberTwoSafeRolls()
                             && (roll - (double) (desperationLevel * 2) / 100) < m.getNumberTwoChance()) {
                         CrinkleMod.EVENT_BUS.post(
                                 new AccidentEvent.Bowels(player, 1, AccidentEvent.Side.SERVER));
                         m.setNumberTwoRolls(0);
                     } else {
-                        int level = getNumberTwoDesperationLevel();
                         CrinkleMod.EVENT_BUS.post(
-                                new DesperationEvent.Bowels(player, level, DesperationEvent.Side.SERVER));
+                                new DesperationEvent.Bowels(player, getNumberTwoDesperationLevel(), DesperationEvent.Side.SERVER));
                     }
                 }
             }
@@ -195,5 +197,52 @@ public class Metabolism implements ServerUpdater {
     public void setNumberTwoSafeRolls(int numberTwoSafeRolls) {
         getMetabolism().ifPresent(m -> m.setNumberTwoSafeRolls(numberTwoSafeRolls));
         syncClient();
+    }
+
+    public void voidNumberOne() {
+        CrinkleEvent.Side side = player instanceof ServerPlayer ? CrinkleEvent.Side.SERVER : CrinkleEvent.Side.CLIENT;
+        getMetabolism().ifPresent(m -> {
+            CrinkleMod.EVENT_BUS.post(
+                    new AccidentEvent.Bladder(player, 1, side));
+        });
+    }
+
+    public void voidNumberTwo() {
+        CrinkleEvent.Side side = player instanceof ServerPlayer ? CrinkleEvent.Side.SERVER : CrinkleEvent.Side.CLIENT;
+        getMetabolism().ifPresent(m -> {
+            CrinkleMod.EVENT_BUS.post(
+                    new AccidentEvent.Bowels(player, 1, side));
+        });
+    }
+
+    public enum DesperationLevel {
+        NONE(Component.translatable("desperation.crinklemod.none")),
+        LOW(Component.translatable("desperation.crinklemod.low")),
+        MEDIUM_LOW(Component.translatable("desperation.crinklemod.medium_low")),
+        MEDIUM(Component.translatable("desperation.crinklemod.medium")),
+        MEDIUM_HIGH(Component.translatable("desperation.crinklemod.medium_high")),
+        HIGH(Component.translatable("desperation.crinklemod.high"));
+
+        private final Component label;
+
+        DesperationLevel(Component label) {
+            this.label = label;
+        }
+
+        public Component getLabel() {
+            return label;
+        }
+
+        public static DesperationLevel of(int level) {
+            return switch (level) {
+                case -1 -> NONE;
+                case 0 -> LOW;
+                case 1 -> MEDIUM_LOW;
+                case 2 -> MEDIUM;
+                case 3 -> MEDIUM_HIGH;
+                case 4 -> HIGH;
+                default -> throw new IllegalArgumentException("Invalid desperation level: " + level);
+            };
+        }
     }
 }

@@ -21,10 +21,13 @@ import java.util.function.Supplier;
  */
 public class MetabolismUpdateMessage {
     private static final Logger LOGGER = LogUtils.getLogger();
+    private final boolean enabled;
     private final int timer;
-    private final int rolls;
-    private final int safeRolls;
+    private final int numberOneRolls;
+    private final int numberOneSafeRolls;
     private final double numberOneChance;
+    private final int numberTwoRolls;
+    private final int numberTwoSafeRolls;
     private final double numberTwoChance;
 
     /**
@@ -34,10 +37,13 @@ public class MetabolismUpdateMessage {
      * @see IMetabolism
      */
     public MetabolismUpdateMessage(@NotNull IMetabolism metabolism) {
+        this.enabled = metabolism.isEnabled();
         this.timer = metabolism.getTimer();
-        this.rolls = metabolism.getNumberOneRolls();
-        this.safeRolls = metabolism.getNumberOneSafeRolls();
+        this.numberOneRolls = metabolism.getNumberOneRolls();
+        this.numberOneSafeRolls = metabolism.getNumberOneSafeRolls();
         this.numberOneChance = metabolism.getNumberOneChance();
+        this.numberTwoRolls = metabolism.getNumberTwoRolls();
+        this.numberTwoSafeRolls = metabolism.getNumberTwoSafeRolls();
         this.numberTwoChance = metabolism.getNumberTwoChance();
     }
 
@@ -48,10 +54,13 @@ public class MetabolismUpdateMessage {
      * @see FriendlyByteBuf
      */
     public MetabolismUpdateMessage(@NotNull FriendlyByteBuf buffer) {
+        this.enabled = buffer.readBoolean();
         this.timer = buffer.readInt();
-        this.rolls = buffer.readInt();
-        this.safeRolls = buffer.readInt();
+        this.numberOneRolls = buffer.readInt();
+        this.numberOneSafeRolls = buffer.readInt();
         this.numberOneChance = buffer.readDouble();
+        this.numberTwoRolls = buffer.readInt();
+        this.numberTwoSafeRolls = buffer.readInt();
         this.numberTwoChance = buffer.readDouble();
     }
 
@@ -73,10 +82,13 @@ public class MetabolismUpdateMessage {
      * @implSpec The order of the encoded values must match the order of the decoded values found in the constructor
      */
     public void encoder(@NotNull FriendlyByteBuf buffer) {
+        buffer.writeBoolean(enabled);
         buffer.writeInt(timer);
-        buffer.writeInt(rolls);
-        buffer.writeInt(safeRolls);
+        buffer.writeInt(numberOneRolls);
+        buffer.writeInt(numberOneSafeRolls);
         buffer.writeDouble(numberOneChance);
+        buffer.writeInt(numberTwoRolls);
+        buffer.writeInt(numberTwoSafeRolls);
         buffer.writeDouble(numberTwoChance);
     }
 
@@ -95,10 +107,13 @@ public class MetabolismUpdateMessage {
 
         IMetabolism metabolism = player.getCapability(MetabolismCapabilities.METABOLISM).orElseThrow(() ->
                 new IllegalStateException("Player does not have a metabolism capability"));
+        metabolism.setEnabled(enabled);
         metabolism.setTimer(timer);
-        metabolism.setNumberOneRolls(rolls);
-        metabolism.setNumberOneSafeRolls(safeRolls);
+        metabolism.setNumberOneRolls(numberOneRolls);
+        metabolism.setNumberOneSafeRolls(numberOneSafeRolls);
         metabolism.setNumberOneChance(numberOneChance);
+        metabolism.setNumberTwoRolls(numberTwoRolls);
+        metabolism.setNumberTwoSafeRolls(numberTwoSafeRolls);
         metabolism.setNumberTwoChance(numberTwoChance);
         ctx.get().setPacketHandled(true);
     }

@@ -99,16 +99,12 @@ public class MetabolismCommand {
     private int status(CommandSourceStack source, ServerPlayer instigator, @NotNull Player target) {
         Metabolism m = Metabolism.of(target);
         List<Component> components = new ArrayList<>();
-        long nextTickSeconds = m.getTimer() - (target.getCommandSenderWorld().getGameTime() / 20) % m.getTimer();
         components.add(Component.literal(String.format("%s: %s",
                 Component.translatable("setting.crinklemod.metabolism.enabled.label").getString(),
                 m.isEnabled())));
         components.add(Component.literal(String.format("%s: %d seconds",
                 Component.translatable("setting.crinklemod.metabolism.timer.label").getString(),
                 m.getTimer())));
-        components.add(Component.literal(String.format("%s: %d seconds",
-                Component.translatable("setting.crinklemod.metabolism.nextTick.label").getString(),
-                nextTickSeconds)));
         components.add(Component.literal(String.format("%s: %d",
                 Component.translatable("setting.crinklemod.metabolism.numberOneRolls.label").getString(),
                 m.getNumberOneRolls())));
