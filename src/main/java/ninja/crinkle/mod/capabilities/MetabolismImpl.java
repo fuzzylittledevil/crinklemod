@@ -27,6 +27,7 @@ public class MetabolismImpl implements IMetabolism {
     private double numberTwoChance;
 
     public MetabolismImpl() {
+        version = MetabolismVersions.getLatest();
         enabled = false;
         timer = MetabolismSettings.TIMER.getDefault();
         numberOneRolls = MetabolismSettings.NUMBER_ONE_ROLLS.getDefault();
