@@ -11,25 +11,11 @@ permissions:
   contents: write
 
 jobs:
-  bump:
-    name: Bump Version
+  build:
+    name: Build Jar
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.bump.outputs.version }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: Bump Version
-        id: bump
-        uses: crinkle-ninja/version-bump-action@v9
-        with:
-          github-token: ${{ secrets.github_token }}
-          auto-version-bump: false
-          git-committer: 'BOT'
-  jar:
-    name: Build Jar
-    needs: bump
-    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -38,10 +24,17 @@ jobs:
         with:
           java-version: 17
           distribution: 'adopt'
-      - name: Build with Gradle
-        uses: gradle/gradle-build-action@v2
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+      - name: Bump Version
+        id: bump
+        uses: crinkle-ninja/version-bump-action@v9
         with:
-          arguments: jar
+          github-token: ${{ secrets.github_token }}
+          auto-version-bump: false
+          git-committer: 'BOT'
+      - name: Build Jar
+        run: ./gradlew jar
       - name: Upload Jar
         uses: actions/upload-artifact@v4
         with:
@@ -51,8 +44,7 @@ jobs:
           overwrite: true
   release:
     needs:
-      - bump
-      - jar
+      - build
     name: Release
     runs-on: ubuntu-latest
     steps:

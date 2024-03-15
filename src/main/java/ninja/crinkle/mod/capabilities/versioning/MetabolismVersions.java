@@ -26,6 +26,10 @@ public enum MetabolismVersions {
         return tag.contains(TAG_VERSION) ? MetabolismVersions.valueOf(tag.getString(TAG_VERSION)) : V1;
     }
 
+    public static MetabolismVersions getLatest() {
+        return values()[values().length - 1];
+    }
+
     @Contract("_ -> param1")
     public @NotNull CompoundTag updateVersion(@NotNull CompoundTag tag) {
         tag.putString(TAG_VERSION, name());
