@@ -1,9 +1,13 @@
 package ninja.crinkle.mod.items.custom;
 
+import com.mojang.datafixers.util.Either;
 import net.minecraft.client.model.HumanoidModel;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.FormattedText;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.ItemStack;
@@ -13,6 +17,7 @@ import ninja.crinkle.mod.client.models.DiaperArmorModel;
 import ninja.crinkle.mod.client.renderers.DiaperArmorRenderer;
 import ninja.crinkle.mod.client.textures.Textures;
 import ninja.crinkle.mod.client.textures.generators.DiaperTextureGenerator;
+import ninja.crinkle.mod.client.ui.tooltips.ItemTooltipProvider;
 import ninja.crinkle.mod.undergarment.Undergarment;
 import ninja.crinkle.mod.util.MathUtil;
 import org.jetbrains.annotations.NotNull;
@@ -26,19 +31,19 @@ import software.bernie.geckolib.core.animation.RawAnimation;
 import software.bernie.geckolib.core.object.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-public class DiaperArmorItem extends ArmorItem implements GeoItem {
+public class DiaperArmorItem extends ArmorItem implements GeoItem, ItemTooltipProvider {
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
     private final ResourceLocation defaultTexture;
-    private final DiaperVariant variant;
     private ResourceLocation texture;
 
     public DiaperArmorItem(ArmorMaterial pMaterial, @NotNull DiaperVariant variant, @NotNull Properties pProperties) {
         super(pMaterial, ArmorItem.Type.LEGGINGS, pProperties.rarity(Rarity.EPIC).durability(1000));
         this.defaultTexture = variant.getTexture();
-        this.variant = variant;
     }
 
     @Override
@@ -91,7 +96,15 @@ public class DiaperArmorItem extends ArmorItem implements GeoItem {
         return Optional.ofNullable(texture).orElse(defaultTexture);
     }
 
-    public DiaperVariant getVariant() {
-        return variant;
+    @Override
+    public List<Either<FormattedText, TooltipComponent>> getTooltip(ItemStack stack) {
+        List<Either<FormattedText, TooltipComponent>> tooltip = new ArrayList<>();
+        Undergarment undergarment = Undergarment.of(stack);
+        tooltip.add(Either.left(Component.translatable("tooltip.crinklemod.undergarment.cauldron")));
+        if (undergarment.getLiquids() > 0 || undergarment.getSolids() > 0) {
+            tooltip.add(Either.right(undergarment.getLiquidsTooltip()));
+            tooltip.add(Either.right(undergarment.getSolidsTooltip()));
+        }
+        return tooltip;
     }
 }
