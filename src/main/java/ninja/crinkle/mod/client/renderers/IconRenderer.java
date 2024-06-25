@@ -1,25 +1,50 @@
 package ninja.crinkle.mod.client.renderers;
 
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.*;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.renderer.texture.SpriteContents;
+import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.resources.ResourceLocation;
 import ninja.crinkle.mod.client.color.Color;
 import ninja.crinkle.mod.client.icons.Icons;
+import org.joml.Matrix4f;
 
 public class IconRenderer {
-    @SuppressWarnings("resource")
-    public static void renderIcon(GuiGraphics graphics, Icons icon, int x, int y) {
+    private final GuiGraphics graphics;
+
+    public IconRenderer(GuiGraphics graphics) {
+        this.graphics = graphics;
+    }
+
+    public void render(Icons icon, int x, int y, Color color) {
+        render(icon, x, y, icon.width(), icon.height(), 1.0f, 1.0f, color);
+    }
+
+    public void render(Icons icon, int x, int y, int width, int height, float uPercent, float vPercent, Color color) {
         TextureAtlasSprite sprite = icon.getSprite();
-        SpriteContents contents = sprite.contents();
-        graphics.blit(x, y, 0, contents.width(), contents.height(), sprite);
+        float x2 = (float)(x + width) - (width * (1.0F - uPercent));
+        float y2 = (float)(y + height) - (height * (1.0F - vPercent));
+        float minU = sprite.getU0();
+        float maxU = sprite.getU1() - (sprite.getU1() - sprite.getU0()) * (1.0F - uPercent);
+        float minV = sprite.getV0();
+        float maxV = sprite.getV1() - (sprite.getV1() - sprite.getV0()) * (1.0F - vPercent);
+        renderIcon(sprite, x, y, x2, y2, minU, maxU, minV, maxV, color);
     }
 
-    public static void renderIcon(GuiGraphics graphics, Icons icon, int x, int y, Color color) {
-        // Get RGBA from int
-        graphics.setColor((float) color.getRed(), (float) color.getGreen(), (float) color.getBlue(),
-                (float) color.getAlpha());
-        renderIcon(graphics, icon, x, y);
+    private void renderIcon(TextureAtlasSprite sprite, float x1, float y1, float x2, float y2, float minU, float maxU,
+                            float minV, float maxV, Color color) {
+        ResourceLocation atlasLocation = sprite.atlasLocation();
+        RenderSystem.setShaderTexture(0, atlasLocation);
+        RenderSystem.setShader(GameRenderer::getPositionColorTexShader);
+        Matrix4f matrix4f = graphics.pose().last().pose();
         graphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
+        BufferBuilder bufferbuilder = Tesselator.getInstance().getBuilder();
+        bufferbuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR_TEX);
+        bufferbuilder.vertex(matrix4f, x1, y1, 0).color(color.ABGR()).uv(minU, minV).endVertex();
+        bufferbuilder.vertex(matrix4f, x1, y2, 0).color(color.ABGR()).uv(minU, maxV).endVertex();
+        bufferbuilder.vertex(matrix4f, x2, y2, 0).color(color.ABGR()).uv(maxU, maxV).endVertex();
+        bufferbuilder.vertex(matrix4f, x2, y1, 0).color(color.ABGR()).uv(maxU, minV).endVertex();
+        BufferUploader.drawWithShader(bufferbuilder.end());
     }
-
 }

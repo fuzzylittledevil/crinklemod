@@ -7,22 +7,21 @@ import ninja.crinkle.mod.client.textures.SpriteLoaderType;
 import ninja.crinkle.mod.client.textures.Textures;
 
 public enum Icons {
+    // ICONS! EVERY LAST ONE!
     BACK(new ResourceLocation(CrinkleMod.MODID, "gui/icons/back")),
-    BLADDER(new ResourceLocation(CrinkleMod.MODID, "gui/icons/bladder")),
     CHECKMARK(new ResourceLocation(CrinkleMod.MODID, "gui/icons/checkmark")),
     DOWN(new ResourceLocation(CrinkleMod.MODID, "gui/icons/down")),
     GEAR(new ResourceLocation(CrinkleMod.MODID, "gui/icons/gear")),
-    MESSINESS(new ResourceLocation(CrinkleMod.MODID, "gui/icons/messiness")),
     RESET(new ResourceLocation(CrinkleMod.MODID, "gui/icons/reset")),
     SAVE(new ResourceLocation(CrinkleMod.MODID, "gui/icons/save")),
-    SIPPY_CUP(new ResourceLocation(CrinkleMod.MODID, "gui/icons/sippycup")),
-    STEM_GLASS(new ResourceLocation(CrinkleMod.MODID, "gui/icons/stemglass")),
-    TUMMY(new ResourceLocation(CrinkleMod.MODID, "gui/icons/tummy")),
     WARNING1(new ResourceLocation(CrinkleMod.MODID, "gui/icons/warning1")),
     WARNING2(new ResourceLocation(CrinkleMod.MODID, "gui/icons/warning2")),
     WARNING3(new ResourceLocation(CrinkleMod.MODID, "gui/icons/warning3")),
-    WETNESS(new ResourceLocation(CrinkleMod.MODID, "gui/icons/wetness")),
-    WRENCH(new ResourceLocation(CrinkleMod.MODID, "gui/icons/wrench"))
+    WRENCH(new ResourceLocation(CrinkleMod.MODID, "gui/icons/wrench")),
+    WETNESS_OUTLINED(new ResourceLocation(CrinkleMod.MODID, "gui/icons/wetness_outlined")),
+    WETNESS_DANGER(new ResourceLocation(CrinkleMod.MODID, "gui/icons/wetness_danger")),
+    MESSINESS_OUTLINED(new ResourceLocation(CrinkleMod.MODID, "gui/icons/messiness_outlined")),
+    MESSINESS_DANGER(new ResourceLocation(CrinkleMod.MODID, "gui/icons/messiness_danger")),
     ;
 
 
@@ -34,6 +33,16 @@ public enum Icons {
 
     public ResourceLocation location() {
         return location;
+    }
+
+    @SuppressWarnings("resource")
+    public int width() {
+        return getSprite().contents().width();
+    }
+
+    @SuppressWarnings("resource")
+    public int height() {
+        return getSprite().contents().height();
     }
 
     public TextureAtlasSprite getSprite() {

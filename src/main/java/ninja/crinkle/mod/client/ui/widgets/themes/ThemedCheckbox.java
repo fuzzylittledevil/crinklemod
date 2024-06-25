@@ -81,7 +81,8 @@ public class ThemedCheckbox extends AbstractThemedButton {
         if (isSelected()) {
             Color color = this.active ? this.getTheme().getSuccessColor() : this.getTheme().getInactiveColor();
             BoxTheme boxTheme = this.getTheme().getBorderTheme(BoxTheme.Type.CHECKBOX);
-            IconRenderer.renderIcon(pGuiGraphics, Icons.CHECKMARK, this.getX() + boxTheme.edgeWidth(),
+            IconRenderer iconRenderer = new IconRenderer(pGuiGraphics);
+            iconRenderer.render(Icons.CHECKMARK, this.getX() + boxTheme.edgeWidth(),
                     this.getY() + boxTheme.edgeHeight(), color.withAlpha(this.alpha));
         }
     }
