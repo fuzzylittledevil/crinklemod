@@ -37,7 +37,8 @@ public class ThemedIconButton extends ThemedButton {
         if (icon != null) {
             BoxTheme borderTheme = getTheme().getBorderTheme(BoxTheme.Type.BUTTON);
             Color color = active ? getTheme().getSecondaryColor() : getTheme().getInactiveColor();
-            IconRenderer.renderIcon(pGuiGraphics, icon, getX() + borderTheme.edgeWidth(),
+            IconRenderer iconRenderer = new IconRenderer(pGuiGraphics);
+            iconRenderer.render(icon, getX() + borderTheme.edgeWidth(),
                     getY() + borderTheme.edgeHeight(), color.withAlpha(this.alpha));
         }
     }

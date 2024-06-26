@@ -105,5 +105,6 @@
   "gui.crinklemod.shared.reset_tooltip": "Reset",
   "gui.crinklemod.shared.save_tooltip": "Save",
   "event.crinklemod.undergarment.bladder.accident_no_pants.text": "You feel wetness trickle down your leg and onto the ground!",
-  "event.crinklemod.undergarment.bowel.accident_no_pants.text": "You leave a small 'gift' for the next person to find."
+  "event.crinklemod.undergarment.bowel.accident_no_pants.text": "You leave a small 'gift' for the next person to find.",
+  "tooltip.crinklemod.undergarment.cauldron": "You may wash this item in a cauldron"
 }

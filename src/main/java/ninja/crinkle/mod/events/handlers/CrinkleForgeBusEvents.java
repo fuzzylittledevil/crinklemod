@@ -1,6 +1,5 @@
 package ninja.crinkle.mod.events.handlers;
 
-import com.mojang.datafixers.util.Either;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
@@ -20,8 +19,8 @@ import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.server.command.ConfigCommand;
 import ninja.crinkle.mod.CrinkleMod;
+import ninja.crinkle.mod.client.ui.tooltips.ItemTooltipProvider;
 import ninja.crinkle.mod.commands.MetabolismCommand;
-import ninja.crinkle.mod.items.custom.DiaperArmorItem;
 import ninja.crinkle.mod.metabolism.Metabolism;
 import ninja.crinkle.mod.undergarment.Undergarment;
 import org.jetbrains.annotations.NotNull;
@@ -71,13 +70,8 @@ public class CrinkleForgeBusEvents {
 
     @SubscribeEvent
     public static void registerTooltips(RenderTooltipEvent.GatherComponents event) {
-        ItemStack stack = event.getItemStack();
-        if (stack.getItem() instanceof DiaperArmorItem) {
-            Undergarment undergarment = Undergarment.of(stack);
-            if (undergarment.getLiquids() > 0 || undergarment.getSolids() > 0) {
-                event.getTooltipElements().add(Either.right(undergarment.getLiquidsTooltip()));
-                event.getTooltipElements().add(Either.right(undergarment.getSolidsTooltip()));
-            }
+        if (event.getItemStack().getItem() instanceof ItemTooltipProvider provider) {
+            event.getTooltipElements().addAll(provider.getTooltip(event.getItemStack()));
         }
     }
 
