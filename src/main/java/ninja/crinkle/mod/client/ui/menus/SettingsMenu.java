@@ -17,7 +17,7 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-public class ConfigMenu<E extends ICapabilityProvider> extends AbstractMenu {
+public class SettingsMenu<E extends ICapabilityProvider> extends AbstractMenu {
 
     private static final Component UNSAVED_CHANGES_LABEL = Component.translatable("gui.crinklemod.shared.unsaved_changes.label");
     private static final int CHANGED_TEXT_COLOR = 0xff008080;
@@ -34,7 +34,7 @@ public class ConfigMenu<E extends ICapabilityProvider> extends AbstractMenu {
     private Label notificationLabel;
     private ThemedIconButton saveButton;
 
-    protected ConfigMenu(Builder<E> builder, Screen screen) {
+    protected SettingsMenu(Builder<E> builder, Screen screen) {
         super(screen, builder.leftPos, builder.topPos, builder.spacer, builder.lineSpacing, builder.margin, builder.lineHeight,
                 builder.visible, builder.font);
         this.entitySupplier = builder.entitySupplier;
@@ -80,9 +80,6 @@ public class ConfigMenu<E extends ICapabilityProvider> extends AbstractMenu {
         saveButton.active = false;
         labels.forEach((c, l) -> l.setColor(Label.DEFAULT_COLOR));
         editBoxes.forEach((c, e) -> e.setTextColor(DEFAULT_EDIT_BOX_TEXT_COLOR));
-        configMenuEntries.forEach(e -> {
-
-        });
 
         // Check for validation
         final List<Component> validationErrors = configMenuEntries.stream()
@@ -238,8 +235,8 @@ public class ConfigMenu<E extends ICapabilityProvider> extends AbstractMenu {
             return this;
         }
 
-        public ConfigMenu<E> build() {
-            return new ConfigMenu<>(this, screen);
+        public SettingsMenu<E> build() {
+            return new SettingsMenu<>(this, screen);
         }
     }
 }
