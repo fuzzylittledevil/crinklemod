@@ -12,14 +12,17 @@ import net.minecraftforge.fml.DistExecutor;
 import ninja.crinkle.mod.client.ClientHooks;
 import ninja.crinkle.mod.client.color.Color;
 import ninja.crinkle.mod.client.icons.Icons;
+import ninja.crinkle.mod.client.ui.animations.AnimationController;
 import ninja.crinkle.mod.client.ui.menus.AbstractMenu;
-import ninja.crinkle.mod.client.ui.menus.ConfigMenu;
+import ninja.crinkle.mod.client.ui.menus.SettingsMenu;
 import ninja.crinkle.mod.client.ui.menus.status.*;
 import ninja.crinkle.mod.client.ui.themes.Theme;
 import ninja.crinkle.mod.api.ServerUpdater;
+import ninja.crinkle.mod.client.ui.widgets.Icon;
 import ninja.crinkle.mod.client.ui.widgets.Label;
 import ninja.crinkle.mod.client.ui.widgets.themes.ThemedCheckbox;
 import ninja.crinkle.mod.client.ui.widgets.themes.ThemedIconButton;
+import ninja.crinkle.mod.client.ui.widgets.themes.ThemedSlider;
 import ninja.crinkle.mod.items.custom.DiaperArmorItem;
 import ninja.crinkle.mod.metabolism.Metabolism;
 import ninja.crinkle.mod.metabolism.MetabolismSettings;
@@ -39,9 +42,9 @@ public class CrinkleScreen extends FlexContainerScreen {
     private AbstractMenu metabolismMenu;
     private AbstractMenu undergarmentMenu;
     private AbstractMenu currentMenu;
-    private ConfigMenu<LocalPlayer> metabolismSettingsMenu;
-    private ConfigMenu<ItemStack> undergarmentLiquidsMenu;
-    private ConfigMenu<ItemStack> undergarmentSolidsMenu;
+    private SettingsMenu<LocalPlayer> metabolismSettingsMenu;
+    private SettingsMenu<ItemStack> undergarmentLiquidsMenu;
+    private SettingsMenu<ItemStack> undergarmentSolidsMenu;
     private boolean showDiaperTextureDebug = false;
     private int currentLine = 0;
 
@@ -76,6 +79,7 @@ public class CrinkleScreen extends FlexContainerScreen {
         final int lineSpacing = 5;
         final int lineHeight = 20;
         final int componentWidth = 20;
+
         setPadding(lineSpacing);
         Optional.ofNullable(DistExecutor.safeCallWhenOn(Dist.CLIENT, () -> ClientHooks::getMinecraft))
                 .ifPresent(minecraft -> {
@@ -90,35 +94,50 @@ public class CrinkleScreen extends FlexContainerScreen {
                                     .build())
                             .entry(CheckboxEntry.builder(nextLine())
                                     .checkbox(ThemedCheckbox.builder(getTheme(), Component
-                                                            .translatable("gui.crinklemod.status.checkbox.enable_metabolism.title"),
+                                                            .translatable("gui.crinklemod.status.checkbox.numberOneEnabled.title"),
                                                     c -> {
-                                                        Metabolism.of(Objects.requireNonNull(minecraft.player)).setEnabled(c.isSelected());
-                                                        MetabolismSettings.ENABLED.syncer(Objects.requireNonNull(minecraft.player)).ifPresent(ServerUpdater::syncServer);
+                                                        Metabolism.of(Objects.requireNonNull(minecraft.player)).setNumberOneEnabled(c.isSelected());
+                                                        MetabolismSettings.NUMBER_ONE_ENABLED.syncer(Objects.requireNonNull(minecraft.player)).ifPresent(ServerUpdater::syncServer);
                                                     })
                                             .bounds(0, 0, componentWidth, lineHeight)
-                                            .selected(Metabolism.of(Objects.requireNonNull(minecraft.player)).isEnabled())
+                                            .selected(Metabolism.of(Objects.requireNonNull(minecraft.player)).isNumberOneEnabled())
                                             .label(Label.builder(getMinecraft().font, Component
-                                                            .translatable("gui.crinklemod.status.checkbox.enable_metabolism.title"))
+                                                            .translatable("gui.crinklemod.status.checkbox.numberOneEnabled.title"))
                                                     .color(getTheme().getForegroundColor().color())
                                                     .build(), false)
                                             .tooltip(Tooltip.create(Component
-                                                    .translatable("gui.crinklemod.status.checkbox.enable_metabolism.tooltip")))
+                                                    .translatable("gui.crinklemod.status.checkbox.numberOneEnabled.tooltip")))
                                             .build())
                                     .build())
                             .entry(LabelEntry.builder(font, () ->
                                             Component.translatable("gui.crinklemod.status.label.number_one_rolls.title",
                                                     Metabolism.of(Objects.requireNonNull(minecraft.player)).getNumberOneRolls(),
                                                     Metabolism.of(Objects.requireNonNull(minecraft.player)).getNumberOneSafeRolls(),
-                                                    Metabolism.DesperationLevel.of(Metabolism.of(Objects.requireNonNull(minecraft.player))
-                                                            .getNumberOneDesperationLevel()).getLabel()))
+                                                    Metabolism.of(Objects.requireNonNull(minecraft.player)).getNumberOneDesperationLevel().getLabel()))
                                     .lineNumber(nextLine())
+                                    .build())
+                            .entry(CheckboxEntry.builder(nextLine())
+                                    .checkbox(ThemedCheckbox.builder(getTheme(), Component
+                                                            .translatable("gui.crinklemod.status.checkbox.numberTwoEnabled.title"),
+                                                    c -> {
+                                                        Metabolism.of(Objects.requireNonNull(minecraft.player)).setNumberTwoEnabled(c.isSelected());
+                                                        MetabolismSettings.NUMBER_ONE_ENABLED.syncer(Objects.requireNonNull(minecraft.player)).ifPresent(ServerUpdater::syncServer);
+                                                    })
+                                            .bounds(0, 0, componentWidth, lineHeight)
+                                            .selected(Metabolism.of(Objects.requireNonNull(minecraft.player)).isNumberTwoEnabled())
+                                            .label(Label.builder(getMinecraft().font, Component
+                                                            .translatable("gui.crinklemod.status.checkbox.numberTwoEnabled.title"))
+                                                    .color(getTheme().getForegroundColor().color())
+                                                    .build(), false)
+                                            .tooltip(Tooltip.create(Component
+                                                    .translatable("gui.crinklemod.status.checkbox.numberTwoEnabled.tooltip")))
+                                            .build())
                                     .build())
                             .entry(LabelEntry.builder(font, () ->
                                             Component.translatable("gui.crinklemod.status.label.number_two_rolls.title",
                                                     Metabolism.of(Objects.requireNonNull(minecraft.player)).getNumberTwoRolls(),
                                                     Metabolism.of(Objects.requireNonNull(minecraft.player)).getNumberTwoSafeRolls(),
-                                                    Metabolism.DesperationLevel.of(Metabolism.of(Objects.requireNonNull(minecraft.player))
-                                                            .getNumberTwoDesperationLevel()).getLabel()))
+                                                    Metabolism.of(Objects.requireNonNull(minecraft.player)).getNumberTwoDesperationLevel().getLabel()))
                                     .lineNumber(nextLine())
                                     .build())
                             .entry(ButtonBarEntry.builder(nextLine())
@@ -133,10 +152,40 @@ public class CrinkleScreen extends FlexContainerScreen {
                                             .onPress((menu) -> Metabolism.of(Objects.requireNonNull(minecraft.player)).voidNumberOne())
                                             .build())
                                     .button(ThemedIconButton.builder(getTheme(), Icons.MESSINESS_OUTLINED)
+                                            .iconColor(Color.RAINBOW)
                                             .bounds(0, 0, componentWidth, lineHeight)
                                             .tooltip(Component.translatable("gui.crinklemod.status.button.number_two_void.tooltip"))
                                             .onPress((menu) -> Metabolism.of(Objects.requireNonNull(minecraft.player)).voidNumberTwo())
                                             .build())
+                                    .build())
+                            .entry(SliderEntry.builder(nextLine())
+                                    .slider(ThemedSlider.builder(getTheme())
+                                            .bounds(0, 0, 100, lineHeight)
+                                            .label(Component.literal("Slider Test"))
+                                            .value(3)
+                                            .interval(1)
+                                            .min(0)
+                                            .max(4)
+                                            .trackHeight(lineHeight * 2 / 3)
+                                            .build())
+                                    .showLabel(true)
+                                    .valueIcon(2D, Icon.builder(Icons.WRENCH).bounds(0, 0, 12, 12).build(),
+                                                slider -> switch ((int) slider.getValue()) {
+                                                    case 0 -> Icons.WETNESS_OUTLINED;
+                                                    case 1 -> Icons.WARNING1;
+                                                    case 2 -> Icons.WARNING2;
+                                                    case 3 -> Icons.WARNING3;
+                                                    case 4 -> Icons.MESSINESS_OUTLINED;
+                                                    default -> Icons.WRENCH;
+                                                })
+                                    .valueButton(0D, ThemedIconButton.builder(getTheme(), Icons.WRENCH)
+                                            .bounds(0, 0, 12, 12)
+                                            .iconColor(Color.RAINBOW)
+                                            .build(), (button, slider) -> slider.setValue(slider.getMinValue()))
+                                    .valueButton(4D, ThemedIconButton.builder(getTheme(), Icons.MESSINESS_OUTLINED)
+                                            .bounds(0, 0, 12, 12)
+                                            .build(), (button, slider) -> slider.setValue(slider.getMaxValue()))
+                                    .showValues(true)
                                     .build())
                             .build();
                     // Creating this here so nextLine() still works
@@ -192,32 +241,37 @@ public class CrinkleScreen extends FlexContainerScreen {
                             .build();
                     mainMenu.visitAll(this::addRenderableWidget);
                     setCurrentMenu(mainMenu);
-                    metabolismSettingsMenu = ConfigMenu.builder(this, font, METABOLISM_TITLE, () -> Objects.requireNonNull(minecraft.player))
+                    metabolismSettingsMenu = SettingsMenu.builder(this, font, METABOLISM_TITLE, () -> Objects.requireNonNull(minecraft.player))
                             .origin(0, 0)
-                            .onClose(m -> setCurrentMenu(mainMenu))
-                            .entry(new ConfigMenu.Entry<>(1, 10, MetabolismSettings.TIMER))
-                            .entry(new ConfigMenu.Entry<>(2, 10, MetabolismSettings.NUMBER_ONE_ROLLS))
-                            .entry(new ConfigMenu.Entry<>(3, 10, MetabolismSettings.NUMBER_ONE_SAFE_ROLLS))
-                            .entry(new ConfigMenu.Entry<>(4, 10, MetabolismSettings.NUMBER_ONE_CHANCE))
-                            .entry(new ConfigMenu.Entry<>(5, 10, MetabolismSettings.NUMBER_TWO_ROLLS))
-                            .entry(new ConfigMenu.Entry<>(6, 10, MetabolismSettings.NUMBER_TWO_SAFE_ROLLS))
-                            .entry(new ConfigMenu.Entry<>(7, 10, MetabolismSettings.NUMBER_TWO_CHANCE))
+                            .onClose(m -> {
+                                AnimationController.INSTANCE.clearQueue();
+                                setCurrentMenu(mainMenu);
+                            })
+                            .entry(new SettingsMenu.Entry<>(1, 10, MetabolismSettings.TIMER))
+                            .entry(new SettingsMenu.Entry<>(2, 10, MetabolismSettings.NUMBER_ONE_ROLLS))
+                            .entry(new SettingsMenu.Entry<>(3, 10, MetabolismSettings.NUMBER_ONE_SAFE_ROLLS))
+                            .entry(new SettingsMenu.Entry<>(4, 10, MetabolismSettings.NUMBER_ONE_CHANCE))
+                            .entry(new SettingsMenu.Entry<>(5, 10, MetabolismSettings.NUMBER_TWO_ROLLS))
+                            .entry(new SettingsMenu.Entry<>(6, 10, MetabolismSettings.NUMBER_TWO_SAFE_ROLLS))
+                            .entry(new SettingsMenu.Entry<>(7, 10, MetabolismSettings.NUMBER_TWO_CHANCE))
+                            .entry(new SettingsMenu.Entry<>(8, 10, MetabolismSettings.INDICATOR_POSITION_X))
+                            .entry(new SettingsMenu.Entry<>(9, 10, MetabolismSettings.INDICATOR_POSITION_Y))
                             .visible(false)
                             .build();
                     metabolismSettingsMenu.visitAll(this::addRenderableWidget);
-                    undergarmentLiquidsMenu = ConfigMenu.builder(this, font, LIQUIDS_MENU_TITLE, () -> Undergarment.getWornUndergarment(Objects.requireNonNull(minecraft.player)))
+                    undergarmentLiquidsMenu = SettingsMenu.builder(this, font, LIQUIDS_MENU_TITLE, () -> Undergarment.getWornUndergarment(Objects.requireNonNull(minecraft.player)))
                             .origin(0, 0)
                             .onClose(m -> setCurrentMenu(mainMenu))
-                            .entry(new ConfigMenu.Entry<>(1, 10, UndergarmentSettings.LIQUIDS))
-                            .entry(new ConfigMenu.Entry<>(2, 10, UndergarmentSettings.MAX_LIQUIDS))
+                            .entry(new SettingsMenu.Entry<>(1, 10, UndergarmentSettings.LIQUIDS))
+                            .entry(new SettingsMenu.Entry<>(2, 10, UndergarmentSettings.MAX_LIQUIDS))
                             .visible(false)
                             .build();
                     undergarmentLiquidsMenu.visitAll(this::addRenderableWidget);
-                    undergarmentSolidsMenu = ConfigMenu.builder(this, font, SOLIDS_MENU_TITLE, () -> Undergarment.getWornUndergarment(Objects.requireNonNull(minecraft.player)))
+                    undergarmentSolidsMenu = SettingsMenu.builder(this, font, SOLIDS_MENU_TITLE, () -> Undergarment.getWornUndergarment(Objects.requireNonNull(minecraft.player)))
                             .origin(0, 0)
                             .onClose(m -> setCurrentMenu(mainMenu))
-                            .entry(new ConfigMenu.Entry<>(1, 10, UndergarmentSettings.SOLIDS))
-                            .entry(new ConfigMenu.Entry<>(2, 10, UndergarmentSettings.MAX_SOLIDS))
+                            .entry(new SettingsMenu.Entry<>(1, 10, UndergarmentSettings.SOLIDS))
+                            .entry(new SettingsMenu.Entry<>(2, 10, UndergarmentSettings.MAX_SOLIDS))
                             .visible(false)
                             .build();
                     undergarmentSolidsMenu.visitAll(this::addRenderableWidget);

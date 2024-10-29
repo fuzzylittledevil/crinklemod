@@ -4,12 +4,20 @@ import net.minecraft.network.chat.Component;
 import ninja.crinkle.mod.settings.Setting;
 
 public class MetabolismSettings {
-    public static final Setting<Boolean> ENABLED = Setting.booleanBuilder("enabled")
-            .label(Component.translatable("setting.crinklemod.metabolism.enabled.label"))
-            .tooltip(Component.translatable("setting.crinklemod.metabolism.enabled.tooltip"))
+    public static final Setting<Boolean> NUMBER_ONE_ENABLED = Setting.booleanBuilder("numberOneEnabled")
+            .label(Component.translatable("setting.crinklemod.metabolism.numberOneEnabled.label"))
+            .tooltip(Component.translatable("setting.crinklemod.metabolism.numberOneEnabled.tooltip"))
             .defaultValue(false)
-            .getter(p -> Metabolism.of(p).isEnabled())
-            .setter((p, v) -> Metabolism.of(p).setEnabled(v))
+            .getter(p -> Metabolism.of(p).isNumberOneEnabled())
+            .setter((p, v) -> Metabolism.of(p).setNumberOneEnabled(v))
+            .synchronizer(Metabolism::of)
+            .build();
+    public static final Setting<Boolean> NUMBER_TWO_ENABLED = Setting.booleanBuilder("numberTwoEnabled")
+            .label(Component.translatable("setting.crinklemod.metabolism.numberTwoEnabled.label"))
+            .tooltip(Component.translatable("setting.crinklemod.metabolism.numberTwoEnabled.tooltip"))
+            .defaultValue(false)
+            .getter(p -> Metabolism.of(p).isNumberTwoEnabled())
+            .setter((p, v) -> Metabolism.of(p).setNumberTwoEnabled(v))
             .synchronizer(Metabolism::of)
             .build();
     public static final Setting<Integer> TIMER = Setting.intBuilder("timer")
@@ -75,6 +83,22 @@ public class MetabolismSettings {
             .defaultValue(0.25)
             .getter(p -> Metabolism.of(p).getNumberTwoChance())
             .setter((p, v) -> Metabolism.of(p).setNumberTwoChance(v))
+            .synchronizer(Metabolism::of)
+            .build();
+    public static final Setting<Integer> INDICATOR_POSITION_X = Setting.intBuilder("indicatorPositionX")
+            .label(Component.translatable("setting.crinklemod.metabolism.indicatorPositionX.label"))
+            .tooltip(Component.translatable("setting.crinklemod.metabolism.indicatorPositionX.tooltip"))
+            .defaultValue(0)
+            .getter(p -> Metabolism.of(p).getIndicatorPositionX())
+            .setter((p, v) -> Metabolism.of(p).setIndicatorPositionX(v))
+            .synchronizer(Metabolism::of)
+            .build();
+    public static final Setting<Integer> INDICATOR_POSITION_Y = Setting.intBuilder("indicatorPositionY")
+            .label(Component.translatable("setting.crinklemod.metabolism.indicatorPositionY.label"))
+            .tooltip(Component.translatable("setting.crinklemod.metabolism.indicatorPositionY.tooltip"))
+            .defaultValue(0)
+            .getter(p -> Metabolism.of(p).getIndicatorPositionY())
+            .setter((p, v) -> Metabolism.of(p).setIndicatorPositionY(v))
             .synchronizer(Metabolism::of)
             .build();
 }

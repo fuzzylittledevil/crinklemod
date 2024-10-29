@@ -4,13 +4,25 @@ import net.minecraft.ChatFormatting;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
 import java.util.Optional;
 
-public record Color(int color) {
+public class Color {
     public static final Color WHITE = new Color(0xFFFFFFFF);
     public static final Color BLACK = new Color(0xFF000000);
     // public static final Color TRANSPARENT = new Color(0);
     public static final Color DEFAULT_TEXT = new Color(0xFF404040);
+    public static final Color RAINBOW = new Color(-1);
+    private final int color;
+
+    public Color(int color) {
+        this.color = color;
+    }
+
+    public static Color rainbow(long speed, long offset) {
+        double hue = (System.currentTimeMillis() + offset) % speed / (double) speed;
+        return Color.of(java.awt.Color.HSBtoRGB((float) hue, 1, 1));
+    }
 
     @Contract("_ -> new")
     public static @NotNull Color of(@NotNull ChatFormatting formatting) {
@@ -87,4 +99,28 @@ public record Color(int color) {
     public int ABGR() {
         return ((color & 0xFF000000) | ((color & 0x00FF0000) >> 16) | (color & 0x0000FF00) | ((color & 0x000000FF) << 16));
     }
+
+    public int color() {
+        return color;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) return true;
+        if (obj == null || obj.getClass() != this.getClass()) return false;
+        var that = (Color) obj;
+        return this.color == that.color;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(color);
+    }
+
+    @Override
+    public String toString() {
+        return "Color[" +
+                "color=" + color + ']';
+    }
+
 }

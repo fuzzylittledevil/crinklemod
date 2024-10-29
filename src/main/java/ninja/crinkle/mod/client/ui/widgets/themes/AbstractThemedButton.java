@@ -12,7 +12,7 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 public abstract class AbstractThemedButton extends ThemedBorderBox {
-    private final Consumer<AbstractThemedButton> onPress;
+    private Consumer<AbstractThemedButton> onPress;
     private boolean isClicked = false;
     private Predicate<AbstractThemedButton> activePredicate;
 
@@ -76,5 +76,9 @@ public abstract class AbstractThemedButton extends ThemedBorderBox {
 
     public void setActivePredicate(Predicate<AbstractThemedButton> activePredicate) {
         this.activePredicate = activePredicate;
+    }
+
+    public void setOnPress(Consumer<AbstractThemedButton> onPress) {
+        this.onPress = onPress;
     }
 }

@@ -5,7 +5,7 @@ import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.network.chat.Component;
 import ninja.crinkle.mod.client.color.Color;
 import ninja.crinkle.mod.client.icons.Icons;
-import ninja.crinkle.mod.client.renderers.IconRenderer;
+import ninja.crinkle.mod.client.renderers.GraphicsUtil;
 import ninja.crinkle.mod.client.ui.themes.BoxTheme;
 import ninja.crinkle.mod.client.ui.themes.Theme;
 import ninja.crinkle.mod.client.ui.widgets.Label;
@@ -81,8 +81,8 @@ public class ThemedCheckbox extends AbstractThemedButton {
         if (isSelected()) {
             Color color = this.active ? this.getTheme().getSuccessColor() : this.getTheme().getInactiveColor();
             BoxTheme boxTheme = this.getTheme().getBorderTheme(BoxTheme.Type.CHECKBOX);
-            IconRenderer iconRenderer = new IconRenderer(pGuiGraphics);
-            iconRenderer.render(Icons.CHECKMARK, this.getX() + boxTheme.edgeWidth(),
+            GraphicsUtil graphicsUtil = new GraphicsUtil(pGuiGraphics);
+            graphicsUtil.render(Icons.CHECKMARK, this.getX() + boxTheme.edgeWidth(),
                     this.getY() + boxTheme.edgeHeight(), color.withAlpha(this.alpha));
         }
     }

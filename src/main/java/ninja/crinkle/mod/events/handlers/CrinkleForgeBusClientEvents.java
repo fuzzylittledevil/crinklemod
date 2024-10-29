@@ -10,9 +10,11 @@ import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.client.event.RenderGuiOverlayEvent;
 import net.minecraftforge.client.event.ScreenEvent;
 import net.minecraftforge.client.event.sound.PlaySoundEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import ninja.crinkle.mod.client.ui.animations.AnimationController;
 import ninja.crinkle.mod.client.ui.screens.CrinkleScreen;
 import ninja.crinkle.mod.sounds.CrinkleSounds;
 import ninja.crinkle.mod.undergarment.Undergarment;
@@ -28,8 +30,8 @@ public class CrinkleForgeBusClientEvents {
     public void addButtonsToInventory(ScreenEvent.Init.Pre event) {
         if (event.getScreen() instanceof AbstractContainerScreen<?> screen) {
             if (!(screen instanceof InventoryScreen) && !(screen instanceof CreativeModeInventoryScreen)) return;
-            int leftPos = 8;
-            int topPos = 8;
+            int leftPos = event.getScreen().width / 2 + 100;
+            int topPos = event.getScreen().height / 2 - 10;
             int width = 80;
             int height = 20;
             LOGGER.debug("Adding button at ({}, {}) with size ({}, {})", leftPos, topPos, width, height);
@@ -55,5 +57,13 @@ public class CrinkleForgeBusClientEvents {
                     0.5f + random.nextFloat(0.5f),
                     0.75f + random.nextFloat(0.5f));
         }
+    }
+
+    @SubscribeEvent
+    public void renderAnimations(RenderGuiOverlayEvent event) {
+        Minecraft minecraft = ClientUtil.getMinecraft();
+        if (minecraft == null || minecraft.level == null || minecraft.player == null) return;
+        double gameTime = minecraft.level.getGameTime() + event.getPartialTick();
+        AnimationController.INSTANCE.render(event.getGuiGraphics(), gameTime);
     }
 }

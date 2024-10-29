@@ -3,6 +3,7 @@ package ninja.crinkle.mod.capabilities.versioning;
 import com.mojang.logging.LogUtils;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import ninja.crinkle.mod.metabolism.MetabolismSettings;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -11,7 +12,14 @@ import java.util.function.BiFunction;
 
 public enum MetabolismVersions {
     V1((provider, tag) -> tag),
-    V2((provider, tag) -> new CompoundTag());
+    V2((provider, tag) -> new CompoundTag()),
+    V3((provider, tag) -> {
+        boolean enabled = tag.getBoolean("enabled");
+        tag.remove("enabled");
+        tag.putBoolean(MetabolismSettings.NUMBER_ONE_ENABLED.key(), enabled);
+        tag.putBoolean(MetabolismSettings.NUMBER_TWO_ENABLED.key(), enabled);
+        return tag;
+    });
 
     private static final Logger LOGGER = LogUtils.getLogger();
     public static final String TAG_VERSION = "version";

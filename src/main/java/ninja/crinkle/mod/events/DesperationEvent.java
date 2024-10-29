@@ -3,6 +3,7 @@ package ninja.crinkle.mod.events;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.eventbus.api.Event;
 import ninja.crinkle.mod.capabilities.MetabolismImpl;
+import ninja.crinkle.mod.metabolism.Metabolism;
 
 /**
  * An accident event that is fired when a player has an accident.
@@ -11,11 +12,11 @@ import ninja.crinkle.mod.capabilities.MetabolismImpl;
  * @see Event
  * @see MetabolismImpl
  */
-public abstract class DesperationEvent extends CrinkleEvent {
-    private final int level;
+public class DesperationEvent extends CrinkleEvent {
+    private final Metabolism.DesperationLevel level;
 
-    public DesperationEvent(Player player, int level, Side side) {
-        super(side, player);
+    public DesperationEvent(Player player, Metabolism.DesperationLevel level, Side side, Type type) {
+        super(side, player, type);
         this.level = level;
     }
 
@@ -24,26 +25,8 @@ public abstract class DesperationEvent extends CrinkleEvent {
      *
      * @return The amount of liquids or solids that were lost
      */
-    public int getLevel() {
+    public Metabolism.DesperationLevel getLevel() {
         return level;
-    }
-
-    /**
-     * An accident event that is fired when a player has a bladder accident.
-     */
-    public static class Bladder extends DesperationEvent {
-        public Bladder(Player player, int level, Side side) {
-            super(player, level, side);
-        }
-    }
-
-    /**
-     * An accident event that is fired when a player has a bowel accident.
-     */
-    public static class Bowels extends DesperationEvent {
-        public Bowels(Player player, int level, Side side) {
-            super(player, level, side);
-        }
     }
 
     @Override

@@ -24,7 +24,6 @@ public class ThemedBorderBox extends AbstractWidget {
 
     @Override
     protected void renderWidget(@NotNull GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
-        // Get RGBA from int
         Color color = active ? theme.getBackgroundColor() : theme.getInactiveColor();
         pGuiGraphics.setColor((float) color.getRed(), (float) color.getGreen(), (float) color.getBlue(), this.alpha);
         RenderSystem.enableBlend();

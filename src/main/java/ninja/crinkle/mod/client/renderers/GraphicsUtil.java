@@ -10,15 +10,19 @@ import ninja.crinkle.mod.client.color.Color;
 import ninja.crinkle.mod.client.icons.Icons;
 import org.joml.Matrix4f;
 
-public class IconRenderer {
+public class GraphicsUtil {
     private final GuiGraphics graphics;
 
-    public IconRenderer(GuiGraphics graphics) {
+    public GraphicsUtil(GuiGraphics graphics) {
         this.graphics = graphics;
     }
 
     public void render(Icons icon, int x, int y, Color color) {
         render(icon, x, y, icon.width(), icon.height(), 1.0f, 1.0f, color);
+    }
+
+    public void render(Icons icon, int x, int y, int width, int height, Color color) {
+        render(icon, x, y, width, height, 1.0f, 1.0f, color);
     }
 
     public void render(Icons icon, int x, int y, int width, int height, float uPercent, float vPercent, Color color) {
@@ -41,10 +45,13 @@ public class IconRenderer {
         graphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
         BufferBuilder bufferbuilder = Tesselator.getInstance().getBuilder();
         bufferbuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR_TEX);
-        bufferbuilder.vertex(matrix4f, x1, y1, 0).color(color.ABGR()).uv(minU, minV).endVertex();
-        bufferbuilder.vertex(matrix4f, x1, y2, 0).color(color.ABGR()).uv(minU, maxV).endVertex();
-        bufferbuilder.vertex(matrix4f, x2, y2, 0).color(color.ABGR()).uv(maxU, maxV).endVertex();
-        bufferbuilder.vertex(matrix4f, x2, y1, 0).color(color.ABGR()).uv(maxU, minV).endVertex();
+        Color c = color;
+        if (c == Color.RAINBOW)
+            c = Color.rainbow(1000, 0);
+        bufferbuilder.vertex(matrix4f, x1, y1, 0).color(c.ABGR()).uv(minU, minV).endVertex();
+        bufferbuilder.vertex(matrix4f, x1, y2, 0).color(c.ABGR()).uv(minU, maxV).endVertex();
+        bufferbuilder.vertex(matrix4f, x2, y2, 0).color(c.ABGR()).uv(maxU, maxV).endVertex();
+        bufferbuilder.vertex(matrix4f, x2, y1, 0).color(c.ABGR()).uv(maxU, minV).endVertex();
         BufferUploader.drawWithShader(bufferbuilder.end());
     }
 }

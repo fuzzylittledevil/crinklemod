@@ -17,7 +17,8 @@ import java.util.function.BiConsumer;
  */
 public class MetabolismImpl implements IMetabolism {
     private MetabolismVersions version;
-    private boolean enabled;
+    private boolean numberOneEnabled;
+    private boolean numberTwoEnabled;
     private int timer;
     private int numberOneRolls;
     private int numberOneSafeRolls;
@@ -25,10 +26,13 @@ public class MetabolismImpl implements IMetabolism {
     private int numberTwoRolls;
     private int numberTwoSafeRolls;
     private double numberTwoChance;
+    private int indicatorPositionX;
+    private int indicatorPositionY;
 
     public MetabolismImpl() {
         version = MetabolismVersions.getLatest();
-        enabled = false;
+        numberOneEnabled = MetabolismSettings.NUMBER_ONE_ENABLED.getDefault();
+        numberTwoEnabled = MetabolismSettings.NUMBER_TWO_ENABLED.getDefault();
         timer = MetabolismSettings.TIMER.getDefault();
         numberOneRolls = MetabolismSettings.NUMBER_ONE_ROLLS.getDefault();
         numberOneSafeRolls = MetabolismSettings.NUMBER_ONE_SAFE_ROLLS.getDefault();
@@ -36,6 +40,8 @@ public class MetabolismImpl implements IMetabolism {
         numberTwoRolls = MetabolismSettings.NUMBER_TWO_ROLLS.getDefault();
         numberTwoSafeRolls = MetabolismSettings.NUMBER_TWO_SAFE_ROLLS.getDefault();
         numberTwoChance = MetabolismSettings.NUMBER_TWO_CHANCE.getDefault();
+        indicatorPositionX = MetabolismSettings.INDICATOR_POSITION_X.getDefault();
+        indicatorPositionY = MetabolismSettings.INDICATOR_POSITION_Y.getDefault();
     }
 
     /**
@@ -47,7 +53,8 @@ public class MetabolismImpl implements IMetabolism {
     public CompoundTag serializeNBT() {
         CompoundTag tag = new CompoundTag();
         tag.putString(MetabolismVersions.TAG_VERSION, version.name());
-        tag.putBoolean(MetabolismSettings.ENABLED.key(), isEnabled());
+        tag.putBoolean(MetabolismSettings.NUMBER_ONE_ENABLED.key(), isNumberOneEnabled());
+        tag.putBoolean(MetabolismSettings.NUMBER_TWO_ENABLED.key(), isNumberTwoEnabled());
         tag.putInt(MetabolismSettings.TIMER.key(), getTimer());
         tag.putInt(MetabolismSettings.NUMBER_ONE_ROLLS.key(), getNumberOneRolls());
         tag.putInt(MetabolismSettings.NUMBER_ONE_SAFE_ROLLS.key(), this.getNumberOneSafeRolls());
@@ -55,6 +62,8 @@ public class MetabolismImpl implements IMetabolism {
         tag.putInt(MetabolismSettings.NUMBER_TWO_ROLLS.key(), getNumberTwoRolls());
         tag.putInt(MetabolismSettings.NUMBER_TWO_SAFE_ROLLS.key(), getNumberTwoSafeRolls());
         tag.putDouble(MetabolismSettings.NUMBER_TWO_CHANCE.key(), getNumberTwoChance());
+        tag.putInt(MetabolismSettings.INDICATOR_POSITION_X.key(), getIndicatorPositionX());
+        tag.putInt(MetabolismSettings.INDICATOR_POSITION_Y.key(), getIndicatorPositionY());
         return tag;
     }
 
@@ -66,7 +75,8 @@ public class MetabolismImpl implements IMetabolism {
     @Override
     public void deserializeNBT(@NotNull CompoundTag nbt) {
         version = MetabolismVersions.fromNBT(nbt);
-        safeSet(nbt, MetabolismSettings.ENABLED.key(), (tag, key) -> setEnabled(tag.getBoolean(key)));
+        safeSet(nbt, MetabolismSettings.NUMBER_ONE_ENABLED.key(), (tag, key) -> setNumberOneEnabled(tag.getBoolean(key)));
+        safeSet(nbt, MetabolismSettings.NUMBER_TWO_ENABLED.key(), (tag, key) -> setNumberTwoEnabled(tag.getBoolean(key)));
         safeSet(nbt, MetabolismSettings.TIMER.key(), (tag, key) -> setTimer(tag.getInt(key)));
         safeSet(nbt, MetabolismSettings.NUMBER_ONE_ROLLS.key(), (tag, key) -> setNumberOneRolls(tag.getInt(key)));
         safeSet(nbt, MetabolismSettings.NUMBER_ONE_SAFE_ROLLS.key(), (tag, key) -> setNumberOneSafeRolls(tag.getInt(key)));
@@ -74,6 +84,8 @@ public class MetabolismImpl implements IMetabolism {
         safeSet(nbt, MetabolismSettings.NUMBER_TWO_ROLLS.key(), (tag, key) -> setNumberTwoRolls(tag.getInt(key)));
         safeSet(nbt, MetabolismSettings.NUMBER_TWO_SAFE_ROLLS.key(), (tag, key) -> setNumberTwoSafeRolls(tag.getInt(key)));
         safeSet(nbt, MetabolismSettings.NUMBER_TWO_CHANCE.key(), (tag, key) -> setNumberTwoChance(tag.getDouble(key)));
+        safeSet(nbt, MetabolismSettings.INDICATOR_POSITION_X.key(), (tag, key) -> setIndicatorPositionX(tag.getInt(key)));
+        safeSet(nbt, MetabolismSettings.INDICATOR_POSITION_Y.key(), (tag, key) -> setIndicatorPositionY(tag.getInt(key)));
     }
 
     private void safeSet(CompoundTag nbt, String key, BiConsumer<CompoundTag, String> setter) {
@@ -99,10 +111,16 @@ public class MetabolismImpl implements IMetabolism {
     public String toString() {
         return "MetabolismImpl{" +
                 "timer=" + getTimer() +
+                ", indicatorPositionX=" + getIndicatorPositionX() +
+                ", indicatorPositionY=" + getIndicatorPositionY() +
+                ", numberOneEnabled=" + isNumberOneEnabled() +
                 ", numberOneRolls=" + getNumberOneRolls() +
-                ", numberOneSafeRolls=" + this.getNumberOneSafeRolls() +
+                ", numberOneSafeRolls=" + getNumberOneSafeRolls() +
                 ", numberOneChance=" + getNumberOneChance() +
+                ", numberTwoEnabled=" + isNumberTwoEnabled() +
+                ", numberTwoRolls=" + getNumberTwoRolls() +
                 ", numberTwoChance=" + getNumberTwoChance() +
+                ", numberTwoSafeRolls=" + getNumberTwoSafeRolls() +
                 '}';
     }
 
@@ -165,13 +183,23 @@ public class MetabolismImpl implements IMetabolism {
     }
 
     @Override
-    public boolean isEnabled() {
-        return enabled;
+    public boolean isNumberOneEnabled() {
+        return numberOneEnabled;
     }
 
     @Override
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
+    public void setNumberOneEnabled(boolean numberOneEnabled) {
+        this.numberOneEnabled = numberOneEnabled;
+    }
+
+    @Override
+    public boolean isNumberTwoEnabled() {
+        return numberTwoEnabled;
+    }
+
+    @Override
+    public void setNumberTwoEnabled(boolean numberTwoEnabled) {
+        this.numberTwoEnabled = numberTwoEnabled;
     }
 
     @Override
@@ -192,5 +220,25 @@ public class MetabolismImpl implements IMetabolism {
     @Override
     public void setNumberTwoSafeRolls(int numberTwoSafeRolls) {
         this.numberTwoSafeRolls = numberTwoSafeRolls;
+    }
+
+    @Override
+    public int getIndicatorPositionX() {
+        return indicatorPositionX;
+    }
+
+    @Override
+    public void setIndicatorPositionX(int x) {
+        this.indicatorPositionX = x;
+    }
+
+    @Override
+    public int getIndicatorPositionY() {
+        return indicatorPositionY;
+    }
+
+    @Override
+    public void setIndicatorPositionY(int y) {
+        this.indicatorPositionY = y;
     }
 }

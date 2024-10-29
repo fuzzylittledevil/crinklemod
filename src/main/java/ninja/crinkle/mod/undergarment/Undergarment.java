@@ -121,4 +121,8 @@ public class Undergarment {
                 SOLIDS_COLOR, Color.brightness(SOLIDS_COLOR, 0.5f),
                 Color.brightness(SOLIDS_COLOR, 0.25f), 9, 60, 40);
     }
+
+    public boolean isLeaking() {
+        return getLiquids() > getMaxLiquids() || getSolids() > getMaxSolids();
+    }
 }

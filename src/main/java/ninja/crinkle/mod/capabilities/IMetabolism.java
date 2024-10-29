@@ -29,6 +29,12 @@ public interface IMetabolism extends INBTSerializable<CompoundTag>, IEntityAddit
     void setNumberTwoSafeRolls(int safeRolls);
     double getNumberTwoChance();
     void setNumberTwoChance(double numberTwoChance);
-    boolean isEnabled();
-    void setEnabled(boolean enabled);
+    int getIndicatorPositionX();
+    void setIndicatorPositionX(int x);
+    int getIndicatorPositionY();
+    void setIndicatorPositionY(int y);
+    boolean isNumberOneEnabled();
+    void setNumberOneEnabled(boolean enabled);
+    boolean isNumberTwoEnabled();
+    void setNumberTwoEnabled(boolean enabled);
 }

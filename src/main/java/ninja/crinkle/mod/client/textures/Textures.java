@@ -21,53 +21,48 @@ import java.util.Map;
 import java.util.Set;
 
 public class Textures {
-    private static final Map<String, TextureGenerator<?>> textureGenerators = Map.of(
-            "gui/panel_background", new BoxThemeTextureGenerator(),
-            "gui/button_background", new BoxThemeTextureGenerator(),
-            "gui/button_background_inverted", new BoxThemeTextureGenerator(),
-            "gui/button_background_inactive", new BoxThemeTextureGenerator(),
-            "gui/checkbox_background", new BoxThemeTextureGenerator(),
-            "gui/checkbox_background_inverted", new BoxThemeTextureGenerator(),
-            "gui/checkbox_background_inactive", new BoxThemeTextureGenerator(),
-            "armor/diaper_plain",
-            new DiaperTextureGenerator(
-                    Undergarment::getLiquidsPercent,
-                    DiaperTextureGenerator.WET_COLORS,
-                    Set.of(Color.WHITE),
-                    DiaperTextureGenerator.Part.FRONT_TOP,
-                    DiaperTextureGenerator.Part.FRONT_BOTTOM,
-                    DiaperTextureGenerator.Part.BOTTOM)
-                    .andThen(new DiaperTextureGenerator(
-                            Undergarment::getSolidsPercent,
-                            DiaperTextureGenerator.MESS_COLORS,
-                            Set.of(Color.WHITE),
-                            DiaperTextureGenerator.Part.BACK_TOP,
-                            DiaperTextureGenerator.Part.BACK_BOTTOM)
-                    ),
-            "armor/diaper_little_pawz",
-            new DiaperTextureGenerator(
-                    Undergarment::getLiquidsPercent,
-                    DiaperTextureGenerator.WET_COLORS,
-                    Set.of(Color.WHITE,
-                            Color.of(0xFFDFDFE0),
-                            Color.of(0xFFBDBDBD)),
-                    DiaperTextureGenerator.Part.FRONT_TOP,
-                    DiaperTextureGenerator.Part.FRONT_BOTTOM,
-                    DiaperTextureGenerator.Part.BOTTOM)
-                    .andThen(new DiaperTextureGenerator(
-                            Undergarment::getSolidsPercent,
-                            DiaperTextureGenerator.MESS_COLORS,
-                            Set.of(Color.WHITE,
-                                    Color.of(0xFFDFDFE0),
-                                    Color.of(0xFFBDBDBD)),
-                            DiaperTextureGenerator.Part.BACK_TOP,
-                            DiaperTextureGenerator.Part.BACK_BOTTOM)
-                    ));
+    private static final Map<String, TextureGenerator<?>> textureGenerators = new HashMap<>();
     private static Textures INSTANCE;
     private final Map<SpriteLoaderType, CrinkleSpriteLoader> loaders = new EnumMap<>(SpriteLoaderType.class);
     private final Map<String, ResourceLocation> dynamicTextures = new HashMap<>();
 
     Textures() {
+        textureGenerators.putAll(
+                Map.of(            "armor/diaper_plain",
+                        new DiaperTextureGenerator(
+                                Undergarment::getLiquidsPercent,
+                                DiaperTextureGenerator.WET_COLORS,
+                                Set.of(Color.WHITE),
+                                DiaperTextureGenerator.Part.FRONT_TOP,
+                                DiaperTextureGenerator.Part.FRONT_BOTTOM,
+                                DiaperTextureGenerator.Part.BOTTOM)
+                                .andThen(new DiaperTextureGenerator(
+                                        Undergarment::getSolidsPercent,
+                                        DiaperTextureGenerator.MESS_COLORS,
+                                        Set.of(Color.WHITE),
+                                        DiaperTextureGenerator.Part.BACK_TOP,
+                                        DiaperTextureGenerator.Part.BACK_BOTTOM)
+                                ),
+                        "armor/diaper_little_pawz",
+                        new DiaperTextureGenerator(
+                                Undergarment::getLiquidsPercent,
+                                DiaperTextureGenerator.WET_COLORS,
+                                Set.of(Color.WHITE,
+                                        Color.of(0xFFDFDFE0),
+                                        Color.of(0xFFBDBDBD)),
+                                DiaperTextureGenerator.Part.FRONT_TOP,
+                                DiaperTextureGenerator.Part.FRONT_BOTTOM,
+                                DiaperTextureGenerator.Part.BOTTOM)
+                                .andThen(new DiaperTextureGenerator(
+                                        Undergarment::getSolidsPercent,
+                                        DiaperTextureGenerator.MESS_COLORS,
+                                        Set.of(Color.WHITE,
+                                                Color.of(0xFFDFDFE0),
+                                                Color.of(0xFFBDBDBD)),
+                                        DiaperTextureGenerator.Part.BACK_TOP,
+                                        DiaperTextureGenerator.Part.BACK_BOTTOM)
+                                ))
+        );
     }
 
     public static Textures getInstance() {
@@ -118,5 +113,9 @@ public class Textures {
         NativeImage image = new NativeImage(sprite.contents().width(), sprite.contents().height(), true);
         image.copyFrom(sprite.contents().getOriginalImage());
         return registerTexture(pData.getName(), generator.apply(image, pData));
+    }
+
+    public void registerGenerator(ResourceLocation texture, BoxThemeTextureGenerator boxThemeTextureGenerator) {
+        textureGenerators.put(texture.getPath(), boxThemeTextureGenerator);
     }
 }

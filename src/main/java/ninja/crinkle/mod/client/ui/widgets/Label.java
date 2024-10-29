@@ -13,12 +13,12 @@ import java.util.function.Supplier;
 
 public class Label extends AbstractWidget {
     public static final int DEFAULT_COLOR = 0x404040;
+    private final int wrapWidth;
     private Component value;
-    private final Supplier<Component> valueSupplier;
+    private Supplier<Component> valueSupplier;
     private Font font;
     private int color;
     private boolean dropShadow;
-    private final int wrapWidth;
 
     public Label(int pX, int pY, Component pMessage, Supplier<Component> valueSupplier, Font font, int color,
                  boolean dropShadow, boolean visible, int wrapWidth) {
@@ -40,16 +40,82 @@ public class Label extends AbstractWidget {
         return new Builder(font, valueSupplier);
     }
 
+    public void setValueSupplier(Supplier<Component> valueSupplier) {
+        this.valueSupplier = valueSupplier;
+    }
+
     public int getWrapWidth() {
         return wrapWidth;
     }
 
+    @Override
+    public int getWidth() {
+        return wrapWidth == 0 ? font.width(value) : wrapWidth;
+    }
+
+    public int getColor() {
+        return color;
+    }
+
+    public void setColor(int color) {
+        this.color = color;
+    }
+
+    public Font getFont() {
+        return font;
+    }
+
+    public void setFont(Font font) {
+        this.font = font;
+    }
+
+    public Component getValue() {
+        return value;
+    }
+
+    public void setValue(Component value) {
+        this.value = value;
+    }
+
+    public boolean getDropShadow() {
+        return dropShadow;
+    }
+
+    public void setDropShadow(boolean dropShadow) {
+        this.dropShadow = dropShadow;
+    }
+
+    @Override
+    protected void renderWidget(@NotNull GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
+        if (!visible) return;
+        if (valueSupplier != null) {
+            value = valueSupplier.get();
+        }
+        if (getWrapWidth() == 0) {
+            pGuiGraphics.drawString(font, value, getX(), getY(), color, getDropShadow());
+            return;
+        }
+        List<FormattedCharSequence> lines = font.split(value, wrapWidth);
+        for (int i = 0; i < lines.size(); i++) {
+            pGuiGraphics.drawString(font, lines.get(i), getX(), getY() + (i * font.lineHeight), color, getDropShadow());
+        }
+    }
+
+    public int getLineHeight() {
+        return font.lineHeight * (wrapWidth == 0 ? 1 : font.split(value, wrapWidth).size());
+    }
+
+    @Override
+    protected void updateWidgetNarration(@NotNull NarrationElementOutput pNarrationElementOutput) {
+
+    }
+
     public static class Builder {
-        private int x;
-        private int y;
         private final Component value;
         private final Supplier<Component> valueSupplier;
         private final Font font;
+        private int x;
+        private int y;
         private int color = DEFAULT_COLOR;
         private boolean dropShadow;
         private boolean visible = true;
@@ -104,67 +170,5 @@ public class Label extends AbstractWidget {
             this.wrapWidth = wrapWidth;
             return this;
         }
-    }
-
-    @Override
-    public int getWidth() {
-        return wrapWidth == 0 ? font.width(value) : wrapWidth;
-    }
-
-    public int getColor() {
-        return color;
-    }
-
-    public Font getFont() {
-        return font;
-    }
-
-    public Component getValue() {
-        return value;
-    }
-
-    public boolean getDropShadow() {
-        return dropShadow;
-    }
-
-    public void setValue(Component value) {
-        this.value = value;
-    }
-
-    public void setFont(Font font) {
-        this.font = font;
-    }
-
-    public void setColor(int color) {
-        this.color = color;
-    }
-
-    public void setDropShadow(boolean dropShadow) {
-        this.dropShadow = dropShadow;
-    }
-
-    @Override
-    protected void renderWidget(@NotNull GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
-        if (!visible) return;
-        if (valueSupplier != null) {
-            value = valueSupplier.get();
-        }
-        if (getWrapWidth() == 0) {
-            pGuiGraphics.drawString(font, value, getX(), getY(), color, getDropShadow());
-            return;
-        }
-        List<FormattedCharSequence> lines = font.split(value, wrapWidth);
-        for (int i = 0; i < lines.size(); i++) {
-            pGuiGraphics.drawString(font, lines.get(i), getX(), getY() + (i * font.lineHeight), color, getDropShadow());
-        }
-    }
-
-    public int getLineHeight() {
-        return font.lineHeight * (wrapWidth == 0 ? 1 : font.split(value, wrapWidth).size());
-    }
-
-    @Override
-    protected void updateWidgetNarration(@NotNull NarrationElementOutput pNarrationElementOutput) {
-
     }
 }

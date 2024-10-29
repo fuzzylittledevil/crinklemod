@@ -9,6 +9,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import ninja.crinkle.mod.blocks.CrinkleBlocks;
 import ninja.crinkle.mod.capabilities.MetabolismProvider;
+import ninja.crinkle.mod.config.ClientConfig;
 import ninja.crinkle.mod.config.UndergarmentConfig;
 import ninja.crinkle.mod.datagen.CrinkleDataGeneration;
 import ninja.crinkle.mod.events.handlers.CrinkleBusEvents;
@@ -51,6 +52,9 @@ public class CrinkleMod {
         CrinkleTabs.register(modEventBus);
         CrinkleMenus.register(modEventBus);
         CrinkleMod.EVENT_BUS.register(new CrinkleBusEvents());
+
+        // Client
+        ClientConfig.register();
 
         // DataGen
         modEventBus.addListener(CrinkleDataGeneration::generate);

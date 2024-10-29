@@ -8,7 +8,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.client.gui.overlay.IGuiOverlay;
 import ninja.crinkle.mod.client.color.Color;
 import ninja.crinkle.mod.client.icons.Icons;
-import ninja.crinkle.mod.client.renderers.IconRenderer;
+import ninja.crinkle.mod.client.renderers.GraphicsUtil;
 import ninja.crinkle.mod.client.ui.themes.BoxTheme;
 import ninja.crinkle.mod.client.ui.themes.Theme;
 import ninja.crinkle.mod.client.ui.widgets.themes.ThemedBorderBox;
@@ -32,7 +32,6 @@ public class CrinkleOverlay {
         renderUndergarmentSlot(guiGraphics, x, y, undergarment);
         Undergarment data = Undergarment.of(undergarment);
 
-        LOGGER.info("v: {}", v);
         if (data.getLiquidsPercent() >= 1.0f && player.tickCount % 20 < 10)
             renderIndicatorIcon(guiGraphics, x + 24, y + 2, Icons.WETNESS_DANGER, data.getLiquidsPercent());
         else
@@ -54,7 +53,7 @@ public class CrinkleOverlay {
     }
 
     private static void renderIndicatorIcon(GuiGraphics guiGraphics, int x, int y, Icons icon, double percent) {
-        IconRenderer renderer = new IconRenderer(guiGraphics);
+        GraphicsUtil renderer = new GraphicsUtil(guiGraphics);
         if (percent < 1.0f)
             renderer.render(icon, x, y, Color.of("#808080").withAlpha(1.0f));
         if (percent > 0) {

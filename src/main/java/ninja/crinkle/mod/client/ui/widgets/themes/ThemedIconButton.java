@@ -5,7 +5,7 @@ import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.network.chat.Component;
 import ninja.crinkle.mod.client.color.Color;
 import ninja.crinkle.mod.client.icons.Icons;
-import ninja.crinkle.mod.client.renderers.IconRenderer;
+import ninja.crinkle.mod.client.renderers.GraphicsUtil;
 import ninja.crinkle.mod.client.ui.themes.BoxTheme;
 import ninja.crinkle.mod.client.ui.themes.Theme;
 import org.apache.commons.lang3.NotImplementedException;
@@ -15,7 +15,8 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 public class ThemedIconButton extends ThemedButton {
-    private final Icons icon;
+    private Icons icon;
+    private Color iconColor;
 
     public ThemedIconButton(int pX, int pY, int pWidth, int pHeight, Component pMessage, Theme theme, Consumer<AbstractThemedButton> onPress, Icons icon) {
         super(pX, pY, pWidth, pHeight, pMessage, theme, onPress);
@@ -31,16 +32,40 @@ public class ThemedIconButton extends ThemedButton {
         throw new NotImplementedException("Use ThemedIconButton.builder(Theme theme, Icon icon) instead");
     }
 
+    public Icons getIcon() {
+        return icon;
+    }
+
+    public void setIcon(Icons icon) {
+        this.icon = icon;
+    }
+
     @Override
     protected void renderWidget(@NotNull GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
         super.renderWidget(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
         if (icon != null) {
             BoxTheme borderTheme = getTheme().getBorderTheme(BoxTheme.Type.BUTTON);
-            Color color = active ? getTheme().getSecondaryColor() : getTheme().getInactiveColor();
-            IconRenderer iconRenderer = new IconRenderer(pGuiGraphics);
-            iconRenderer.render(icon, getX() + borderTheme.edgeWidth(),
-                    getY() + borderTheme.edgeHeight(), color.withAlpha(this.alpha));
+            Color color = active ? getTheme().getForegroundColor() : getTheme().getInactiveColor();
+            if (this.iconColor != null) {
+                if (this.iconColor == Color.RAINBOW)
+                    color = Color.rainbow(1000, 0);
+                else
+                    color = this.iconColor;
+            }
+            GraphicsUtil graphicsUtil = new GraphicsUtil(pGuiGraphics);
+            int iconWidth = getWidth() - borderTheme.edgeWidth() * 2;
+            int iconHeight = getHeight() - borderTheme.edgeHeight() * 2;
+            graphicsUtil.render(icon, getX() + borderTheme.edgeWidth(),
+                    getY() + borderTheme.edgeHeight(), iconWidth, iconHeight, color.withAlpha(this.alpha));
         }
+    }
+
+    public Color getIconColor() {
+        return iconColor;
+    }
+
+    public void setIconColor(Color iconColor) {
+        this.iconColor = iconColor;
     }
 
     public static class Builder {
@@ -54,6 +79,7 @@ public class ThemedIconButton extends ThemedButton {
         private Component tooltip;
         private Consumer<AbstractThemedButton> onPress;
         private Predicate<AbstractThemedButton> activePredicate;
+        private Color iconColor;
 
         public Builder(Theme theme, Icons icon) {
             this.theme = theme;
@@ -107,11 +133,18 @@ public class ThemedIconButton extends ThemedButton {
             return this;
         }
 
+        public Builder iconColor(Color iconColor) {
+            this.iconColor = iconColor;
+            return this;
+        }
+
         public ThemedIconButton build() {
             ThemedIconButton button = new ThemedIconButton(x, y, width, height, label, theme, onPress, icon);
             button.setActivePredicate(activePredicate);
             if (tooltip != null)
                 button.setTooltip(Tooltip.create(tooltip));
+            if (iconColor != null)
+                button.setIconColor(iconColor);
             return button;
         }
     }
