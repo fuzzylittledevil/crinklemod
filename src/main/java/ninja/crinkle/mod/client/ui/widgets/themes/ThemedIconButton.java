@@ -6,8 +6,11 @@ import net.minecraft.network.chat.Component;
 import ninja.crinkle.mod.client.color.Color;
 import ninja.crinkle.mod.client.icons.Icons;
 import ninja.crinkle.mod.client.renderers.GraphicsUtil;
-import ninja.crinkle.mod.client.ui.themes.BoxTheme;
 import ninja.crinkle.mod.client.ui.themes.Theme;
+import ninja.crinkle.mod.client.ui.widgets.properties.Border;
+import ninja.crinkle.mod.client.ui.widgets.properties.Box;
+import ninja.crinkle.mod.client.ui.widgets.properties.Margin;
+import ninja.crinkle.mod.client.ui.widgets.properties.Padding;
 import org.apache.commons.lang3.NotImplementedException;
 import org.jetbrains.annotations.NotNull;
 
@@ -41,10 +44,10 @@ public class ThemedIconButton extends ThemedButton {
     }
 
     @Override
-    protected void renderWidget(@NotNull GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
-        super.renderWidget(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
+    protected void renderContent(@NotNull GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick,
+                                 Box pBox) {
+        super.renderContent(pGuiGraphics, pMouseX, pMouseY, pPartialTick, pBox);
         if (icon != null) {
-            BoxTheme borderTheme = getTheme().getBorderTheme(BoxTheme.Type.BUTTON);
             Color color = active ? getTheme().getForegroundColor() : getTheme().getInactiveColor();
             if (this.iconColor != null) {
                 if (this.iconColor == Color.RAINBOW)
@@ -53,10 +56,7 @@ public class ThemedIconButton extends ThemedButton {
                     color = this.iconColor;
             }
             GraphicsUtil graphicsUtil = new GraphicsUtil(pGuiGraphics);
-            int iconWidth = getWidth() - borderTheme.edgeWidth() * 2;
-            int iconHeight = getHeight() - borderTheme.edgeHeight() * 2;
-            graphicsUtil.render(icon, getX() + borderTheme.edgeWidth(),
-                    getY() + borderTheme.edgeHeight(), iconWidth, iconHeight, color.withAlpha(this.alpha));
+            graphicsUtil.render(icon, pBox.x(), pBox.y(), pBox.width(), pBox.height(), color.withAlpha(this.alpha));
         }
     }
 
@@ -80,6 +80,9 @@ public class ThemedIconButton extends ThemedButton {
         private Consumer<AbstractThemedButton> onPress;
         private Predicate<AbstractThemedButton> activePredicate;
         private Color iconColor;
+        private Margin margin = Margin.ZERO;
+        private Border border = Border.ZERO;
+        private Padding padding = Padding.ZERO;
 
         public Builder(Theme theme, Icons icon) {
             this.theme = theme;
@@ -138,6 +141,21 @@ public class ThemedIconButton extends ThemedButton {
             return this;
         }
 
+        public Builder margin(Margin margin) {
+            this.margin = margin;
+            return this;
+        }
+
+        public Builder border(Border border) {
+            this.border = border;
+            return this;
+        }
+
+        public Builder padding(Padding padding) {
+            this.padding = padding;
+            return this;
+        }
+
         public ThemedIconButton build() {
             ThemedIconButton button = new ThemedIconButton(x, y, width, height, label, theme, onPress, icon);
             button.setActivePredicate(activePredicate);
@@ -145,6 +163,9 @@ public class ThemedIconButton extends ThemedButton {
                 button.setTooltip(Tooltip.create(tooltip));
             if (iconColor != null)
                 button.setIconColor(iconColor);
+            button.setMargin(margin);
+            button.setBorder(border);
+            button.setPadding(padding);
             return button;
         }
     }

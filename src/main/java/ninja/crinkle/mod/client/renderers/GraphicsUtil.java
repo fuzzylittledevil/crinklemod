@@ -22,6 +22,8 @@ public class GraphicsUtil {
     }
 
     public void render(Icons icon, int x, int y, int width, int height, Color color) {
+        if (width < 0 || height < 0)
+            throw new IllegalArgumentException("Width and height must be positive");
         render(icon, x, y, width, height, 1.0f, 1.0f, color);
     }
 

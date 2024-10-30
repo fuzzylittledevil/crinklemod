@@ -21,11 +21,7 @@ public class CheckboxEntry implements IEntry {
     public List<AbstractWidget> create(@NotNull StatusMenu menu) {
         List<AbstractWidget> widgets = new ArrayList<>();
         checkbox.setY(menu.getLineYOffset(lineNumber));
-        if (checkbox.isShowLabel() && !checkbox.isLabelRight()) {
-            checkbox.setX(menu.getMargin() + menu.getSpacer() + checkbox.getLabel().getWidth());
-        } else {
-            checkbox.setX(menu.getLineXOffset());
-        }
+        checkbox.setX(menu.getLineXOffset());
         widgets.add(checkbox);
         return widgets;
     }

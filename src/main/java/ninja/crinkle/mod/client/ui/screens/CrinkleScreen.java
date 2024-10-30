@@ -19,7 +19,9 @@ import ninja.crinkle.mod.client.ui.menus.status.*;
 import ninja.crinkle.mod.client.ui.themes.Theme;
 import ninja.crinkle.mod.api.ServerUpdater;
 import ninja.crinkle.mod.client.ui.widgets.Icon;
-import ninja.crinkle.mod.client.ui.widgets.Label;
+import ninja.crinkle.mod.client.ui.widgets.properties.Border;
+import ninja.crinkle.mod.client.ui.widgets.properties.Margin;
+import ninja.crinkle.mod.client.ui.widgets.properties.Padding;
 import ninja.crinkle.mod.client.ui.widgets.themes.ThemedCheckbox;
 import ninja.crinkle.mod.client.ui.widgets.themes.ThemedIconButton;
 import ninja.crinkle.mod.client.ui.widgets.themes.ThemedSlider;
@@ -99,12 +101,11 @@ public class CrinkleScreen extends FlexContainerScreen {
                                                         Metabolism.of(Objects.requireNonNull(minecraft.player)).setNumberOneEnabled(c.isSelected());
                                                         MetabolismSettings.NUMBER_ONE_ENABLED.syncer(Objects.requireNonNull(minecraft.player)).ifPresent(ServerUpdater::syncServer);
                                                     })
-                                            .bounds(0, 0, componentWidth, lineHeight)
+                                            .bounds(0, 0, componentWidth , lineHeight )
+                                            .border(new Border(2, Color.of("#FF0000")))
+                                            .margin(new Margin(2))
+                                            .padding(new Padding(2))
                                             .selected(Metabolism.of(Objects.requireNonNull(minecraft.player)).isNumberOneEnabled())
-                                            .label(Label.builder(getMinecraft().font, Component
-                                                            .translatable("gui.crinklemod.status.checkbox.numberOneEnabled.title"))
-                                                    .color(getTheme().getForegroundColor().color())
-                                                    .build(), false)
                                             .tooltip(Tooltip.create(Component
                                                     .translatable("gui.crinklemod.status.checkbox.numberOneEnabled.tooltip")))
                                             .build())
@@ -123,12 +124,8 @@ public class CrinkleScreen extends FlexContainerScreen {
                                                         Metabolism.of(Objects.requireNonNull(minecraft.player)).setNumberTwoEnabled(c.isSelected());
                                                         MetabolismSettings.NUMBER_ONE_ENABLED.syncer(Objects.requireNonNull(minecraft.player)).ifPresent(ServerUpdater::syncServer);
                                                     })
-                                            .bounds(0, 0, componentWidth, lineHeight)
+                                            .bounds(0, 0, componentWidth , lineHeight )
                                             .selected(Metabolism.of(Objects.requireNonNull(minecraft.player)).isNumberTwoEnabled())
-                                            .label(Label.builder(getMinecraft().font, Component
-                                                            .translatable("gui.crinklemod.status.checkbox.numberTwoEnabled.title"))
-                                                    .color(getTheme().getForegroundColor().color())
-                                                    .build(), false)
                                             .tooltip(Tooltip.create(Component
                                                     .translatable("gui.crinklemod.status.checkbox.numberTwoEnabled.tooltip")))
                                             .build())
@@ -145,6 +142,9 @@ public class CrinkleScreen extends FlexContainerScreen {
                                             .bounds(0, 0, componentWidth, lineHeight)
                                             .tooltip(Component.translatable("gui.crinklemod.status.button.settings.tooltip"))
                                             .onPress((menu) -> setCurrentMenu(metabolismSettingsMenu))
+                                            .margin(new Margin(2))
+                                            .padding(new Padding(2))
+                                            .border(new Border(2, Color.of("#00FF00")))
                                             .build())
                                     .button(ThemedIconButton.builder(getTheme(), Icons.WETNESS_OUTLINED)
                                             .bounds(0, 0, componentWidth, lineHeight)
@@ -219,12 +219,8 @@ public class CrinkleScreen extends FlexContainerScreen {
                                     .checkbox(ThemedCheckbox.builder(getTheme(), Component
                                                     .translatable("gui.crinklemod.status.checkbox.debug.title"),
                                                     c -> showDiaperTextureDebug = c.isSelected())
-                                            .bounds(0, 0, componentWidth, lineHeight)
+                                            .bounds(0, 0, componentWidth , lineHeight )
                                             .selected(showDiaperTextureDebug)
-                                            .label(Label.builder(getMinecraft().font, Component
-                                                            .translatable("gui.crinklemod.status.checkbox.debug.title"))
-                                                    .color(getTheme().getForegroundColor().color())
-                                                    .build(), true)
                                             .tooltip(Tooltip.create(Component
                                                     .translatable("gui.crinklemod.status.checkbox.debug.tooltip")))
                                             .build())

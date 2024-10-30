@@ -64,7 +64,7 @@ public class Color {
         if (hex.startsWith("0x")) hex = hex.substring(2);
         if (hex.startsWith("#")) hex = hex.substring(1);
         int color = Integer.parseInt(hex, 16);
-        return new Color(color);
+        return new Color(color).withAlpha(1);
     }
 
     public static int brightness(int color, double amount) {

@@ -8,53 +8,32 @@ import ninja.crinkle.mod.client.icons.Icons;
 import ninja.crinkle.mod.client.renderers.GraphicsUtil;
 import ninja.crinkle.mod.client.ui.themes.BoxTheme;
 import ninja.crinkle.mod.client.ui.themes.Theme;
-import ninja.crinkle.mod.client.ui.widgets.Label;
+import ninja.crinkle.mod.client.ui.widgets.properties.Border;
+import ninja.crinkle.mod.client.ui.widgets.properties.Box;
+import ninja.crinkle.mod.client.ui.widgets.properties.Margin;
+import ninja.crinkle.mod.client.ui.widgets.properties.Padding;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
 
 public class ThemedCheckbox extends AbstractThemedButton {
-    private boolean selected;
-    private final boolean showLabel;
-    private final boolean labelRight;
-    private final Label label;
     private final Consumer<ThemedCheckbox> onChange;
+    private boolean selected;
 
     public ThemedCheckbox(int pX, int pY, int pWidth, int pHeight, Component pMessage, Theme pTheme, boolean pSelected,
-                          boolean pShowLabel, boolean pLabelRight, Consumer<ThemedCheckbox> onChange, Label pLabel,
-                          Tooltip pTooltip) {
+                          Consumer<ThemedCheckbox> onChange, Tooltip pTooltip) {
         super(pX, pY, pWidth, pHeight, pMessage, pTheme, null, BoxTheme.Type.CHECKBOX);
-        this.showLabel = pShowLabel;
         this.selected = pSelected;
         this.onChange = onChange;
-        this.label = pLabel;
-        this.labelRight = pLabelRight;
-        if (this.label != null) {
-            this.label.setTooltip(pTooltip);
-        }
         setTooltip(pTooltip);
+    }
+
+    public static Builder builder(Theme theme, Component label, Consumer<ThemedCheckbox> onChange) {
+        return new Builder(theme, label, onChange);
     }
 
     public boolean isSelected() {
         return this.selected;
-    }
-
-    public boolean isShowLabel() {
-        return this.showLabel && this.label != null;
-    }
-
-    public boolean isLabelRight() {
-        return this.labelRight;
-    }
-
-    public Label getLabel() {
-        return this.label;
-    }
-
-    @Override
-    public void onClick(double pMouseX, double pMouseY) {
-        super.onClick(pMouseX, pMouseY);
-        this.setSelected(!isSelected());
     }
 
     public void setSelected(boolean pSelected) {
@@ -66,29 +45,25 @@ public class ThemedCheckbox extends AbstractThemedButton {
     }
 
     @Override
-    protected void renderWidget(@NotNull GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
-        if (this.showLabel) {
-            if (this.labelRight) {
-                this.label.setX(this.getX() + this.getWidth() + 4);
-                this.label.setY(this.getY() + (this.getHeight() - this.label.getHeight()) / 2);
-            } else {
-                this.label.setX(this.getX() - this.label.getWidth() - 4);
-                this.label.setY(this.getY() + (this.getHeight() - this.label.getHeight()) / 2);
-            }
-            this.label.render(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
-        }
-        super.renderWidget(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
+    public void onClick(double pMouseX, double pMouseY) {
+        super.onClick(pMouseX, pMouseY);
+        this.setSelected(!isSelected());
+    }
+
+    @Override
+    protected void renderContent(@NotNull GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick,
+                                 Box pBox) {
         if (isSelected()) {
             Color color = this.active ? this.getTheme().getSuccessColor() : this.getTheme().getInactiveColor();
             BoxTheme boxTheme = this.getTheme().getBorderTheme(BoxTheme.Type.CHECKBOX);
             GraphicsUtil graphicsUtil = new GraphicsUtil(pGuiGraphics);
-            graphicsUtil.render(Icons.CHECKMARK, this.getX() + boxTheme.edgeWidth(),
-                    this.getY() + boxTheme.edgeHeight(), color.withAlpha(this.alpha));
+            graphicsUtil.render(Icons.CHECKMARK,
+                    pBox.x() + boxTheme.edgeWidth(),
+                    pBox.y() + boxTheme.edgeHeight(),
+                    Math.max(pBox.width() - boxTheme.edgeWidth() * 2, 0),
+                    Math.max(pBox.height() - boxTheme.edgeHeight() * 2, 0),
+                    color.withAlpha(this.alpha));
         }
-    }
-
-    public static Builder builder(Theme theme, Component label, Consumer<ThemedCheckbox> onChange) {
-        return new Builder(theme, label, onChange);
     }
 
     public static class Builder {
@@ -100,15 +75,42 @@ public class ThemedCheckbox extends AbstractThemedButton {
         private int width;
         private int height;
         private boolean selected;
-        private boolean showLabel;
-        private boolean labelRight;
-        private Label labelWidget;
         private Tooltip tooltip;
+        private Color checkedColor;
+        private Margin margin = Margin.ZERO;
+        private Border border = Border.ZERO;
+        private Padding padding = Padding.ZERO;
+        private boolean debug = false;
 
         public Builder(Theme theme, Component label, Consumer<ThemedCheckbox> onChange) {
             this.theme = theme;
             this.label = label;
             this.onChange = onChange;
+        }
+
+        public Builder debug(boolean debug) {
+            this.debug = debug;
+            return this;
+        }
+
+        public Builder margin(Margin margin) {
+            this.margin = margin;
+            return this;
+        }
+
+        public Builder border(Border border) {
+            this.border = border;
+            return this;
+        }
+
+        public Builder padding(Padding padding) {
+            this.padding = padding;
+            return this;
+        }
+
+        public Builder checkedColor(Color checkedColor) {
+            this.checkedColor = checkedColor;
+            return this;
         }
 
         public Builder x(int x) {
@@ -143,21 +145,19 @@ public class ThemedCheckbox extends AbstractThemedButton {
             return this;
         }
 
-        public Builder label(Label labelWidget, boolean labelRight) {
-            this.labelWidget = labelWidget;
-            this.labelRight = labelRight;
-            this.showLabel = true;
-            return this;
-        }
-
         public Builder tooltip(Tooltip tooltip) {
             this.tooltip = tooltip;
             return this;
         }
 
         public ThemedCheckbox build() {
-            return new ThemedCheckbox(this.x, this.y, this.width, this.height, this.label, this.theme, this.selected,
-                    this.showLabel, this.labelRight, this.onChange, this.labelWidget, this.tooltip);
+            ThemedCheckbox box = new ThemedCheckbox(this.x, this.y, this.width, this.height, this.label, this.theme, this.selected,
+                    this.onChange, this.tooltip);
+            box.setMargin(this.margin);
+            box.setBorder(this.border);
+            box.setPadding(this.padding);
+            box.setDebug(this.debug);
+            return box;
         }
     }
 }

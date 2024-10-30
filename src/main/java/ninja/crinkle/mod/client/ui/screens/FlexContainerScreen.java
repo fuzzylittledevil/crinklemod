@@ -8,6 +8,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import ninja.crinkle.mod.client.ui.themes.BoxTheme;
 import ninja.crinkle.mod.client.ui.themes.Theme;
+import ninja.crinkle.mod.client.ui.widgets.properties.Box;
 import ninja.crinkle.mod.client.ui.widgets.themes.ThemedBorderBox;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -41,13 +42,15 @@ public abstract class FlexContainerScreen extends Screen {
         int maxY = 0;
         flexedWidgets.clear();
         for (Renderable renderable : renderables) {
-            if (renderable instanceof AbstractWidget widget && widget.visible) {
-                if (widget.getX() + widget.getWidth() > maxX) {
-                    maxX = widget.getX() + widget.getWidth();
-                }
-                if (widget.getY() + widget.getHeight() > maxY) {
-                    maxY = widget.getY() + widget.getHeight();
-                }
+            if (renderable instanceof ThemedBorderBox themedBorderBox) {
+                Box box = themedBorderBox.getBox();
+                maxX = Math.max(box.x() + box.width(), maxX);
+                maxY = Math.max(box.y() + box.height(), maxY);
+            } else if (renderable instanceof AbstractWidget widget && widget.visible) {
+                maxX = Math.max(widget.getX() + widget.getWidth(), maxX);
+                maxY = Math.max(widget.getY() + widget.getHeight(), maxY);
+            } else {
+                LOGGER.warn("[Flex Reset] Unknown renderable: {}", renderable);
             }
         }
         containerInfo.width = maxX;
@@ -55,22 +58,34 @@ public abstract class FlexContainerScreen extends Screen {
         containerInfo.leftPos = (width - containerInfo.width) / 2;
         containerInfo.topPos = (height - containerInfo.height) / 2;
         for (Renderable renderable : renderables) {
-            if (renderable instanceof AbstractWidget widget && widget.visible) {
+            if (renderable instanceof ThemedBorderBox themedBorderBox) {
+                Box box = themedBorderBox.getBox();
+                flexedWidgets.add(new RelativeWidget(themedBorderBox, box.x(), box.y()));
+                themedBorderBox.setFlex(new Box(box.x() + containerInfo.leftPos, box.y() + containerInfo.topPos,
+                        box.width(), box.height()));
+            } else if (renderable instanceof AbstractWidget widget && widget.visible) {
                 flexedWidgets.add(new RelativeWidget(widget, widget.getX(), widget.getY()));
                 widget.setX(widget.getX() + containerInfo.leftPos);
                 widget.setY(widget.getY() + containerInfo.topPos);
+            } else {
+                LOGGER.warn("[Flex] Unknown renderable: {}", renderable);
             }
         }
         BoxTheme borderTheme = theme.getBorderTheme(BoxTheme.Type.PANEL);
         containerInfo.width += borderTheme.edgeWidth() + containerInfo.padding;
         containerInfo.height += borderTheme.edgeHeight() + containerInfo.padding;
-        borderBox = new ThemedBorderBox(containerInfo.leftPos, containerInfo.topPos, containerInfo.width, containerInfo.height, title, theme, BoxTheme.Type.PANEL);
+        borderBox = new ThemedBorderBox(containerInfo.leftPos, containerInfo.topPos, containerInfo.width,
+                containerInfo.height, title, theme, BoxTheme.Type.PANEL);
     }
 
     public void refreshFlex() {
         for (RelativeWidget widget : flexedWidgets) {
-            widget.widget.setX(widget.relativeX);
-            widget.widget.setY(widget.relativeY);
+            if (widget.widget instanceof ThemedBorderBox box) {
+                box.setFlex(Box.ZERO);
+            } else {
+                widget.widget.setX(widget.relativeX);
+                widget.widget.setY(widget.relativeY);
+            }
         }
         containerInfo.leftPos = 0;
         containerInfo.topPos = 0;

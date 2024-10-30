@@ -14,8 +14,13 @@ import net.minecraftforge.client.event.RenderGuiOverlayEvent;
 import net.minecraftforge.client.event.ScreenEvent;
 import net.minecraftforge.client.event.sound.PlaySoundEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import ninja.crinkle.mod.client.icons.Icons;
 import ninja.crinkle.mod.client.ui.animations.AnimationController;
+import ninja.crinkle.mod.client.ui.screens.ConfigScreen;
 import ninja.crinkle.mod.client.ui.screens.CrinkleScreen;
+import ninja.crinkle.mod.client.ui.themes.Theme;
+import ninja.crinkle.mod.client.ui.widgets.themes.ThemedButton;
+import ninja.crinkle.mod.client.ui.widgets.themes.ThemedIconButton;
 import ninja.crinkle.mod.sounds.CrinkleSounds;
 import ninja.crinkle.mod.undergarment.Undergarment;
 import ninja.crinkle.mod.util.ClientUtil;
@@ -30,16 +35,23 @@ public class CrinkleForgeBusClientEvents {
     public void addButtonsToInventory(ScreenEvent.Init.Pre event) {
         if (event.getScreen() instanceof AbstractContainerScreen<?> screen) {
             if (!(screen instanceof InventoryScreen) && !(screen instanceof CreativeModeInventoryScreen)) return;
-            int leftPos = event.getScreen().width / 2 + 100;
-            int topPos = event.getScreen().height / 2 - 10;
             int width = 80;
             int height = 20;
+            int leftPos = 32;
+            int topPos = event.getScreen().height - height - 6;
             LOGGER.debug("Adding button at ({}, {}) with size ({}, {})", leftPos, topPos, width, height);
             Screen current = Minecraft.getInstance().screen;
-            Button button = Button.builder(Component.translatable("gui.crinklemod.crinkle_button.title"),
-                            b -> Minecraft.getInstance().setScreen(new CrinkleScreen(current)))
-                    .bounds(leftPos, topPos, width, height)
+            ThemedButton button = ThemedButton.builder(Theme.DEFAULT)
+                    .label(Component.translatable("gui.crinklemod.crinkle_button.title"))
+                    .onPress(b -> Minecraft.getInstance().setScreen(new CrinkleScreen(current)))
+                    .width(width).height(height)
+                    .x(leftPos).y(topPos)
                     .build();
+            ThemedIconButton themedButton = ThemedIconButton.builder(Theme.DEFAULT, Icons.GEAR)
+                    .onPress(b -> Minecraft.getInstance().setScreen(new ConfigScreen(current)))
+                    .bounds(leftPos + width, topPos, 20, 20)
+                    .build();
+            event.addListener(themedButton);
             event.addListener(button);
         }
     }

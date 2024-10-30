@@ -6,6 +6,7 @@ import net.minecraft.client.gui.navigation.CommonInputs;
 import net.minecraft.network.chat.Component;
 import ninja.crinkle.mod.client.ui.themes.BoxTheme;
 import ninja.crinkle.mod.client.ui.themes.Theme;
+import ninja.crinkle.mod.client.ui.widgets.properties.Border;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
@@ -34,10 +35,13 @@ public abstract class AbstractThemedButton extends ThemedBorderBox {
             this.active = activePredicate.test(this);
         if (!isHovered && isClicked) isClicked = false;
         setInverted(this.isClicked);
-        super.renderWidget(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
+        Border border = this.getBorder();
         if (this.isHoveredOrFocused()) {
-            pGuiGraphics.renderOutline(this.getX(), this.getY(), this.getWidth(), this.getHeight(), 0xFFFFFFFF);
+            this.setBorder(new Border(border.top(), border.bottom(), border.left(), border.right(),
+                    this.getTheme().getForegroundColor()));
         }
+        super.renderWidget(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
+        this.setBorder(border);
     }
 
     @Override

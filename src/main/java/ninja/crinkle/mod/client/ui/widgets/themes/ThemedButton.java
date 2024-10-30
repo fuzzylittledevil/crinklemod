@@ -5,8 +5,15 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
+import ninja.crinkle.mod.client.color.Color;
+import ninja.crinkle.mod.client.ui.themes.BoxTheme;
 import ninja.crinkle.mod.client.ui.themes.Theme;
+import ninja.crinkle.mod.client.ui.widgets.properties.Border;
+import ninja.crinkle.mod.client.ui.widgets.properties.Box;
+import ninja.crinkle.mod.client.ui.widgets.properties.Margin;
+import ninja.crinkle.mod.client.ui.widgets.properties.Padding;
 import ninja.crinkle.mod.util.ClientUtil;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
@@ -34,15 +41,16 @@ public class ThemedButton extends AbstractThemedButton {
     }
 
     @Override
-    protected void renderWidget(@NotNull GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
-        super.renderWidget(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
+    protected void renderContent(@NotNull GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick, Box pBox) {
+        super.renderContent(pGuiGraphics, pMouseX, pMouseY, pPartialTick, pBox);
         Minecraft minecraft = ClientUtil.getMinecraft();
         if (minecraft == null || label == null) return;
         this.renderString(pGuiGraphics, minecraft.font,
                 getTheme().getForegroundColor().color() | Mth.ceil(this.alpha * 255.0F) << 24);
     }
 
-    public static Builder builder(Theme theme) {
+    @Contract(value = "_ -> new", pure = true)
+    public static @NotNull Builder builder(Theme theme) {
         return new Builder(theme);
     }
 
@@ -55,6 +63,9 @@ public class ThemedButton extends AbstractThemedButton {
         protected final Theme theme;
         protected Consumer<AbstractThemedButton> onPress;
         protected Predicate<AbstractThemedButton> activePredicate;
+        private Margin margin = Margin.ZERO;
+        private Border border = Border.ZERO;
+        private Padding padding = Padding.ZERO;
 
         public Builder(Theme theme) {
             this.theme = theme;
@@ -95,9 +106,27 @@ public class ThemedButton extends AbstractThemedButton {
             return this;
         }
 
+        public Builder margin(Margin margin) {
+            this.margin = margin;
+            return this;
+        }
+
+        public Builder border(Border border) {
+            this.border = border;
+            return this;
+        }
+
+        public Builder padding(Padding padding) {
+            this.padding = padding;
+            return this;
+        }
+
         public ThemedButton build() {
             ThemedButton button = new ThemedButton(x, y, width, height, label, theme, onPress);
             button.setActivePredicate(activePredicate);
+            button.setMargin(margin);
+            button.setBorder(border);
+            button.setPadding(padding);
             return button;
         }
     }
