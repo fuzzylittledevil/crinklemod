@@ -72,6 +72,7 @@ public class Metabolism implements ServerUpdater {
         protected void tick() {
             if (!enabled) return;
             rolls++;
+            updateMetabolism();
             if (rolls < safeRolls) return;
             double roll = Math.random();
             int desperationLevel = getDesperationLevel() == DesperationLevel.NONE ? 0 : getDesperationLevel().getLevel();
