@@ -2,13 +2,13 @@ package ninja.crinkle.mod.client.ui.themes;
 
 import ninja.crinkle.mod.client.color.Color;
 import ninja.crinkle.mod.client.textures.Textures;
-import ninja.crinkle.mod.client.textures.generators.BoxThemeTextureGenerator;
 
 import java.util.Map;
 
 public class Theme {
     public static final Theme DEFAULT = new Theme(
             Map.of(
+                    BoxTheme.Type.NONE, BoxTheme.NONE,
                     BoxTheme.Type.BUTTON, BoxTheme.BUTTON,
                     BoxTheme.Type.PANEL, BoxTheme.PANEL,
                     BoxTheme.Type.CHECKBOX, BoxTheme.CHECKBOX,
@@ -42,16 +42,6 @@ public class Theme {
         this.successColor = successColor;
         this.warningColor = warningColor;
         this.errorColor = errorColor;
-
-        for (BoxTheme theme : borderThemes.values()) {
-            Textures.getInstance().registerGenerator(theme.texture(), new BoxThemeTextureGenerator());
-            if (theme.inverted() != null) {
-                Textures.getInstance().registerGenerator(theme.inverted(), new BoxThemeTextureGenerator());
-            }
-            if (theme.inactive() != null) {
-                Textures.getInstance().registerGenerator(theme.inactive(), new BoxThemeTextureGenerator());
-            }
-        }
     }
 
     public BoxTheme getBorderTheme(BoxTheme.Type type) {

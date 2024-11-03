@@ -4,7 +4,6 @@ import net.minecraft.resources.ResourceLocation;
 import ninja.crinkle.mod.CrinkleMod;
 
 public enum SpriteLoaderType {
-    GUI("textures/atlas/gui.png", "gui"),
     ARMOR("textures/atlas/armor.png", "armor"),
     SPRITE("textures/atlas/sprites.png", "sprites"),
     ;
@@ -19,7 +18,6 @@ public enum SpriteLoaderType {
 
     public static SpriteLoaderType fromString(String string) {
         return switch (string) {
-            case "gui" -> GUI;
             case "armor" -> ARMOR;
             case "sprites" -> SPRITE;
             default -> null;

@@ -13,7 +13,10 @@ import ninja.crinkle.mod.client.ui.widgets.properties.Border;
 import ninja.crinkle.mod.client.ui.widgets.properties.Box;
 import ninja.crinkle.mod.client.ui.widgets.properties.Margin;
 import ninja.crinkle.mod.client.ui.widgets.properties.Padding;
+import ninja.crinkle.mod.util.ClientUtil;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 public class ThemedBorderBox extends AbstractWidget {
     private final Theme theme;
@@ -70,10 +73,6 @@ public class ThemedBorderBox extends AbstractWidget {
                 getBorder().top(),
                 -(getBorder().right() + getBorder().left()),
                 -(getBorder().bottom() + getBorder().top()));
-        renderTexture(pGuiGraphics,
-                borderTheme.generateTexture(borderThemeBox.width(), borderThemeBox.height(), textureType),
-                borderThemeBox.x(), borderThemeBox.y(), 0, 0, 0,
-                borderThemeBox.width(), borderThemeBox.height(), borderThemeBox.width(), borderThemeBox.height());
         pGuiGraphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
         renderContent(pGuiGraphics, pMouseX, pMouseY, pPartialTick, getContentBox());
         RenderSystem.disableBlend();
@@ -89,15 +88,6 @@ public class ThemedBorderBox extends AbstractWidget {
 
     protected void renderDebug(GuiGraphics guiGraphics) {
         if (!debug) return;
-        Box fullBox = getBox();
-        Box borderBox = getBorderBox();
-        Box contentBox = getContentBox();
-        guiGraphics.fill(fullBox.x(), fullBox.y(), fullBox.x() + fullBox.width(), fullBox.y() + fullBox.height(),
-                10, Color.of("#dbff33").withAlpha(0.5f).color());
-        guiGraphics.fill(borderBox.x(), borderBox.y(), borderBox.x() + borderBox.width(), borderBox.y() + borderBox.height(),
-                10, Color.of("#ffbd33").withAlpha(0.5f).color());
-        guiGraphics.fill(contentBox.x(), contentBox.y(), contentBox.x() + contentBox.width(), contentBox.y() + contentBox.height(),
-                10, Color.of("#ff5733").withAlpha(0.5f).color());
     }
 
     /**

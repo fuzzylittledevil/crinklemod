@@ -2,7 +2,10 @@ package ninja.crinkle.mod.client.ui.overlays;
 
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraftforge.client.gui.overlay.IGuiOverlay;
-import ninja.crinkle.mod.client.ui.animations.*;
+import ninja.crinkle.mod.client.animations.Animation;
+import ninja.crinkle.mod.client.animations.AnimationController;
+import ninja.crinkle.mod.client.animations.BubbleSpriteGroup;
+import ninja.crinkle.mod.client.animations.CharacterSpriteGroup;
 import ninja.crinkle.mod.metabolism.Metabolism;
 
 public class SpriteOverlay {

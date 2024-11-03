@@ -7,7 +7,6 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.resources.ResourceLocation;
 import ninja.crinkle.mod.client.color.Color;
-import ninja.crinkle.mod.client.textures.generators.BoxThemeTextureGenerator;
 import ninja.crinkle.mod.client.textures.generators.DiaperTextureGenerator;
 import ninja.crinkle.mod.client.textures.generators.TextureData;
 import ninja.crinkle.mod.client.textures.generators.TextureGenerator;
@@ -77,18 +76,6 @@ public class Textures {
         return INSTANCE;
     }
 
-//    public void releaseAll() {
-//        dynamicTextures.values().forEach(ClientUtil.getMinecraft().getTextureManager()::release);
-//        dynamicTextures.clear();
-//    }
-//
-//    public void release(String pName) {
-//        ResourceLocation location = dynamicTextures.remove(pName);
-//        if (location != null) {
-//            ClientUtil.getMinecraft().getTextureManager().release(location);
-//        }
-//    }
-
     public CrinkleSpriteLoader getSpriteLoader(SpriteLoaderType pType) {
         return loaders.get(pType);
     }
@@ -113,9 +100,5 @@ public class Textures {
         NativeImage image = new NativeImage(sprite.contents().width(), sprite.contents().height(), true);
         image.copyFrom(sprite.contents().getOriginalImage());
         return registerTexture(pData.getName(), generator.apply(image, pData));
-    }
-
-    public void registerGenerator(ResourceLocation texture, BoxThemeTextureGenerator boxThemeTextureGenerator) {
-        textureGenerators.put(texture.getPath(), boxThemeTextureGenerator);
     }
 }

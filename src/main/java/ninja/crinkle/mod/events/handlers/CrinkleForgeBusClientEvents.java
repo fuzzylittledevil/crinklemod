@@ -2,7 +2,6 @@ package ninja.crinkle.mod.events.handlers;
 
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen;
@@ -14,10 +13,9 @@ import net.minecraftforge.client.event.RenderGuiOverlayEvent;
 import net.minecraftforge.client.event.ScreenEvent;
 import net.minecraftforge.client.event.sound.PlaySoundEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import ninja.crinkle.mod.client.gui.screens.TestScreen;
 import ninja.crinkle.mod.client.icons.Icons;
-import ninja.crinkle.mod.client.ui.animations.AnimationController;
-import ninja.crinkle.mod.client.ui.screens.ConfigScreen;
-import ninja.crinkle.mod.client.ui.screens.CrinkleScreen;
+import ninja.crinkle.mod.client.animations.AnimationController;
 import ninja.crinkle.mod.client.ui.themes.Theme;
 import ninja.crinkle.mod.client.ui.widgets.themes.ThemedButton;
 import ninja.crinkle.mod.client.ui.widgets.themes.ThemedIconButton;
@@ -43,12 +41,12 @@ public class CrinkleForgeBusClientEvents {
             Screen current = Minecraft.getInstance().screen;
             ThemedButton button = ThemedButton.builder(Theme.DEFAULT)
                     .label(Component.translatable("gui.crinklemod.crinkle_button.title"))
-                    .onPress(b -> Minecraft.getInstance().setScreen(new CrinkleScreen(current)))
+//                    .onPress(b -> Minecraft.getInstance().setScreen(new CrinkleScreen(current)))
                     .width(width).height(height)
                     .x(leftPos).y(topPos)
                     .build();
             ThemedIconButton themedButton = ThemedIconButton.builder(Theme.DEFAULT, Icons.GEAR)
-                    .onPress(b -> Minecraft.getInstance().setScreen(new ConfigScreen(current)))
+                    .onPress(b -> Minecraft.getInstance().setScreen(new TestScreen()))
                     .bounds(leftPos + width, topPos, 20, 20)
                     .build();
             event.addListener(themedButton);

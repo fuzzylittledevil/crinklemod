@@ -1,18 +1,19 @@
 package ninja.crinkle.mod.client;
 
 import net.minecraft.client.gui.screens.MenuScreens;
+import net.minecraft.client.renderer.texture.atlas.SpriteSource;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.ConfigScreenHandler;
 import net.minecraftforge.client.event.RegisterGuiOverlaysEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import ninja.crinkle.mod.client.gui.themes.ThemeRegistry;
 import ninja.crinkle.mod.client.ui.overlays.CrinkleOverlay;
 import ninja.crinkle.mod.client.ui.overlays.SpriteOverlay;
 import ninja.crinkle.mod.client.ui.screens.DunnyScreen;
 import ninja.crinkle.mod.menus.CrinkleMenus;
+import ninja.crinkle.mod.util.ClientUtil;
 
 import static ninja.crinkle.mod.CrinkleMod.MODID;
 

@@ -1,0 +1,1033 @@
+{
+  "version": 1,
+  "theme": {
+    "id": "default",
+    "name": "Default",
+    "description": "The default GUI theme for CrinkleMod",
+    "version": "1.0.0",
+    "author": "Galen & Vahn",
+    "colors": {
+      "background": "#AA7FD6",
+      "primary": "#D6AA7F",
+      "secondary": "#7FD6AA",
+      "inactive": "#B8A5C3",
+      "highlight": "#FFD766",
+      "accent": "#9E5ABD",
+      "text": "#333333",
+      "inactiveText": "#E7D1F2",
+      "highlightText": "#F0F0F0"
+    },
+    "textures": [
+      {
+        "id": "icons/wrench",
+        "location": "icons/wrench"
+      },
+      {
+        "id": "icons/gear",
+        "location": "icons/gear"
+      },
+      {
+        "id": "icons/back",
+        "location": "icons/back"
+      },
+      {
+        "id": "icons/save",
+        "location": "icons/save"
+      },
+      {
+        "id": "icons/reset",
+        "location": "icons/reset"
+      },
+      {
+        "id": "icons/checkmark",
+        "location": "icons/checkmark"
+      },
+      {
+        "id": "icons/down",
+        "location": "icons/down"
+      },
+      {
+        "id": "icons/warning1",
+        "location": "icons/warning1"
+      },
+      {
+        "id": "icons/warning2",
+        "location": "icons/warning2"
+      },
+      {
+        "id": "icons/warning3",
+        "location": "icons/warning3"
+      },
+      {
+        "id": "icons/messiness_outlined",
+        "location": "icons/messiness_outlined"
+      },
+      {
+        "id": "icons/messiness_danger",
+        "location": "icons/messiness_danger"
+      },
+      {
+        "id": "icons/wetness_outlined",
+        "location": "icons/wetness_outlined"
+      },
+      {
+        "id": "icons/wetness_danger",
+        "location": "icons/wetness_danger"
+      },
+      {
+        "id": "button_background",
+        "location": "widgets/button_background",
+        "slices": {
+          "topLeft": {
+            "start": {
+              "x": 0,
+              "y": 0
+            },
+            "bounds": {
+              "width": 1,
+              "height": 1
+            }
+          },
+          "topRight": {
+            "start": {
+              "x": 2,
+              "y": 0
+            },
+            "bounds": {
+              "width": 1,
+              "height": 1
+            }
+          },
+          "bottomLeft": {
+            "start": {
+              "x": 0,
+              "y": 2
+            },
+            "bounds": {
+              "width": 1,
+              "height": 1
+            }
+          },
+          "bottomRight": {
+            "start": {
+              "x": 2,
+              "y": 2
+            },
+            "bounds": {
+              "width": 1,
+              "height": 1
+            }
+          },
+          "top": {
+            "start": {
+              "x": 1,
+              "y": 0
+            },
+            "bounds": {
+              "width": 1,
+              "height": 1
+            }
+          },
+          "right": {
+            "start": {
+              "x": 2,
+              "y": 1
+            },
+            "bounds": {
+              "width": 1,
+              "height": 1
+            }
+          },
+          "bottom": {
+            "start": {
+              "x": 1,
+              "y": 2
+            },
+            "bounds": {
+              "width": 1,
+              "height": 1
+            }
+          },
+          "left": {
+            "start": {
+              "x": 0,
+              "y": 1
+            },
+            "bounds": {
+              "width": 1,
+              "height": 1
+            }
+          },
+          "center": {
+            "start": {
+              "x": 1,
+              "y": 1
+            },
+            "bounds": {
+              "width": 1,
+              "height": 1
+            }
+          }
+        }
+      },
+      {
+        "id": "button_background_inverted",
+        "location": "widgets/button_background_inverted",
+        "slices": {
+          "topLeft": {
+            "start": {
+              "x": 0,
+              "y": 0
+            },
+            "bounds": {
+              "width": 1,
+              "height": 1
+            }
+          },
+          "topRight": {
+            "start": {
+              "x": 2,
+              "y": 0
+            },
+            "bounds": {
+              "width": 1,
+              "height": 1
+            }
+          },
+          "bottomLeft": {
+            "start": {
+              "x": 0,
+              "y": 2
+            },
+            "bounds": {
+              "width": 1,
+              "height": 1
+            }
+          },
+          "bottomRight": {
+            "start": {
+              "x": 2,
+              "y": 2
+            },
+            "bounds": {
+              "width": 1,
+              "height": 1
+            }
+          },
+          "top": {
+            "start": {
+              "x": 1,
+              "y": 0
+            },
+            "bounds": {
+              "width": 1,
+              "height": 1
+            }
+          },
+          "right": {
+            "start": {
+              "x": 2,
+              "y": 1
+            },
+            "bounds": {
+              "width": 1,
+              "height": 1
+            }
+          },
+          "bottom": {
+            "start": {
+              "x": 1,
+              "y": 2
+            },
+            "bounds": {
+              "width": 1,
+              "height": 1
+            }
+          },
+          "left": {
+            "start": {
+              "x": 0,
+              "y": 1
+            },
+            "bounds": {
+              "width": 1,
+              "height": 1
+            }
+          },
+          "center": {
+            "start": {
+              "x": 1,
+              "y": 1
+            },
+            "bounds": {
+              "width": 1,
+              "height": 1
+            }
+          }
+        }
+      },
+      {
+        "id": "checkbox_background",
+        "location": "widgets/checkbox_background",
+        "slices": {
+          "topLeft": {
+            "start": {
+              "x": 0,
+              "y": 0
+            },
+            "bounds": {
+              "width": 1,
+              "height": 1
+            }
+          },
+          "topRight": {
+            "start": {
+              "x": 2,
+              "y": 0
+            },
+            "bounds": {
+              "width": 1,
+              "height": 1
+            }
+          },
+          "bottomLeft": {
+            "start": {
+              "x": 0,
+              "y": 2
+            },
+            "bounds": {
+              "width": 1,
+              "height": 1
+            }
+          },
+          "bottomRight": {
+            "start": {
+              "x": 2,
+              "y": 2
+            },
+            "bounds": {
+              "width": 1,
+              "height": 1
+            }
+          },
+          "top": {
+            "start": {
+              "x": 1,
+              "y": 0
+            },
+            "bounds": {
+              "width": 1,
+              "height": 1
+            }
+          },
+          "right": {
+            "start": {
+              "x": 2,
+              "y": 1
+            },
+            "bounds": {
+              "width": 1,
+              "height": 1
+            }
+          },
+          "bottom": {
+            "start": {
+              "x": 1,
+              "y": 2
+            },
+            "bounds": {
+              "width": 1,
+              "height": 1
+            }
+          },
+          "left": {
+            "start": {
+              "x": 0,
+              "y": 1
+            },
+            "bounds": {
+              "width": 1,
+              "height": 1
+            }
+          },
+          "center": {
+            "start": {
+              "x": 1,
+              "y": 1
+            },
+            "bounds": {
+              "width": 1,
+              "height": 1
+            }
+          }
+        }
+      },
+      {
+        "id": "panel_background",
+        "location": "widgets/panel_background",
+        "slices": {
+          "topLeft": {
+            "start": {
+              "x": 0,
+              "y": 0
+            },
+            "bounds": {
+              "width": 4,
+              "height": 4
+            }
+          },
+          "topRight": {
+            "start": {
+              "x": 5,
+              "y": 0
+            },
+            "bounds": {
+              "width": 4,
+              "height": 4
+            }
+          },
+          "bottomLeft": {
+            "start": {
+              "x": 0,
+              "y": 5
+            },
+            "bounds": {
+              "width": 4,
+              "height": 4
+            }
+          },
+          "bottomRight": {
+            "start": {
+              "x": 5,
+              "y": 5
+            },
+            "bounds": {
+              "width": 4,
+              "height": 4
+            }
+          },
+          "top": {
+            "start": {
+              "x": 4,
+              "y": 0
+            },
+            "bounds": {
+              "width": 1,
+              "height": 4
+            }
+          },
+          "right": {
+            "start": {
+              "x": 5,
+              "y": 4
+            },
+            "bounds": {
+              "width": 4,
+              "height": 1
+            }
+          },
+          "bottom": {
+            "start": {
+              "x": 4,
+              "y": 5
+            },
+            "bounds": {
+              "width": 1,
+              "height": 4
+            }
+          },
+          "left": {
+            "start": {
+              "x": 0,
+              "y": 4
+            },
+            "bounds": {
+              "width": 4,
+              "height": 1
+            }
+          },
+          "center": {
+            "start": {
+              "x": 4,
+              "y": 4
+            },
+            "bounds": {
+              "width": 1,
+              "height": 1
+            }
+          }
+        }
+      },
+      {
+        "id": "slider_thumb",
+        "location": "widgets/slider_thumb",
+        "slices": {
+          "topLeft": {
+            "start": {
+              "x": 0,
+              "y": 0
+            },
+            "bounds": {
+              "width": 1,
+              "height": 1
+            }
+          },
+          "topRight": {
+            "start": {
+              "x": 2,
+              "y": 0
+            },
+            "bounds": {
+              "width": 1,
+              "height": 1
+            }
+          },
+          "bottomLeft": {
+            "start": {
+              "x": 0,
+              "y": 2
+            },
+            "bounds": {
+              "width": 1,
+              "height": 1
+            }
+          },
+          "bottomRight": {
+            "start": {
+              "x": 2,
+              "y": 2
+            },
+            "bounds": {
+              "width": 1,
+              "height": 1
+            }
+          },
+          "top": {
+            "start": {
+              "x": 1,
+              "y": 0
+            },
+            "bounds": {
+              "width": 1,
+              "height": 1
+            }
+          },
+          "right": {
+            "start": {
+              "x": 2,
+              "y": 1
+            },
+            "bounds": {
+              "width": 1,
+              "height": 1
+            }
+          },
+          "bottom": {
+            "start": {
+              "x": 1,
+              "y": 2
+            },
+            "bounds": {
+              "width": 1,
+              "height": 1
+            }
+          },
+          "left": {
+            "start": {
+              "x": 0,
+              "y": 1
+            },
+            "bounds": {
+              "width": 1,
+              "height": 1
+            }
+          },
+          "center": {
+            "start": {
+              "x": 1,
+              "y": 1
+            },
+            "bounds": {
+              "width": 1,
+              "height": 1
+            }
+          }
+        }
+      },
+      {
+        "id": "slider_track",
+        "location": "widgets/slider_track",
+        "slices": {
+          "topLeft": {
+            "start": {
+              "x": 0,
+              "y": 0
+            },
+            "bounds": {
+              "width": 1,
+              "height": 1
+            }
+          },
+          "topRight": {
+            "start": {
+              "x": 2,
+              "y": 0
+            },
+            "bounds": {
+              "width": 1,
+              "height": 1
+            }
+          },
+          "bottomLeft": {
+            "start": {
+              "x": 0,
+              "y": 2
+            },
+            "bounds": {
+              "width": 1,
+              "height": 1
+            }
+          },
+          "bottomRight": {
+            "start": {
+              "x": 2,
+              "y": 2
+            },
+            "bounds": {
+              "width": 1,
+              "height": 1
+            }
+          },
+          "top": {
+            "start": {
+              "x": 1,
+              "y": 0
+            },
+            "bounds": {
+              "width": 1,
+              "height": 1
+            }
+          },
+          "right": {
+            "start": {
+              "x": 2,
+              "y": 1
+            },
+            "bounds": {
+              "width": 1,
+              "height": 1
+            }
+          },
+          "bottom": {
+            "start": {
+              "x": 1,
+              "y": 2
+            },
+            "bounds": {
+              "width": 1,
+              "height": 1
+            }
+          },
+          "left": {
+            "start": {
+              "x": 0,
+              "y": 1
+            },
+            "bounds": {
+              "width": 1,
+              "height": 1
+            }
+          },
+          "center": {
+            "start": {
+              "x": 1,
+              "y": 1
+            },
+            "bounds": {
+              "width": 1,
+              "height": 1
+            }
+          }
+        }
+      }
+    ],
+    "widgets": [
+      {
+        "id": "default",
+        "states": {
+          "active": {
+            "background": {
+              "color": "background"
+            },
+            "foreground": {
+              "color": "text"
+            }
+          },
+          "hover": {
+            "background": {
+              "color": "highlight"
+            },
+            "foreground": {
+              "color": "highlightText",
+              "shadow": true
+            }
+          },
+          "inactive": {
+            "background": {
+              "color": "inactive"
+            },
+            "foreground": {
+              "color": "inactiveText",
+              "shadow": true
+            }
+          },
+          "pressed": {
+            "background": {
+              "color": "accent"
+            },
+            "foreground": {
+              "color": "highlightText"
+            }
+          }
+        }
+      },
+      {
+        "id": "checkbox_unchecked",
+        "states": {
+          "active": {
+            "background": {
+              "texture": "checkbox_background",
+              "color": "primary"
+            },
+            "foreground": {
+              "color": "text"
+            }
+          },
+          "hover": {
+            "background": {
+              "texture": "checkbox_background",
+              "color": "highlight"
+            },
+            "foreground": {
+              "color": "highlightText"
+            }
+          },
+          "inactive": {
+            "background": {
+              "texture": "checkbox_background",
+              "color": "inactive"
+            },
+            "foreground": {
+              "color": "inactiveText"
+            }
+          },
+          "pressed": {
+            "background": {
+              "texture": "checkbox_background",
+              "color": "accent"
+            },
+            "foreground": {
+              "color": "highlightText"
+            }
+          }
+        }
+      },
+      {
+        "id": "checkbox_checked",
+        "states": {
+          "active": {
+            "background": {
+              "texture": "checkbox_background",
+              "color": "primary"
+            },
+            "foreground": {
+              "texture": "icons/checkmark",
+              "color": "text"
+            }
+          },
+          "hover": {
+            "background": {
+              "texture": "checkbox_background",
+              "color": "highlight"
+            },
+            "foreground": {
+              "texture": "icons/checkmark",
+              "color": "highlightText"
+            }
+          },
+          "inactive": {
+            "background": {
+              "texture": "checkbox_background",
+              "color": "inactive"
+            },
+            "foreground": {
+              "texture": "icons/checkmark",
+              "color": "inactiveText"
+            }
+          },
+          "pressed": {
+            "background": {
+              "texture": "checkbox_background",
+              "color": "accent"
+            },
+            "foreground": {
+              "texture": "icons/checkmark",
+              "color": "highlightText"
+            }
+          }
+        }
+      },
+      {
+        "id": "button_primary",
+        "states": {
+          "active": {
+            "background": {
+              "texture": "button_background",
+              "color": "primary"
+            },
+            "foreground": {
+              "color": "text"
+            }
+          },
+          "hover": {
+            "background": {
+              "texture": "button_background",
+              "color": "highlight"
+            },
+            "foreground": {
+              "color": "highlightText",
+              "shadow": true
+            }
+          },
+          "inactive": {
+            "background": {
+              "texture": "button_background",
+              "color": "inactive"
+            },
+            "foreground": {
+              "color": "inactiveText",
+              "shadow": true
+            }
+          },
+          "pressed": {
+            "background": {
+              "texture": "button_background",
+              "color": "accent"
+            },
+            "foreground": {
+              "color": "highlightText"
+            }
+          }
+        }
+      },
+      {
+        "id": "secondary_button",
+        "states": {
+          "active": {
+            "background": {
+              "texture": "button_background",
+              "color": "secondary"
+            },
+            "foreground": {
+              "color": "text"
+            }
+          },
+          "hover": {
+            "background": {
+              "texture": "button_background",
+              "color": "highlight"
+            },
+            "foreground": {
+              "color": "highlightText",
+              "shadow": true
+            }
+          },
+          "inactive": {
+            "background": {
+              "texture": "button_background",
+              "color": "inactive"
+            },
+            "foreground": {
+              "color": "inactiveText",
+              "shadow": true
+            }
+          },
+          "pressed": {
+            "background": {
+              "texture": "button_background",
+              "color": "accent"
+            },
+            "foreground": {
+              "color": "highlightText"
+            }
+          }
+        }
+      },
+      {
+        "id": "button",
+        "states": {
+          "active": {
+            "background": {
+              "texture": "button_background",
+              "color": "background"
+            },
+            "foreground": {
+              "color": "text"
+            }
+          },
+          "hover": {
+            "background": {
+              "texture": "button_background",
+              "color": "highlight"
+            },
+            "foreground": {
+              "color": "highlightText",
+              "shadow": true
+            }
+          },
+          "inactive": {
+            "background": {
+              "texture": "button_background",
+              "color": "inactive"
+            },
+            "foreground": {
+              "color": "inactiveText"
+            }
+          },
+          "pressed": {
+            "background": {
+              "texture": "button_background_inverted",
+              "color": "highlight"
+            },
+            "foreground": {
+              "color": "highlightText"
+            }
+          },
+          "focused": {
+            "background": {
+              "texture": "button_background",
+              "color": "accent"
+            },
+            "foreground": {
+              "color": "text",
+              "shadow": true
+            }
+          }
+        }
+      },
+      {
+        "id": "panel",
+        "states": {
+          "active": {
+            "background": {
+              "texture": "panel_background",
+              "color": "background"
+            },
+            "foreground": {
+              "color": "text",
+              "shadow": true
+            }
+          }
+        }
+      },
+      {
+        "id": "slider_track",
+        "states": {
+          "active": {
+            "background": {
+              "texture": "slider_track",
+              "color": "background"
+            }
+          }
+        }
+      },
+      {
+        "id": "slider_thumb",
+        "states": {
+          "active": {
+            "background": {
+              "texture": "slider_thumb",
+              "color": "primary"
+            }
+          },
+          "hover": {
+            "background": {
+              "texture": "slider_thumb",
+              "color": "highlight"
+            }
+          },
+          "inactive": {
+            "background": {
+              "texture": "slider_thumb",
+              "color": "inactive"
+            }
+          },
+          "pressed": {
+            "background": {
+              "texture": "slider_thumb",
+              "color": "accent"
+            }
+          }
+        }
+      }
+    ],
+    "icons": [
+      {
+        "id": "back",
+        "texture": "icons/back"
+      },
+      {
+        "id": "checkmark",
+        "texture": "icons/checkmark"
+      },
+      {
+        "id": "down",
+        "texture": "icons/down"
+      },
+      {
+        "id": "gear",
+        "texture": "icons/gear"
+      },
+      {
+        "id": "messiness_danger",
+        "texture": "icons/messiness_danger"
+      },
+      {
+        "id": "messiness_outlined",
+        "texture": "icons/messiness_outlined"
+      },
+      {
+        "id": "reset",
+        "texture": "icons/reset"
+      },
+      {
+        "id": "save",
+        "texture": "icons/save"
+      },
+      {
+        "id": "warning1",
+        "texture": "icons/warning1"
+      },
+      {
+        "id": "warning2",
+        "texture": "icons/warning2"
+      },
+      {
+        "id": "warning3",
+        "texture": "icons/warning3"
+      },
+      {
+        "id": "wetness_danger",
+        "texture": "icons/wetness_danger"
+      },
+      {
+        "id": "wetness_outlined",
+        "texture": "icons/wetness_outlined"
+      },
+      {
+        "id": "wrench",
+        "texture": "icons/wrench"
+      }
+    ]
+  }
+}

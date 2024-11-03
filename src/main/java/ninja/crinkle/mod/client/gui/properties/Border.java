@@ -1,0 +1,44 @@
+package ninja.crinkle.mod.client.gui.properties;
+
+import net.minecraft.client.gui.GuiGraphics;
+import ninja.crinkle.mod.client.color.Color;
+
+public record Border(int top, int right, int bottom, int left, Color color) {
+    public static final Border ZERO = new Border(0, 0, 0, 0, Color.BLACK);
+
+    public Border {
+        if (top < 0 || bottom < 0 || left < 0 || right < 0) {
+            throw new IllegalArgumentException("Border values cannot be negative");
+        }
+    }
+
+    public Border(int all, Color color) {
+        this(all, all, all, all, color);
+    }
+
+    public Border(int vertical, int horizontal, Color color) {
+        this(vertical, horizontal, vertical, horizontal, color);
+    }
+
+    public void render(GuiGraphics guiGraphics, Box box) {
+        // top
+        Point min = box.topLeft();
+        Point max = box.topRight().add(0, top());
+        guiGraphics.fill((int) min.x(), (int) min.y(), (int) max.x(), (int) max.y(), box.z(), color().color());
+        
+        // bottom
+        min = box.bottomLeft().subtract(0, bottom());
+        max = box.bottomRight().subtract(0, bottom());
+        guiGraphics.fill((int) min.x(), (int) min.y(), (int) max.x(), (int) max.y(), box.z(), color().color());
+
+        // left
+        min = box.topLeft();
+        max = box.bottomLeft().add(left(), 0);
+        guiGraphics.fill((int) min.x(), (int) min.y(), (int) max.x(), (int) max.y(), box.z(), color().color());
+
+        // right
+        min = box.topRight().subtract(right(), 0);
+        max = box.bottomRight().subtract(right(), 0);
+        guiGraphics.fill((int) min.x(), (int) min.y(), (int) max.x(), (int) max.y(), box.z(), color().color());
+    }
+}

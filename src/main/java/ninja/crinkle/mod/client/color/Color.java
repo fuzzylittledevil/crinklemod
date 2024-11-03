@@ -8,6 +8,16 @@ import java.util.Objects;
 import java.util.Optional;
 
 public class Color {
+    public static final Color RED = new Color(0xFFFF0000);
+    public static final Color GREEN = new Color(0xFF00FF00);
+    public static final Color BLUE = new Color(0xFF0000FF);
+    public static final Color CYAN = new Color(0xFF00FFFF);
+    public static final Color MAGENTA = new Color(0xFFFF00FF);
+    public static final Color YELLOW = new Color(0xFFFFFF00);
+    public static final Color ORANGE = new Color(0xFFFFA500);
+    public static final Color PINK = new Color(0xFFFFC0CB);
+    public static final Color PURPLE = new Color(0xFF800080);
+    public static final Color BROWN = new Color(0xFFA52A2A);
     public static final Color WHITE = new Color(0xFFFFFFFF);
     public static final Color BLACK = new Color(0xFF000000);
     // public static final Color TRANSPARENT = new Color(0);
@@ -123,4 +133,8 @@ public class Color {
                 "color=" + color + ']';
     }
 
+    public Color get() {
+        if (this == RAINBOW) return Color.rainbow(1000, 0);
+        return this;
+    }
 }

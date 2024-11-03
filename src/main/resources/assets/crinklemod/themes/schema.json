@@ -1,0 +1,537 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "version": {
+      "type": "integer"
+    },
+    "theme": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
+        },
+        "author": {
+          "type": "string"
+        },
+        "colors": {
+          "type": "object",
+          "patternProperties": {
+            "^.*$": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
+        "textures": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "location": {
+                "type": "string"
+              },
+              "slices": {
+                "type": "object",
+                "properties": {
+                  "topLeft": {
+                    "type": "object",
+                    "properties": {
+                      "start": {
+                        "type": "object",
+                        "properties": {
+                          "x": {
+                            "type": "integer"
+                          },
+                          "y": {
+                            "type": "integer"
+                          }
+                        },
+                        "required": [
+                          "x",
+                          "y"
+                        ]
+                      },
+                      "bounds": {
+                        "type": "object",
+                        "properties": {
+                          "width": {
+                            "type": "integer"
+                          },
+                          "height": {
+                            "type": "integer"
+                          }
+                        },
+                        "required": [
+                          "width",
+                          "height"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "start",
+                      "bounds"
+                    ]
+                  },
+                  "topRight": {
+                    "type": "object",
+                    "properties": {
+                      "start": {
+                        "type": "object",
+                        "properties": {
+                          "x": {
+                            "type": "integer"
+                          },
+                          "y": {
+                            "type": "integer"
+                          }
+                        },
+                        "required": [
+                          "x",
+                          "y"
+                        ]
+                      },
+                      "bounds": {
+                        "type": "object",
+                        "properties": {
+                          "width": {
+                            "type": "integer"
+                          },
+                          "height": {
+                            "type": "integer"
+                          }
+                        },
+                        "required": [
+                          "width",
+                          "height"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "start",
+                      "bounds"
+                    ]
+                  },
+                  "bottomLeft": {
+                    "type": "object",
+                    "properties": {
+                      "start": {
+                        "type": "object",
+                        "properties": {
+                          "x": {
+                            "type": "integer"
+                          },
+                          "y": {
+                            "type": "integer"
+                          }
+                        },
+                        "required": [
+                          "x",
+                          "y"
+                        ]
+                      },
+                      "bounds": {
+                        "type": "object",
+                        "properties": {
+                          "width": {
+                            "type": "integer"
+                          },
+                          "height": {
+                            "type": "integer"
+                          }
+                        },
+                        "required": [
+                          "width",
+                          "height"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "start",
+                      "bounds"
+                    ]
+                  },
+                  "bottomRight": {
+                    "type": "object",
+                    "properties": {
+                      "start": {
+                        "type": "object",
+                        "properties": {
+                          "x": {
+                            "type": "integer"
+                          },
+                          "y": {
+                            "type": "integer"
+                          }
+                        },
+                        "required": [
+                          "x",
+                          "y"
+                        ]
+                      },
+                      "bounds": {
+                        "type": "object",
+                        "properties": {
+                          "width": {
+                            "type": "integer"
+                          },
+                          "height": {
+                            "type": "integer"
+                          }
+                        },
+                        "required": [
+                          "width",
+                          "height"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "start",
+                      "bounds"
+                    ]
+                  },
+                  "top": {
+                    "type": "object",
+                    "properties": {
+                      "start": {
+                        "type": "object",
+                        "properties": {
+                          "x": {
+                            "type": "integer"
+                          },
+                          "y": {
+                            "type": "integer"
+                          }
+                        },
+                        "required": [
+                          "x",
+                          "y"
+                        ]
+                      },
+                      "bounds": {
+                        "type": "object",
+                        "properties": {
+                          "width": {
+                            "type": "integer"
+                          },
+                          "height": {
+                            "type": "integer"
+                          }
+                        },
+                        "required": [
+                          "width",
+                          "height"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "start",
+                      "bounds"
+                    ]
+                  },
+                  "right": {
+                    "type": "object",
+                    "properties": {
+                      "start": {
+                        "type": "object",
+                        "properties": {
+                          "x": {
+                            "type": "integer"
+                          },
+                          "y": {
+                            "type": "integer"
+                          }
+                        },
+                        "required": [
+                          "x",
+                          "y"
+                        ]
+                      },
+                      "bounds": {
+                        "type": "object",
+                        "properties": {
+                          "width": {
+                            "type": "integer"
+                          },
+                          "height": {
+                            "type": "integer"
+                          }
+                        },
+                        "required": [
+                          "width",
+                          "height"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "start",
+                      "bounds"
+                    ]
+                  },
+                  "bottom": {
+                    "type": "object",
+                    "properties": {
+                      "start": {
+                        "type": "object",
+                        "properties": {
+                          "x": {
+                            "type": "integer"
+                          },
+                          "y": {
+                            "type": "integer"
+                          }
+                        },
+                        "required": [
+                          "x",
+                          "y"
+                        ]
+                      },
+                      "bounds": {
+                        "type": "object",
+                        "properties": {
+                          "width": {
+                            "type": "integer"
+                          },
+                          "height": {
+                            "type": "integer"
+                          }
+                        },
+                        "required": [
+                          "width",
+                          "height"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "start",
+                      "bounds"
+                    ]
+                  },
+                  "left": {
+                    "type": "object",
+                    "properties": {
+                      "start": {
+                        "type": "object",
+                        "properties": {
+                          "x": {
+                            "type": "integer"
+                          },
+                          "y": {
+                            "type": "integer"
+                          }
+                        },
+                        "required": [
+                          "x",
+                          "y"
+                        ]
+                      },
+                      "bounds": {
+                        "type": "object",
+                        "properties": {
+                          "width": {
+                            "type": "integer"
+                          },
+                          "height": {
+                            "type": "integer"
+                          }
+                        },
+                        "required": [
+                          "width",
+                          "height"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "start",
+                      "bounds"
+                    ]
+                  },
+                  "center": {
+                    "type": "object",
+                    "properties": {
+                      "start": {
+                        "type": "object",
+                        "properties": {
+                          "x": {
+                            "type": "integer"
+                          },
+                          "y": {
+                            "type": "integer"
+                          }
+                        },
+                        "required": [
+                          "x",
+                          "y"
+                        ]
+                      },
+                      "bounds": {
+                        "type": "object",
+                        "properties": {
+                          "width": {
+                            "type": "integer"
+                          },
+                          "height": {
+                            "type": "integer"
+                          }
+                        },
+                        "required": [
+                          "width",
+                          "height"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "start",
+                      "bounds"
+                    ]
+                  }
+                },
+                "required": [
+                  "topLeft",
+                  "topRight",
+                  "bottomLeft",
+                  "bottomRight",
+                  "top",
+                  "right",
+                  "bottom",
+                  "left",
+                  "center"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "id", "location"
+            ]
+          }
+        },
+        "widgets": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "states": {
+                "type": "object",
+                "properties": {
+                  "active": {
+                    "type": "object",
+                    "properties": {
+                      "background": {
+                        "type": "object",
+                        "properties": {
+                          "texture": {
+                            "type": "string"
+                          },
+                          "color": {
+                            "type": "string"
+                          }
+                        },
+                        "anyOf": [
+                          {
+                            "required": [
+                              "texture"
+                            ]
+                          },
+                          {
+                            "required": [
+                              "color"
+                            ]
+                          }
+                        ]
+                      },
+                      "foreground": {
+                        "type": "object",
+                        "properties": {
+                          "texture": {
+                            "type": "string"
+                          },
+                          "color": {
+                            "type": "string"
+                          },
+                          "shadow": {
+                            "type": "boolean"
+                          }
+                        },
+                        "anyOf": [
+                          {
+                            "required": [
+                              "texture"
+                            ]
+                          },
+                          {
+                            "required": [
+                              "color"
+                            ]
+                          }
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "required": [
+                      "background"
+                    ]
+                  }
+                },
+                "additionalProperties": true
+              }
+            },
+            "required": [
+              "id",
+              "states"
+            ]
+          }
+        },
+        "icons": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "texture": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "texture"
+            ]
+          }
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "description",
+        "version",
+        "author",
+        "colors",
+        "textures",
+        "widgets",
+        "icons"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "version",
+    "theme"
+  ],
+  "additionalProperties": false
+}
