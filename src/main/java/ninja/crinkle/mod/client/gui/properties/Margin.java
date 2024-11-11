@@ -1,6 +1,6 @@
 package ninja.crinkle.mod.client.gui.properties;
 
-public record Margin(int top, int right, int bottom, int left) {
+public record Margin(int top, int right, int bottom, int left) implements BoxProperty {
     public static final Margin ZERO = new Margin(0, 0, 0, 0);
 
     public Margin {
@@ -15,5 +15,9 @@ public record Margin(int top, int right, int bottom, int left) {
 
     public Margin(int all) {
         this(all, all, all, all);
+    }
+
+    public static Margin all(int all) {
+        return new Margin(all);
     }
 }

@@ -7,10 +7,8 @@ import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.resources.ResourceLocation;
 import ninja.crinkle.mod.client.color.Color;
-import ninja.crinkle.mod.client.gui.GenericBuilder;
-import ninja.crinkle.mod.client.gui.properties.Bounds;
-import ninja.crinkle.mod.client.gui.properties.Box;
-import ninja.crinkle.mod.client.gui.properties.Point;
+import ninja.crinkle.mod.client.gui.builders.GenericBuilder;
+import ninja.crinkle.mod.client.gui.properties.*;
 import ninja.crinkle.mod.client.gui.renderers.ThemeGraphics;
 import ninja.crinkle.mod.client.gui.themes.Theme;
 import ninja.crinkle.mod.client.gui.themes.WidgetAppearance;
@@ -25,11 +23,15 @@ public record Texture(String id, String location, Map<Slice.Location, Slice> sli
     public static final Texture EMPTY = new Texture("empty", "missingno", Slice.Location.emptySliceMap(), ninja.crinkle.mod.client.gui.themes.Theme.EMPTY);
     private static final Logger LOGGER = LogUtils.getLogger();
 
-    public Bounds boundsOf(Slice.Location location) {
-        if (slices.containsKey(location)) {
-            return slices.get(location).bounds();
+    public Size boundsOf(Slice.Location location) {
+        if (slices().containsKey(location)) {
+            return slices().get(location).size();
         }
-        return Bounds.ZERO;
+        return Size.ZERO;
+    }
+
+    public boolean isSliced() {
+        return slices().size() > 1;
     }
 
     public ResourceLocation resourceLocation() {
@@ -37,16 +39,25 @@ public record Texture(String id, String location, Map<Slice.Location, Slice> sli
                 .orElse(new ResourceLocation("minecraft", "missingno"));
     }
 
+    private boolean isOutOfBounds(Box a, Slice b, String key) {
+        if (!a.contains(b.box().bottomRight())) {
+            LOGGER.warn("Texture '{}' could not be created since the slice '{}' is out of bounds. a bounds: {}, b bounds: {}", key, b, a, b.box());
+            return true;
+        }
+        return false;
+    }
+
     @SuppressWarnings("resource")
-    public @NotNull ResourceLocation generate(String key, @NotNull Bounds bounds, @NotNull Theme theme) {
+    public @NotNull ResourceLocation generate(String key, @NotNull Size size, @NotNull Theme theme) {
         if (!isLoadedFor(theme)) {
             LOGGER.warn("Texture '{}' could not be created since '{}' is not loaded.", key, ThemeAtlas.getTextureLocation(theme.getId(), id()));
             return new ResourceLocation("minecraft", "missingno");
         }
         TextureAtlasSprite sprite = ThemeAtlas.getSprite(resourceLocation());
         NativeImage original = new NativeImage(sprite.contents().width(), sprite.contents().height(), true);
+        Box originalBox = new Box(0, 0, original.getWidth(), original.getHeight());
         original.copyFrom(sprite.contents().getOriginalImage());
-        NativeImage image = new NativeImage(bounds.width(), bounds.height(), true);
+        NativeImage image = new NativeImage(size.width(), size.height(), true);
 
         for (var entry : slices.entrySet()) {
             Slice.Location location = entry.getKey();
@@ -57,48 +68,57 @@ public record Texture(String id, String location, Map<Slice.Location, Slice> sli
                     final Point from = slice.start();
                     // The x,y coords of the destination image
                     final Point to = switch (location) {
-                        case topLeft -> new Point(0, 0);
-                        case topRight -> new Point(bounds.width() - slice.bounds().width(), 0);
-                        case bottomLeft -> new Point(0, bounds.height() - slice.bounds().height());
-                        case bottomRight -> new Point(bounds.width() - slice.bounds().width(),
-                                bounds.height() - slice.bounds().height());
+                        case topLeft -> new ImmutablePoint(0, 0);
+                        case topRight -> new ImmutablePoint(size.width() - slice.size().width(), 0);
+                        case bottomLeft -> new ImmutablePoint(0, size.height() - slice.size().height());
+                        case bottomRight -> new ImmutablePoint(size.width() - slice.size().width(),
+                                size.height() - slice.size().height());
                         default -> throw new IllegalStateException("Unexpected value: " + location);
                     };
-                    original.copyRect(image, (int) from.x(), (int) from.y(), (int) to.x(), (int) to.y(), slice.bounds().width(),
-                            slice.bounds().height(), false, false);
+                    if (isOutOfBounds(originalBox, slice, key)) {
+                        return new ResourceLocation("minecraft", "missingno");
+                    }
+                    original.copyRect(image, (int) from.x(), (int) from.y(), (int) to.x(), (int) to.y(), slice.size().width(),
+                            slice.size().height(), false, false);
                 }
                 case top, bottom -> {
                     Slice corner = slices.get(location == Slice.Location.top ?
                             Slice.Location.topLeft : Slice.Location.bottomLeft);
-                    double startX = corner.start().add(corner.bounds()).x();
-                    for (double x = startX; x < bounds.subtract(corner.bounds()).width(); x += slice.bounds().width()) {
+                    double startX = corner.start().add(corner.size()).x();
+                    for (double x = startX; x < size.subtract(corner.size()).width(); x += slice.size().width()) {
                         // The x,y coords of the original image
                         final Point from = slice.start();
                         // The x,y coords of the destination image
                         final Point to = switch (location) {
-                            case top -> new Point(x, 0);
-                            case bottom -> new Point(x, bounds.height() - slice.bounds().height());
+                            case top -> new ImmutablePoint(x, 0);
+                            case bottom -> new ImmutablePoint(x, size.height() - slice.size().height());
                             default -> throw new IllegalStateException("Unexpected value: " + location);
                         };
-                        original.copyRect(image, (int) from.x(), (int) from.y(), (int) to.x(), (int) to.y(), slice.bounds().width(),
-                                slice.bounds().height(), false, false);
+                        if (isOutOfBounds(originalBox, slice, key)) {
+                            return new ResourceLocation("minecraft", "missingno");
+                        }
+                        original.copyRect(image, (int) from.x(), (int) from.y(), (int) to.x(), (int) to.y(), slice.size().width(),
+                                slice.size().height(), false, false);
                     }
                 }
                 case left, right -> {
                     Slice corner = slices.get(location == Slice.Location.left ?
                             Slice.Location.topLeft : Slice.Location.topRight);
-                    double startY = corner.start().add(corner.bounds()).y();
-                    for (double y = startY; y < bounds.subtract(corner.bounds()).height(); y += slice.bounds().height()) {
+                    double startY = corner.start().add(corner.size()).y();
+                    for (double y = startY; y < size.subtract(corner.size()).height(); y += slice.size().height()) {
                         // The x,y coords of the original image
                         final Point from = slice.start();
                         // The x,y coords of the destination image
                         final Point to = switch (location) {
-                            case left -> new Point(0, y);
-                            case right -> new Point(bounds.width() - slice.bounds().width(), y);
+                            case left -> new ImmutablePoint(0, y);
+                            case right -> new ImmutablePoint(size.width() - slice.size().width(), y);
                             default -> throw new IllegalStateException("Unexpected value: " + location);
                         };
-                        original.copyRect(image, (int) from.x(), (int) from.y(), (int) to.x(), (int) to.y(), slice.bounds().width(),
-                                slice.bounds().height(), false, false);
+                        if (isOutOfBounds(originalBox, slice, key)) {
+                            return new ResourceLocation("minecraft", "missingno");
+                        }
+                        original.copyRect(image, (int) from.x(), (int) from.y(), (int) to.x(), (int) to.y(), slice.size().width(),
+                                slice.size().height(), false, false);
                     }
                 }
                 case center -> {
@@ -106,16 +126,19 @@ public record Texture(String id, String location, Map<Slice.Location, Slice> sli
                     Slice left = slices.get(Slice.Location.left);
                     Slice bottom = slices.get(Slice.Location.bottom);
                     Slice right = slices.get(Slice.Location.right);
-                    double startX = left.start().add(left.bounds()).x();
-                    double startY = top.start().add(top.bounds()).y();
-                    for (double x = startX; x < bounds.subtract(right.bounds()).width(); x += slice.bounds().width()) {
-                        for (double y = startY; y < bounds.subtract(bottom.bounds()).height(); y += slice.bounds().height()) {
+                    double startX = left.start().add(left.size()).x();
+                    double startY = top.start().add(top.size()).y();
+                    for (double x = startX; x < size.subtract(right.size()).width(); x += slice.size().width()) {
+                        for (double y = startY; y < size.subtract(bottom.size()).height(); y += slice.size().height()) {
                             // The x,y coords of the original image
                             final Point from = slice.start();
                             // The x,y coords of the destination image
-                            final Point to = new Point(x, y);
-                            original.copyRect(image, (int) from.x(), (int) from.y(), (int) to.x(), (int) to.y(), slice.bounds().width(),
-                                    slice.bounds().height(), false, false);
+                            final Point to = new ImmutablePoint(x, y);
+                            if (isOutOfBounds(originalBox, slice, key)) {
+                                return new ResourceLocation("minecraft", "missingno");
+                            }
+                            original.copyRect(image, (int) from.x(), (int) from.y(), (int) to.x(), (int) to.y(), slice.size().width(),
+                                    slice.size().height(), false, false);
                         }
                     }
                 }
@@ -134,17 +157,21 @@ public record Texture(String id, String location, Map<Slice.Location, Slice> sli
         if (this == EMPTY) {
             return;
         }
-        WidgetAppearance widgetAppearance = widget.getWidgetTheme().getAppearance(widget.state());
+        WidgetAppearance widgetAppearance = widget.widgetTheme().getAppearance(widget.status());
+        if (widgetAppearance == null) {
+            widgetAppearance = widget.widgetTheme().getAppearance(Status.active);
+        }
         Color color = widgetAppearance.getBackgroundColor().get();
         graphics.setColor((float) color.getRed(), (float) color.getGreen(), (float) color.getBlue(),
                 widget.alpha());
         RenderSystem.enableBlend();
         RenderSystem.enableDepthTest();
-        Box borderBox = widget.getBorderTextureBox();
-        ResourceLocation texture = theme.generateTexture(this, borderBox.bounds());
-        graphics.blit(texture, (int) borderBox.topLeft().x(), (int) borderBox.topLeft().y(), 0, 0, 0,
-                borderBox.bounds().width(), borderBox.bounds().height(), borderBox.bounds().width(),
-                borderBox.bounds().height());
+        Box background = widget.layout().boxes().rendered().backgroundBox();
+        ResourceLocation texture = theme.generateTexture(this, background.size());
+        graphics.blit(texture, (int) background.topLeft().x(), (int) background.topLeft().y(),
+                widget.zIndex(), 0, 0,
+                background.size().width(), background.size().height(), background.size().width(),
+                background.size().height());
         graphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.disableDepthTest();
         RenderSystem.disableBlend();
@@ -166,8 +193,8 @@ public record Texture(String id, String location, Map<Slice.Location, Slice> sli
             return self();
         }
 
-        public Builder addSlice(Slice.Location location, Point start, Bounds bounds) {
-            return addSlice(location, new Slice(start, bounds));
+        public Builder addSlice(Slice.Location location, Point start, Size size) {
+            return addSlice(location, new Slice(ImmutablePoint.from(start), size));
         }
 
         public Builder location(String location) {
@@ -186,7 +213,14 @@ public record Texture(String id, String location, Map<Slice.Location, Slice> sli
         }
     }
 
-    public record Slice(Point start, Bounds bounds) {
+    public record Slice(ImmutablePoint start, Size size) {
+        public Slice(int x, int y, int width, int height) {
+            this(new ImmutablePoint(x, y), new Size(width, height));
+        }
+
+        public Box box() {
+            return new Box(start, size);
+        }
         public enum Location {
             topLeft,
             top,
@@ -200,15 +234,15 @@ public record Texture(String id, String location, Map<Slice.Location, Slice> sli
 
             public static Map<Location, Slice> emptySliceMap() {
                 return Map.of(
-                        topLeft, new Slice(new Point(0, 0), new Bounds(0, 0)),
-                        top, new Slice(new Point(0, 0), new Bounds(0, 0)),
-                        topRight, new Slice(new Point(0, 0), new Bounds(0, 0)),
-                        left, new Slice(new Point(0, 0), new Bounds(0, 0)),
-                        center, new Slice(new Point(0, 0), new Bounds(0, 0)),
-                        right, new Slice(new Point(0, 0), new Bounds(0, 0)),
-                        bottomLeft, new Slice(new Point(0, 0), new Bounds(0, 0)),
-                        bottom, new Slice(new Point(0, 0), new Bounds(0, 0)),
-                        bottomRight, new Slice(new Point(0, 0), new Bounds(0, 0))
+                        topLeft, new Slice(new ImmutablePoint(0, 0), new Size(0, 0)),
+                        top, new Slice(new ImmutablePoint(0, 0), new Size(0, 0)),
+                        topRight, new Slice(new ImmutablePoint(0, 0), new Size(0, 0)),
+                        left, new Slice(new ImmutablePoint(0, 0), new Size(0, 0)),
+                        center, new Slice(new ImmutablePoint(0, 0), new Size(0, 0)),
+                        right, new Slice(new ImmutablePoint(0, 0), new Size(0, 0)),
+                        bottomLeft, new Slice(new ImmutablePoint(0, 0), new Size(0, 0)),
+                        bottom, new Slice(new ImmutablePoint(0, 0), new Size(0, 0)),
+                        bottomRight, new Slice(new ImmutablePoint(0, 0), new Size(0, 0))
                 );
             }
         }

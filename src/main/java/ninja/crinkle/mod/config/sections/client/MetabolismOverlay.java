@@ -24,10 +24,10 @@ public class MetabolismOverlay {
                 .comment("The region of the screen where the overlay is displayed.")
                 .defineEnum("region", ScreenRegion.TOP_LEFT);
         x = builder
-                .comment("The x-coordinate offset of the overlay, relative to the center of the region.")
+                .comment("The x-coordinate offset of the overlay, position to the center of the region.")
                 .defineInRange("x", 0, 0, Integer.MAX_VALUE);
         y = builder
-                .comment("The y-coordinate offset of the overlay, relative to the center of the region.")
+                .comment("The y-coordinate offset of the overlay, position to the center of the region.")
                 .defineInRange("y", 0, 0, Integer.MAX_VALUE);
         builder.pop();
     }

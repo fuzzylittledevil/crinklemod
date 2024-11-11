@@ -1,11 +1,10 @@
 package ninja.crinkle.mod.client.gui.themes;
 
 import com.mojang.logging.LogUtils;
-import net.minecraft.client.resources.TextureAtlasHolder;
 import net.minecraft.resources.ResourceLocation;
 import ninja.crinkle.mod.client.color.Color;
-import ninja.crinkle.mod.client.gui.GenericBuilder;
-import ninja.crinkle.mod.client.gui.properties.Bounds;
+import ninja.crinkle.mod.client.gui.builders.GenericBuilder;
+import ninja.crinkle.mod.client.gui.properties.Size;
 import ninja.crinkle.mod.client.gui.textures.Texture;
 import ninja.crinkle.mod.client.gui.textures.ThemeAtlas;
 import ninja.crinkle.mod.client.gui.themes.loader.ThemeData;
@@ -17,8 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 public class Theme {
-    public static final Theme EMPTY = Theme.builder("empty").name("Empty").description("Empty theme")
-            .version("0.0.0").build();
+    public static final Theme EMPTY = Theme.builder("empty").name("Empty").description("Empty theme").version("0.0.0").build();
     private static final Logger LOGGER = LogUtils.getLogger();
     private final List<String> authors;
     private final Map<String, Color> colors = new HashMap<>();
@@ -45,16 +43,15 @@ public class Theme {
 
     public static Theme fromConfig(ThemeData config) {
         LOGGER.info("Loading theme '{}' ({})", config.name(), config.id());
-        Theme theme = new Theme(config.id(), config.name(), config.description(), config.version(),
-                config.authors());
+        Theme theme = new Theme(config.id(), config.name(), config.description(), config.version(), config.authors());
         config.colors().forEach((key, value) -> theme.colors.put(key, Color.of(value)));
-        config.textures().forEach(texture ->
-                theme.textures.put(texture.id(), ThemeAtlas.getTextureLocation(theme.getId(), texture.location())
-                .map(location -> new Texture(texture.id(), texture.location(), texture.slices(), theme))
-                .orElse(Texture.EMPTY)));
-        config.widgets().forEach(widgetData -> theme.widgetThemes.put(widgetData.id(),
-                WidgetTheme.fromConfig(widgetData, theme)));
+        config.textures().forEach(texture -> theme.textures.put(texture.id(), ThemeAtlas.getTextureLocation(theme.getId(), texture.location()).map(location -> new Texture(texture.id(), texture.location(), texture.slices(), theme)).orElse(Texture.EMPTY)));
+        config.widgets().forEach(widgetData -> theme.widgetThemes.put(widgetData.id(), WidgetTheme.fromConfig(widgetData, theme)));
         return theme;
+    }
+
+    public String getId() {
+        return id;
     }
 
     public void addColor(String key, Color color) {
@@ -69,14 +66,13 @@ public class Theme {
         widgetThemes.put(widgetTheme.id(), widgetTheme);
     }
 
-    public ResourceLocation generateTexture(Texture texture, Bounds bounds) {
-        String key = String.format("%s_%s_%dx%d", getId(), texture.id(), bounds.width(), bounds.height());
-        return generatedTextures.computeIfAbsent(key,
-                k -> texture.generate(k, bounds, this));
-    }
-
-    public String getId() {
-        return id;
+    public ResourceLocation generateTexture(Texture texture, Size size) {
+        String key = String.format("%s_%s_%dx%d", getId(), texture.id(), size.width(), size.height());
+        if (generatedTextures.containsKey(key)
+                && generatedTextures.get(key).getPath().equals(Texture.EMPTY.location())) {
+            generatedTextures.remove(key);
+        }
+        return generatedTextures.computeIfAbsent(key, k -> texture.generate(k, size, this));
     }
 
     public List<String> getAuthors() {
@@ -99,7 +95,7 @@ public class Theme {
         if (map.containsKey(key)) {
             return map.get(key);
         } else if (this == ThemeRegistry.getDefault() || this == EMPTY) {
-            LOGGER.warn("Missing key '{}' from '{}' in theme '{}'", key, defaultValue.getClass().getSimpleName(), getId());
+            // LOGGER.warn("Missing key '{}' from '{}' in theme '{}'", key, defaultValue.getClass().getSimpleName(), getId());
             return defaultValue;
         }
         return ThemeRegistry.getDefault().getOrDefault(map, key, defaultValue);
@@ -118,14 +114,14 @@ public class Theme {
     }
 
     public static class Builder extends GenericBuilder<Builder, Theme> {
+        private final Map<String, Color> colors = new HashMap<>();
         private final String id;
+        private final List<Texture> textures = new ArrayList<>();
+        private final List<WidgetTheme> widgetThemes = new ArrayList<>();
         private List<String> authors;
         private String description;
         private String name;
         private String version;
-        private final Map<String, Color> colors = new HashMap<>();
-        private final List<Texture> textures = new ArrayList<>();
-        private final List<WidgetTheme> widgetThemes = new ArrayList<>();
 
         public Builder(String id) {
             this.id = id;
@@ -151,6 +147,7 @@ public class Theme {
             return self();
         }
 
+        @Override
         public Theme build() {
             var theme = new Theme(id, name, description, version, authors);
             colors.forEach(theme::addColor);

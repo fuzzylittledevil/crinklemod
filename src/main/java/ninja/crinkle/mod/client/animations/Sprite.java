@@ -93,7 +93,7 @@ public class Sprite {
         }
 
         /***
-         * Set the position of the sprite relative to the top left corner of the parent frame
+         * Set the position of the sprite position to the top left corner of the parent frame
          * @param x The x position
          * @param y The y position
          * @return The {@link Builder} instance

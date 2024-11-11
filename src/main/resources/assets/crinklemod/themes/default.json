@@ -83,7 +83,7 @@
               "x": 0,
               "y": 0
             },
-            "bounds": {
+            "size": {
               "width": 1,
               "height": 1
             }
@@ -93,7 +93,7 @@
               "x": 2,
               "y": 0
             },
-            "bounds": {
+            "size": {
               "width": 1,
               "height": 1
             }
@@ -103,7 +103,7 @@
               "x": 0,
               "y": 2
             },
-            "bounds": {
+            "size": {
               "width": 1,
               "height": 1
             }
@@ -113,7 +113,7 @@
               "x": 2,
               "y": 2
             },
-            "bounds": {
+            "size": {
               "width": 1,
               "height": 1
             }
@@ -123,7 +123,7 @@
               "x": 1,
               "y": 0
             },
-            "bounds": {
+            "size": {
               "width": 1,
               "height": 1
             }
@@ -133,7 +133,7 @@
               "x": 2,
               "y": 1
             },
-            "bounds": {
+            "size": {
               "width": 1,
               "height": 1
             }
@@ -143,7 +143,7 @@
               "x": 1,
               "y": 2
             },
-            "bounds": {
+            "size": {
               "width": 1,
               "height": 1
             }
@@ -153,7 +153,7 @@
               "x": 0,
               "y": 1
             },
-            "bounds": {
+            "size": {
               "width": 1,
               "height": 1
             }
@@ -163,7 +163,7 @@
               "x": 1,
               "y": 1
             },
-            "bounds": {
+            "size": {
               "width": 1,
               "height": 1
             }
@@ -179,7 +179,7 @@
               "x": 0,
               "y": 0
             },
-            "bounds": {
+            "size": {
               "width": 1,
               "height": 1
             }
@@ -189,7 +189,7 @@
               "x": 2,
               "y": 0
             },
-            "bounds": {
+            "size": {
               "width": 1,
               "height": 1
             }
@@ -199,7 +199,7 @@
               "x": 0,
               "y": 2
             },
-            "bounds": {
+            "size": {
               "width": 1,
               "height": 1
             }
@@ -209,7 +209,7 @@
               "x": 2,
               "y": 2
             },
-            "bounds": {
+            "size": {
               "width": 1,
               "height": 1
             }
@@ -219,7 +219,7 @@
               "x": 1,
               "y": 0
             },
-            "bounds": {
+            "size": {
               "width": 1,
               "height": 1
             }
@@ -229,7 +229,7 @@
               "x": 2,
               "y": 1
             },
-            "bounds": {
+            "size": {
               "width": 1,
               "height": 1
             }
@@ -239,7 +239,7 @@
               "x": 1,
               "y": 2
             },
-            "bounds": {
+            "size": {
               "width": 1,
               "height": 1
             }
@@ -249,7 +249,7 @@
               "x": 0,
               "y": 1
             },
-            "bounds": {
+            "size": {
               "width": 1,
               "height": 1
             }
@@ -259,7 +259,7 @@
               "x": 1,
               "y": 1
             },
-            "bounds": {
+            "size": {
               "width": 1,
               "height": 1
             }
@@ -275,7 +275,7 @@
               "x": 0,
               "y": 0
             },
-            "bounds": {
+            "size": {
               "width": 1,
               "height": 1
             }
@@ -285,7 +285,7 @@
               "x": 2,
               "y": 0
             },
-            "bounds": {
+            "size": {
               "width": 1,
               "height": 1
             }
@@ -295,7 +295,7 @@
               "x": 0,
               "y": 2
             },
-            "bounds": {
+            "size": {
               "width": 1,
               "height": 1
             }
@@ -305,7 +305,7 @@
               "x": 2,
               "y": 2
             },
-            "bounds": {
+            "size": {
               "width": 1,
               "height": 1
             }
@@ -315,7 +315,7 @@
               "x": 1,
               "y": 0
             },
-            "bounds": {
+            "size": {
               "width": 1,
               "height": 1
             }
@@ -325,7 +325,7 @@
               "x": 2,
               "y": 1
             },
-            "bounds": {
+            "size": {
               "width": 1,
               "height": 1
             }
@@ -335,7 +335,7 @@
               "x": 1,
               "y": 2
             },
-            "bounds": {
+            "size": {
               "width": 1,
               "height": 1
             }
@@ -345,7 +345,7 @@
               "x": 0,
               "y": 1
             },
-            "bounds": {
+            "size": {
               "width": 1,
               "height": 1
             }
@@ -355,7 +355,7 @@
               "x": 1,
               "y": 1
             },
-            "bounds": {
+            "size": {
               "width": 1,
               "height": 1
             }
@@ -371,7 +371,7 @@
               "x": 0,
               "y": 0
             },
-            "bounds": {
+            "size": {
               "width": 4,
               "height": 4
             }
@@ -381,7 +381,7 @@
               "x": 5,
               "y": 0
             },
-            "bounds": {
+            "size": {
               "width": 4,
               "height": 4
             }
@@ -391,7 +391,7 @@
               "x": 0,
               "y": 5
             },
-            "bounds": {
+            "size": {
               "width": 4,
               "height": 4
             }
@@ -401,7 +401,7 @@
               "x": 5,
               "y": 5
             },
-            "bounds": {
+            "size": {
               "width": 4,
               "height": 4
             }
@@ -411,7 +411,7 @@
               "x": 4,
               "y": 0
             },
-            "bounds": {
+            "size": {
               "width": 1,
               "height": 4
             }
@@ -421,7 +421,7 @@
               "x": 5,
               "y": 4
             },
-            "bounds": {
+            "size": {
               "width": 4,
               "height": 1
             }
@@ -431,7 +431,7 @@
               "x": 4,
               "y": 5
             },
-            "bounds": {
+            "size": {
               "width": 1,
               "height": 4
             }
@@ -441,7 +441,7 @@
               "x": 0,
               "y": 4
             },
-            "bounds": {
+            "size": {
               "width": 4,
               "height": 1
             }
@@ -451,7 +451,7 @@
               "x": 4,
               "y": 4
             },
-            "bounds": {
+            "size": {
               "width": 1,
               "height": 1
             }
@@ -467,7 +467,7 @@
               "x": 0,
               "y": 0
             },
-            "bounds": {
+            "size": {
               "width": 1,
               "height": 1
             }
@@ -477,7 +477,7 @@
               "x": 2,
               "y": 0
             },
-            "bounds": {
+            "size": {
               "width": 1,
               "height": 1
             }
@@ -487,7 +487,7 @@
               "x": 0,
               "y": 2
             },
-            "bounds": {
+            "size": {
               "width": 1,
               "height": 1
             }
@@ -497,7 +497,7 @@
               "x": 2,
               "y": 2
             },
-            "bounds": {
+            "size": {
               "width": 1,
               "height": 1
             }
@@ -507,7 +507,7 @@
               "x": 1,
               "y": 0
             },
-            "bounds": {
+            "size": {
               "width": 1,
               "height": 1
             }
@@ -517,7 +517,7 @@
               "x": 2,
               "y": 1
             },
-            "bounds": {
+            "size": {
               "width": 1,
               "height": 1
             }
@@ -527,7 +527,7 @@
               "x": 1,
               "y": 2
             },
-            "bounds": {
+            "size": {
               "width": 1,
               "height": 1
             }
@@ -537,7 +537,7 @@
               "x": 0,
               "y": 1
             },
-            "bounds": {
+            "size": {
               "width": 1,
               "height": 1
             }
@@ -547,7 +547,7 @@
               "x": 1,
               "y": 1
             },
-            "bounds": {
+            "size": {
               "width": 1,
               "height": 1
             }
@@ -563,7 +563,7 @@
               "x": 0,
               "y": 0
             },
-            "bounds": {
+            "size": {
               "width": 1,
               "height": 1
             }
@@ -573,7 +573,7 @@
               "x": 2,
               "y": 0
             },
-            "bounds": {
+            "size": {
               "width": 1,
               "height": 1
             }
@@ -583,7 +583,7 @@
               "x": 0,
               "y": 2
             },
-            "bounds": {
+            "size": {
               "width": 1,
               "height": 1
             }
@@ -593,7 +593,7 @@
               "x": 2,
               "y": 2
             },
-            "bounds": {
+            "size": {
               "width": 1,
               "height": 1
             }
@@ -603,7 +603,7 @@
               "x": 1,
               "y": 0
             },
-            "bounds": {
+            "size": {
               "width": 1,
               "height": 1
             }
@@ -613,7 +613,7 @@
               "x": 2,
               "y": 1
             },
-            "bounds": {
+            "size": {
               "width": 1,
               "height": 1
             }
@@ -623,7 +623,7 @@
               "x": 1,
               "y": 2
             },
-            "bounds": {
+            "size": {
               "width": 1,
               "height": 1
             }
@@ -633,7 +633,7 @@
               "x": 0,
               "y": 1
             },
-            "bounds": {
+            "size": {
               "width": 1,
               "height": 1
             }
@@ -643,7 +643,7 @@
               "x": 1,
               "y": 1
             },
-            "bounds": {
+            "size": {
               "width": 1,
               "height": 1
             }
@@ -654,7 +654,7 @@
     "widgets": [
       {
         "id": "default",
-        "states": {
+        "statuses": {
           "active": {
             "background": {
               "color": "background"
@@ -688,12 +688,21 @@
             "foreground": {
               "color": "highlightText"
             }
+          },
+          "focused": {
+            "background": {
+              "color": "accent"
+            },
+            "foreground": {
+              "color": "text",
+              "shadow": true
+            }
           }
         }
       },
       {
         "id": "checkbox_unchecked",
-        "states": {
+        "statuses": {
           "active": {
             "background": {
               "texture": "checkbox_background",
@@ -734,7 +743,7 @@
       },
       {
         "id": "checkbox_checked",
-        "states": {
+        "statuses": {
           "active": {
             "background": {
               "texture": "checkbox_background",
@@ -779,7 +788,7 @@
       },
       {
         "id": "button_primary",
-        "states": {
+        "statuses": {
           "active": {
             "background": {
               "texture": "button_background",
@@ -822,7 +831,7 @@
       },
       {
         "id": "secondary_button",
-        "states": {
+        "statuses": {
           "active": {
             "background": {
               "texture": "button_background",
@@ -865,7 +874,7 @@
       },
       {
         "id": "button",
-        "states": {
+        "statuses": {
           "active": {
             "background": {
               "texture": "button_background",
@@ -917,7 +926,7 @@
       },
       {
         "id": "panel",
-        "states": {
+        "statuses": {
           "active": {
             "background": {
               "texture": "panel_background",
@@ -932,7 +941,7 @@
       },
       {
         "id": "slider_track",
-        "states": {
+        "statuses": {
           "active": {
             "background": {
               "texture": "slider_track",
@@ -943,7 +952,7 @@
       },
       {
         "id": "slider_thumb",
-        "states": {
+        "statuses": {
           "active": {
             "background": {
               "texture": "slider_thumb",

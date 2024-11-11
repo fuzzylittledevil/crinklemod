@@ -64,7 +64,7 @@
                           "y"
                         ]
                       },
-                      "bounds": {
+                      "size": {
                         "type": "object",
                         "properties": {
                           "width": {
@@ -82,7 +82,7 @@
                     },
                     "required": [
                       "start",
-                      "bounds"
+                      "size"
                     ]
                   },
                   "topRight": {
@@ -103,7 +103,7 @@
                           "y"
                         ]
                       },
-                      "bounds": {
+                      "size": {
                         "type": "object",
                         "properties": {
                           "width": {
@@ -121,7 +121,7 @@
                     },
                     "required": [
                       "start",
-                      "bounds"
+                      "size"
                     ]
                   },
                   "bottomLeft": {
@@ -142,7 +142,7 @@
                           "y"
                         ]
                       },
-                      "bounds": {
+                      "size": {
                         "type": "object",
                         "properties": {
                           "width": {
@@ -160,7 +160,7 @@
                     },
                     "required": [
                       "start",
-                      "bounds"
+                      "size"
                     ]
                   },
                   "bottomRight": {
@@ -181,7 +181,7 @@
                           "y"
                         ]
                       },
-                      "bounds": {
+                      "size": {
                         "type": "object",
                         "properties": {
                           "width": {
@@ -199,7 +199,7 @@
                     },
                     "required": [
                       "start",
-                      "bounds"
+                      "size"
                     ]
                   },
                   "top": {
@@ -220,7 +220,7 @@
                           "y"
                         ]
                       },
-                      "bounds": {
+                      "size": {
                         "type": "object",
                         "properties": {
                           "width": {
@@ -238,7 +238,7 @@
                     },
                     "required": [
                       "start",
-                      "bounds"
+                      "size"
                     ]
                   },
                   "right": {
@@ -259,7 +259,7 @@
                           "y"
                         ]
                       },
-                      "bounds": {
+                      "size": {
                         "type": "object",
                         "properties": {
                           "width": {
@@ -277,7 +277,7 @@
                     },
                     "required": [
                       "start",
-                      "bounds"
+                      "size"
                     ]
                   },
                   "bottom": {
@@ -298,7 +298,7 @@
                           "y"
                         ]
                       },
-                      "bounds": {
+                      "size": {
                         "type": "object",
                         "properties": {
                           "width": {
@@ -316,7 +316,7 @@
                     },
                     "required": [
                       "start",
-                      "bounds"
+                      "size"
                     ]
                   },
                   "left": {
@@ -337,7 +337,7 @@
                           "y"
                         ]
                       },
-                      "bounds": {
+                      "size": {
                         "type": "object",
                         "properties": {
                           "width": {
@@ -355,7 +355,7 @@
                     },
                     "required": [
                       "start",
-                      "bounds"
+                      "size"
                     ]
                   },
                   "center": {
@@ -376,7 +376,7 @@
                           "y"
                         ]
                       },
-                      "bounds": {
+                      "size": {
                         "type": "object",
                         "properties": {
                           "width": {
@@ -394,7 +394,7 @@
                     },
                     "required": [
                       "start",
-                      "bounds"
+                      "size"
                     ]
                   }
                 },
@@ -425,7 +425,7 @@
               "id": {
                 "type": "string"
               },
-              "states": {
+              "statuses": {
                 "type": "object",
                 "properties": {
                   "active": {
@@ -492,7 +492,7 @@
             },
             "required": [
               "id",
-              "states"
+              "statuses"
             ]
           }
         },

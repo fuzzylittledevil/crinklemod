@@ -1,14 +1,17 @@
 package ninja.crinkle.mod.client.gui.events;
 
+import ninja.crinkle.mod.client.gui.events.sources.EventSource;
+import ninja.crinkle.mod.client.gui.properties.MutablePoint;
 import ninja.crinkle.mod.client.gui.properties.Point;
+import ninja.crinkle.mod.client.gui.properties.Scope;
 
 public abstract class MouseEvent extends InputEvent {
     private final Button button;
     private final double x;
     private final double y;
 
-    public MouseEvent(EventType type, double x, double y, int button) {
-        super(type);
+    public MouseEvent(Type type, Scope scope, EventSource source, double x, double y, int button) {
+        super(type, scope, source);
         this.x = x;
         this.y = y;
         this.button = Button.fromInt(button);
@@ -31,7 +34,7 @@ public abstract class MouseEvent extends InputEvent {
     }
 
     public Point position() {
-        return new Point(x, y);
+        return new MutablePoint(x, y);
     }
 
     @Override
@@ -40,6 +43,7 @@ public abstract class MouseEvent extends InputEvent {
                 "x=" + x +
                 ", y=" + y +
                 ", button=" + button +
+                ", " + super.toString() +
                 '}';
     }
 
@@ -75,4 +79,6 @@ public abstract class MouseEvent extends InputEvent {
             return NONE;
         }
     }
+
+
 }

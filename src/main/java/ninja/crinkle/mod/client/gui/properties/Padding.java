@@ -1,6 +1,6 @@
 package ninja.crinkle.mod.client.gui.properties;
 
-public record Padding(int top, int right, int bottom, int left) {
+public record Padding(int top, int right, int bottom, int left) implements BoxProperty {
     public static final Padding ZERO = new Padding(0, 0, 0, 0);
 
     public Padding {
@@ -15,5 +15,9 @@ public record Padding(int top, int right, int bottom, int left) {
 
     public Padding(int vertical, int horizontal) {
         this(vertical, horizontal, vertical, horizontal);
+    }
+
+    public static Padding all(int all) {
+        return new Padding(all);
     }
 }

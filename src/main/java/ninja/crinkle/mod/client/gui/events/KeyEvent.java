@@ -1,25 +1,28 @@
 package ninja.crinkle.mod.client.gui.events;
 
+import ninja.crinkle.mod.client.gui.events.sources.EventSource;
+import ninja.crinkle.mod.client.gui.properties.Scope;
+
 public class KeyEvent extends InputEvent {
     private final int keyCode;
     private final int modifiers;
     private final boolean released;
     private final int scanCode;
 
-    public KeyEvent(EventType type, int modifiers) {
-        this(type, java.awt.event.KeyEvent.VK_UNDEFINED, 0, modifiers, false);
+    public KeyEvent(Type type, Scope scope, EventSource source, int modifiers) {
+        this(type, scope, source, java.awt.event.KeyEvent.VK_UNDEFINED, 0, modifiers, false);
     }
 
-    public KeyEvent(int keyCode, int scanCode, int modifiers, boolean released) {
-        super(EventType.Key);
+    public KeyEvent(Type type, Scope scope, EventSource source, int keyCode, int scanCode, int modifiers, boolean released) {
+        super(type, scope, source);
         this.keyCode = keyCode;
         this.scanCode = scanCode;
         this.modifiers = modifiers;
         this.released = released;
     }
 
-    public KeyEvent(EventType type, int keyCode, int scanCode, int modifiers, boolean released) {
-        super(type);
+    public KeyEvent(Scope scope, EventSource source, int keyCode, int scanCode, int modifiers, boolean released) {
+        super(Type.Key, scope, source);
         this.keyCode = keyCode;
         this.scanCode = scanCode;
         this.modifiers = modifiers;
@@ -69,6 +72,7 @@ public class KeyEvent extends InputEvent {
                 ", scanCode=" + scanCode +
                 ", modifiers=" + modifiers +
                 ", released=" + released +
+                ", " + super.toString() +
                 '}';
     }
 }

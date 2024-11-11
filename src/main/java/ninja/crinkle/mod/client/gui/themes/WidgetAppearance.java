@@ -1,14 +1,15 @@
 package ninja.crinkle.mod.client.gui.themes;
 
-import net.minecraft.client.gui.GuiGraphics;
 import ninja.crinkle.mod.client.color.Color;
-import ninja.crinkle.mod.client.gui.GenericBuilder;
+import ninja.crinkle.mod.client.gui.builders.GenericBuilder;
 import ninja.crinkle.mod.client.gui.properties.Box;
-import ninja.crinkle.mod.client.gui.properties.Point;
+import ninja.crinkle.mod.client.gui.properties.Status;
 import ninja.crinkle.mod.client.gui.renderers.ThemeGraphics;
 import ninja.crinkle.mod.client.gui.textures.Texture;
 import ninja.crinkle.mod.client.gui.widgets.AbstractWidget;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Optional;
 
 public class WidgetAppearance {
     public static final WidgetAppearance EMPTY = WidgetAppearance.builder()
@@ -36,6 +37,12 @@ public class WidgetAppearance {
         return new Builder();
     }
 
+    public static WidgetAppearance getDefault(String widgetTheme) {
+        return Optional.of(ThemeRegistry.getDefault().getWidgetTheme(widgetTheme))
+                .map(wt -> wt.getAppearance(Status.active))
+                .orElse(WidgetAppearance.EMPTY);
+    }
+
     public @NotNull Color getBackgroundColor() {
         return backgroundColor != null ? backgroundColor : Color.RAINBOW;
     }
@@ -60,7 +67,7 @@ public class WidgetAppearance {
         if (backgroundTexture != null) {
             backgroundTexture.render(pGuiGraphics, widget);
         } else if (backgroundColor != null) {
-            pGuiGraphics.fill(pBox, backgroundColor);
+            pGuiGraphics.fill(pBox, backgroundColor, widget.zIndex());
         }
 
         if (foregroundTexture != null) {

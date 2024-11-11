@@ -1,15 +1,29 @@
 package ninja.crinkle.mod.client.gui.events;
 
+import ninja.crinkle.mod.client.gui.events.listeners.EventListener;
+import ninja.crinkle.mod.client.gui.events.sources.EventSource;
+import ninja.crinkle.mod.client.gui.properties.Scope;
+
+import java.util.List;
+
 public class DragEvent extends MouseEvent {
     private final double dragX;
     private final double dragY;
-    private final boolean dragged;
+    private final List<EventListener> listeners;
 
-    public DragEvent(double x, double y, int button, double dragX, double dragY, boolean dragged) {
-        super(EventType.Drag, x, y, button);
+    public DragEvent(Scope scope, EventSource source, double x, double y, int button, double dragX, double dragY,
+                     List<EventListener> listeners) {
+        super(Type.Drag, scope, source, x, y, button);
         this.dragX = dragX;
         this.dragY = dragY;
-        this.dragged = dragged;
+        this.listeners = listeners == null ? List.of() : List.copyOf(listeners);
+    }
+
+    public DragEvent(Type type, Scope scope, EventSource source, double x, double y, int button, double dragX, double dragY, List<EventListener> listeners) {
+        super(type, scope, source, x, y, button);
+        this.dragX = dragX;
+        this.dragY = dragY;
+        this.listeners = listeners;
     }
 
     public double dragX() {
@@ -20,8 +34,8 @@ public class DragEvent extends MouseEvent {
         return dragY;
     }
 
-    public boolean dragged() {
-        return dragged;
+    public List<EventListener> listeners() {
+        return listeners;
     }
 
     @Override
@@ -32,7 +46,7 @@ public class DragEvent extends MouseEvent {
                 ", button=" + button() +
                 ", dragX=" + dragX +
                 ", dragY=" + dragY +
-                ", dragged=" + dragged +
+                ", " + super.toString() +
                 '}';
     }
 }

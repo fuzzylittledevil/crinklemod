@@ -61,9 +61,9 @@ public class ThemeLoader {
                                 texture.slices().forEach((location, slice) -> {
                                     if (slice.start() == null) {
                                         textureErrors.add(new Error("Texture slice '" + location + "' for texture '"
-                                                + texture.id() + "' is missing start point."));
+                                                + texture.id() + "' is missing start position."));
                                     }
-                                    if (slice.bounds() == null) {
+                                    if (slice.size() == null) {
                                         textureErrors.add(new Error("Texture slice '" + location + "' for texture '"
                                                 + texture.id() + "' is missing bounds."));
                                     }

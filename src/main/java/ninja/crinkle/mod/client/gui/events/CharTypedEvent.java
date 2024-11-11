@@ -1,10 +1,13 @@
 package ninja.crinkle.mod.client.gui.events;
 
+import ninja.crinkle.mod.client.gui.events.sources.EventSource;
+import ninja.crinkle.mod.client.gui.properties.Scope;
+
 public class CharTypedEvent extends KeyEvent {
     private final char codePoint;
 
-    public CharTypedEvent(char codePoint, int modifiers) {
-        super(EventType.CharTyped, modifiers);
+    public CharTypedEvent(Scope scope, EventSource source, char codePoint, int modifiers) {
+        super(Type.CharTyped, scope, source, modifiers);
         this.codePoint = codePoint;
     }
 

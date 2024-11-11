@@ -1,8 +1,23 @@
 package ninja.crinkle.mod.client.gui.events.sources;
 
-import ninja.crinkle.mod.client.gui.events.listeners.EventListener;
+import com.mojang.logging.LogUtils;
+import ninja.crinkle.mod.client.gui.managers.EventManager;
+import ninja.crinkle.mod.client.gui.properties.Scope;
+import org.slf4j.Logger;
+
+import java.util.Optional;
 
 public interface EventSource {
-    default void addListener(EventListener listener) {}
-    default void removeListener(EventListener listener) {}
+    Logger LOGGER = LogUtils.getLogger();
+    default Optional<EventManager> eventManager() {
+        return Optional.empty();
+    }
+    default Optional<EventManager> eventManager(Scope scope) {
+        return switch (scope) {
+            case Global -> Optional.of(EventManager.global());
+            case Local, Screen -> eventManager()
+                    .flatMap(m -> m.scope().equals(scope) ? Optional.of(m) : Optional.empty());
+        };
+    }
+    String name();
 }

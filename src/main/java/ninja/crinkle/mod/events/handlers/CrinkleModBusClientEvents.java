@@ -56,11 +56,11 @@ public class CrinkleModBusClientEvents {
         if (!location.getNamespace().equals(CrinkleMod.MODID)) {
             return;
         }
-        try {
-            event.getAtlas().dumpContents(location, Path.of("/Users","jonathan","projects","crinkle-mod","debug"));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+//        try {
+//            event.getAtlas().dumpContents(location, Path.of("/Users","jonathan","projects","crinkle-mod","debug"));
+//        } catch (IOException e) {
+//            throw new RuntimeException(e);
+//        }
 
         // Log the texture locations for debugging purposes
         event.getAtlas().getTextureLocations().forEach(l -> {
