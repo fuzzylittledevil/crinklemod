@@ -10,13 +10,15 @@ import ninja.crinkle.mod.client.color.Color;
 import ninja.crinkle.mod.client.gui.builders.GenericBuilder;
 import ninja.crinkle.mod.client.gui.properties.*;
 import ninja.crinkle.mod.client.gui.renderers.ThemeGraphics;
+import ninja.crinkle.mod.client.gui.themes.StyleVariant;
 import ninja.crinkle.mod.client.gui.themes.Theme;
-import ninja.crinkle.mod.client.gui.themes.WidgetAppearance;
+import ninja.crinkle.mod.client.gui.themes.Style;
 import ninja.crinkle.mod.client.gui.widgets.AbstractWidget;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public record Texture(String id, String location, Map<Slice.Location, Slice> slices, Theme theme) {
@@ -48,16 +50,17 @@ public record Texture(String id, String location, Map<Slice.Location, Slice> sli
     }
 
     @SuppressWarnings("resource")
-    public @NotNull ResourceLocation generate(String key, @NotNull Size size, @NotNull Theme theme) {
+    public @NotNull ResourceLocation generate(String key, @NotNull Size size, @NotNull Theme theme, List<ColorFilters> colorFilters) {
         if (!isLoadedFor(theme)) {
             LOGGER.warn("Texture '{}' could not be created since '{}' is not loaded.", key, ThemeAtlas.getTextureLocation(theme.getId(), id()));
             return new ResourceLocation("minecraft", "missingno");
         }
         TextureAtlasSprite sprite = ThemeAtlas.getSprite(resourceLocation());
-        NativeImage original = new NativeImage(sprite.contents().width(), sprite.contents().height(), true);
+        final NativeImage original = new NativeImage(sprite.contents().width(), sprite.contents().height(), true);
         Box originalBox = new Box(0, 0, original.getWidth(), original.getHeight());
         original.copyFrom(sprite.contents().getOriginalImage());
         NativeImage image = new NativeImage(size.width(), size.height(), true);
+        colorFilters.forEach(colorFilter -> original.applyToAllPixels(colorFilter.filter()));
 
         for (var entry : slices.entrySet()) {
             Slice.Location location = entry.getKey();
@@ -82,10 +85,13 @@ public record Texture(String id, String location, Map<Slice.Location, Slice> sli
                             slice.size().height(), false, false);
                 }
                 case top, bottom -> {
-                    Slice corner = slices.get(location == Slice.Location.top ?
+                    Slice leftCorner = slices.get(location == Slice.Location.top ?
                             Slice.Location.topLeft : Slice.Location.bottomLeft);
-                    double startX = corner.start().add(corner.size()).x();
-                    for (double x = startX; x < size.subtract(corner.size()).width(); x += slice.size().width()) {
+                    Slice rightCorner = slices.get(location == Slice.Location.top ?
+                            Slice.Location.topRight : Slice.Location.bottomRight);
+                    double startX = leftCorner.start().add(leftCorner.size()).x();
+                    double endX = size.subtract(rightCorner.size()).width();
+                    for (double x = startX; x < endX; x += slice.size().width()) {
                         // The x,y coords of the original image
                         final Point from = slice.start();
                         // The x,y coords of the destination image
@@ -102,10 +108,13 @@ public record Texture(String id, String location, Map<Slice.Location, Slice> sli
                     }
                 }
                 case left, right -> {
-                    Slice corner = slices.get(location == Slice.Location.left ?
+                    Slice topCorner = slices.get(location == Slice.Location.left ?
                             Slice.Location.topLeft : Slice.Location.topRight);
-                    double startY = corner.start().add(corner.size()).y();
-                    for (double y = startY; y < size.subtract(corner.size()).height(); y += slice.size().height()) {
+                    Slice bottomCorner = slices.get(location == Slice.Location.left ?
+                            Slice.Location.bottomLeft : Slice.Location.bottomRight);
+                    double startY = topCorner.start().add(topCorner.size()).y();
+                    double endY = size.subtract(bottomCorner.size()).height();
+                    for (double y = startY; y < endY; y += slice.size().height()) {
                         // The x,y coords of the original image
                         final Point from = slice.start();
                         // The x,y coords of the destination image
@@ -153,21 +162,21 @@ public record Texture(String id, String location, Map<Slice.Location, Slice> sli
         return ThemeAtlas.hasTexture(theme.getId(), id());
     }
 
-    public void render(@NotNull ThemeGraphics graphics, @NotNull AbstractWidget widget) {
+    public void render(@NotNull ThemeGraphics graphics, @NotNull AbstractWidget widget, List<ColorFilters> colorFilters) {
         if (this == EMPTY) {
             return;
         }
-        WidgetAppearance widgetAppearance = widget.widgetTheme().getAppearance(widget.status());
-        if (widgetAppearance == null) {
-            widgetAppearance = widget.widgetTheme().getAppearance(Status.active);
+        StyleVariant styleVariant = widget.widgetTheme().getAppearance(widget.status());
+        if (styleVariant == null) {
+            styleVariant = widget.widgetTheme().getAppearance(Style.Variant.active);
         }
-        Color color = widgetAppearance.getBackgroundColor().get();
+        Color color = styleVariant.getBackgroundColor().get();
         graphics.setColor((float) color.getRed(), (float) color.getGreen(), (float) color.getBlue(),
                 widget.alpha());
         RenderSystem.enableBlend();
         RenderSystem.enableDepthTest();
         Box background = widget.layout().boxes().rendered().backgroundBox();
-        ResourceLocation texture = theme.generateTexture(this, background.size());
+        ResourceLocation texture = theme.generateTexture(this, background.size(), colorFilters);
         graphics.blit(texture, (int) background.topLeft().x(), (int) background.topLeft().y(),
                 widget.zIndex(), 0, 0,
                 background.size().width(), background.size().height(), background.size().width(),

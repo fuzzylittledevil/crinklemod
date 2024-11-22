@@ -1,23 +1,29 @@
 package ninja.crinkle.mod.client.gui.widgets;
 
 import ninja.crinkle.mod.client.color.Color;
+import ninja.crinkle.mod.client.gui.events.MoveEvent;
 import ninja.crinkle.mod.client.gui.managers.GuiManager;
 import ninja.crinkle.mod.client.gui.properties.*;
 import ninja.crinkle.mod.client.gui.states.WidgetBehavior;
 import ninja.crinkle.mod.client.gui.states.WidgetDisplay;
 import ninja.crinkle.mod.client.gui.states.WidgetLayout;
 import ninja.crinkle.mod.client.gui.textures.Texture;
-import ninja.crinkle.mod.client.gui.themes.WidgetAppearance;
-import ninja.crinkle.mod.client.gui.themes.WidgetTheme;
+import ninja.crinkle.mod.client.gui.themes.StyleVariant;
+import ninja.crinkle.mod.client.gui.themes.Style;
+import ninja.crinkle.mod.util.ClientUtil;
+import ninja.crinkle.mod.util.TestUtil;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 class AbstractWidgetTest {
@@ -74,16 +80,16 @@ class AbstractWidgetTest {
     @Test
     void renderedPosition() {
         Container parent = spy(Container.builder(manager).absolute(15, 15).build());
-        doReturn(parent).when(widget).parent();
+        doReturn(Optional.of(parent)).when(widget).parent();
         doCallRealMethod().when(widget).renderedPosition();
         assertEquals(Position.absolute(15, 15), widget.renderedPosition(), "Rendered position check");
     }
 
     @BeforeEach
     void setUp() {
-        WidgetDisplay display = new WidgetDisplay(true, 1.0f, 0, Status.active);
+        WidgetDisplay display = new WidgetDisplay(true, 1.0f, 0);
         WidgetLayout layout = new WidgetLayout(Position.relative(0, 0), Size.of(100, 100), Margin.all(0),
-                Border.all(0), Padding.all(0));
+                Border.all(0), Padding.all(0), widget);
         WidgetBehavior behavior = new WidgetBehavior(false, false, false, false, false, true);
         doReturn(display).when(widget).display();
         doReturn(layout).when(widget).layout();
@@ -100,8 +106,8 @@ class AbstractWidgetTest {
         doCallRealMethod().when(widget).textureBorder();
         assertEquals(Border.ZERO, widget.textureBorder(), "Texture border check");
 
-        WidgetTheme theme = mock(WidgetTheme.class);
-        WidgetAppearance appearance = mock(WidgetAppearance.class);
+        Style theme = mock(Style.class);
+        StyleVariant appearance = mock(StyleVariant.class);
         Texture texture = mock(Texture.class);
         doReturn(texture).when(appearance).getBackgroundTexture();
         doCallRealMethod().when(widget).textureBorder();
@@ -139,5 +145,24 @@ class AbstractWidgetTest {
         doReturn(layout).when(widget).layout();
         doCallRealMethod().when(widget).totalWidth();
         assertEquals(width, widget.totalWidth(), "Total width check");
+    }
+
+    @Test
+    void mouseOver() {
+        doCallRealMethod().when(widget).mouseOver(any());
+        Point point = widget.layout().boxes().rendered().contentBox().start();
+        assertTrue(widget.mouseOver(point), "Mouse over check");
+    }
+
+    @Test
+    void onMove() {
+        doCallRealMethod().when(widget).onMove(any());
+        MoveEvent event = new MoveEvent(Scope.Screen, widget, 10, 10, List.of(widget));
+        try(var clientUtil = TestUtil.mockClientUtil()) {
+            clientUtil.when(ClientUtil::getMousePosition).thenReturn(Point.of(10, 10));
+            widget.onMove(event);
+        }
+        // verify the widget saw the event
+        verify(widget, times(1)).mouseOver(any());
     }
 }

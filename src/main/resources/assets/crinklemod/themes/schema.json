@@ -417,7 +417,7 @@
             ]
           }
         },
-        "widgets": {
+        "styles": {
           "type": "array",
           "items": {
             "type": "object",
@@ -425,7 +425,7 @@
               "id": {
                 "type": "string"
               },
-              "statuses": {
+              "variants": {
                 "type": "object",
                 "properties": {
                   "active": {
@@ -465,6 +465,17 @@
                           },
                           "shadow": {
                             "type": "boolean"
+                          },
+                          "filters": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                                "enum": [
+                                    "grayscale",
+                                    "invert",
+                                    "sepia"
+                                ]
+                            }
                           }
                         },
                         "anyOf": [
@@ -492,7 +503,7 @@
             },
             "required": [
               "id",
-              "statuses"
+              "variants"
             ]
           }
         },
@@ -523,7 +534,7 @@
         "author",
         "colors",
         "textures",
-        "widgets",
+        "styles",
         "icons"
       ],
       "additionalProperties": false

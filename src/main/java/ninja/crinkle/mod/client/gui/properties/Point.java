@@ -34,7 +34,7 @@ public interface Point {
     }
 
     default int xInt() {
-        return (int) x();
+        return Math.round(xFloat());
     }
 
     double y();
@@ -46,7 +46,7 @@ public interface Point {
     }
 
     default int yInt() {
-        return (int) y();
+        return Math.round(yFloat());
     }
 //
 //    default boolean checkForRendering() {

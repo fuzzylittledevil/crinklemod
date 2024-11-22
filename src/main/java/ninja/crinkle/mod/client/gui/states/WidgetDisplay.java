@@ -1,10 +1,8 @@
 package ninja.crinkle.mod.client.gui.states;
 
 import ninja.crinkle.mod.client.gui.managers.DragManager;
-import ninja.crinkle.mod.client.gui.properties.Status;
-import ninja.crinkle.mod.client.gui.widgets.AbstractWidget;
 
-public record WidgetDisplay(boolean visible, float alpha, int zIndex, Status status) {
+public record WidgetDisplay(boolean visible, float alpha, int zIndex) {
     public WidgetDisplay {
         if (alpha < 0 || alpha > 1) {
             throw new IllegalArgumentException("Alpha must be between 0 and 1");
@@ -15,25 +13,18 @@ public record WidgetDisplay(boolean visible, float alpha, int zIndex, Status sta
     }
 
     public WidgetDisplay() {
-        this(true, 1, DragManager.Z_MIN, Status.active);
-    }
-
-    public WidgetDisplay(AbstractWidget.AbstractBuilder<?> builder) {
-        this(builder.visible(), builder.alpha(), builder.zIndex(), builder.status());
+        this(true, 1, DragManager.Z_MIN);
     }
 
     public WidgetDisplay withVisible(boolean visible) {
-        return new WidgetDisplay(visible, alpha, zIndex, status);
+        return new WidgetDisplay(visible, alpha, zIndex);
     }
     public WidgetDisplay withAlpha(float alpha) {
-        return new WidgetDisplay(visible, alpha, zIndex, status);
+        return new WidgetDisplay(visible, alpha, zIndex);
     }
     public WidgetDisplay withZIndex(int zIndex) {
         assert zIndex >= DragManager.Z_MIN && zIndex <= DragManager.Z_MAX;
-        return new WidgetDisplay(visible, alpha, zIndex, status);
-    }
-    public WidgetDisplay withStatus(Status status) {
-        return new WidgetDisplay(visible, alpha, zIndex, status);
+        return new WidgetDisplay(visible, alpha, zIndex);
     }
 
     @Override
@@ -42,7 +33,6 @@ public record WidgetDisplay(boolean visible, float alpha, int zIndex, Status sta
                 "visible=" + visible +
                 ", alpha=" + alpha +
                 ", zIndex=" + zIndex +
-                ", status=" + status +
                 '}';
     }
 }

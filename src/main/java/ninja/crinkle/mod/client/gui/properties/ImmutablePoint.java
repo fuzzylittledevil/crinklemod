@@ -73,7 +73,7 @@ public class ImmutablePoint implements Point, Comparable<Point> {
 
     @Override
     public ImmutablePoint add(int x, int y) {
-        return new ImmutablePoint(x() + x, y() + y);
+        return new ImmutablePoint(xInt() + x, yInt() + y);
     }
 
     @Override

@@ -43,10 +43,6 @@ public record Position(ImmutablePoint point, Type type) {
         return new Position(base.add(point), type);
     }
 
-    public Position offsetBy(int x, int y) {
-        return new Position(point.add(x, y), type);
-    }
-
     public Position offsetBy(ImmutablePoint offset) {
         return new Position(point.add(offset), type);
     }

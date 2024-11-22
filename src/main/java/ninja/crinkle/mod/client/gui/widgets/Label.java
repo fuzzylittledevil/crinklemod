@@ -21,7 +21,7 @@ public class Label extends AbstractWidget {
         // The theory here is that a label inside a container, such as a Button, should not need
         // to render itself, as the container will render it for us via renderContent.
         // This prevents state updates, border, background, and debug rendering.
-        if (!(parent() instanceof AbstractContainer)) {
+        if (!(parentOrThrow() instanceof AbstractContainer)) {
             super.render(graphics, pMouse, pPartialTick);
         }
     }
@@ -37,8 +37,9 @@ public class Label extends AbstractWidget {
     @Override
     public void renderContent(ThemeGraphics graphics, Point pMouse, Box renderedBox, float pPartialTick) {
         Point topLeft = renderedBox.topLeft();
-        int xOffset = (renderedBox.size().width() - graphics.textWidth(text())) / 2;
-        graphics.text(text(), topLeft.add(xOffset, 0), zIndex(), color());
+        int xOffset = (int) Math.ceil((double) (renderedBox.size().width() - graphics.textWidth(text())) / 2);
+        int yOffset = (int) Math.ceil((double) (renderedBox.size().height() - graphics.textHeight()) / 2);
+        graphics.text(text(), topLeft.add(xOffset, yOffset), zIndex(), color());
     }
 
     public String text() {

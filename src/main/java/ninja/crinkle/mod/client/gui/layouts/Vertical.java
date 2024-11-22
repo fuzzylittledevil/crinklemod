@@ -30,33 +30,33 @@ public class Vertical extends AbstractLayout {
         assert List.of(Layout.Alignment.TOP, Layout.Alignment.CENTER, Layout.Alignment.BOTTOM)
                 .contains(alignment()) : "Invalid alignment";
 
-        int yOffset = calculateOffset(height, totalHeight);
+        double yOffset = calculateOffset(height, totalHeight);
         List<AbstractWidget> widgets = container.children().stream()
                 .sorted(Comparator.comparingInt(AbstractWidget::zIndexOf).reversed()).toList();
 
-        for (Widget child : widgets) {
+        for (AbstractWidget child : widgets) {
             child.resetPosition();
             Position childPosition = child.position();
             if (childPosition.absolute()) {
-                LOGGER.debug("Skipping absolute positioned child: {}, position: {}", child.name(), childPosition);
+                //LOGGER.debug("Skipping absolute positioned child: {}, position: {}", child.name(), childPosition);
                 continue;
             }
             Position newPosition = childPosition.offsetBy(0, yOffset);
             child.position(newPosition);
-            LOGGER.debug("[{}] Arranging child: {} from {} to {} (screen position: {})", alignment(), child.name(), childPosition, newPosition, child.renderedPosition());
+            //LOGGER.debug("[{}] Arranging child: {} from {} to {} (screen position: {})", alignment(), child.name(), childPosition, newPosition, child.renderedPosition());
             yOffset += child.layout().size().height() + spacing();
         }
     }
 
     @Override
     public int totalInnerHeight(AbstractContainer abstractContainer) {
-        return abstractContainer.children().stream().mapToInt(w -> w.layout().size().height()).sum() +
+        return abstractContainer.children().stream().mapToInt(AbstractWidget::totalHeight).sum() +
                 (abstractContainer.children().size() - 1) * spacing();
     }
 
     @Override
     public int totalInnerWidth(AbstractContainer abstractContainer) {
-        return abstractContainer.children().stream().mapToInt(w -> w.layout().size().width())
+        return abstractContainer.children().stream().mapToInt(AbstractWidget::totalWidth)
                 .max().orElse(0);
     }
 

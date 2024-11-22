@@ -1,6 +1,7 @@
 package ninja.crinkle.mod.client.gui.widgets;
 
 import ninja.crinkle.mod.client.gui.events.ClickEvent;
+import ninja.crinkle.mod.client.gui.managers.EventManager;
 import ninja.crinkle.mod.client.gui.properties.Box;
 import ninja.crinkle.mod.client.gui.properties.Point;
 import ninja.crinkle.mod.client.gui.renderers.ThemeGraphics;
@@ -18,8 +19,8 @@ public class Button extends AbstractContainer {
         this.text = builder.text();
         this.onClick = builder.onClick();
         if (text != null) {
-            text.priority(100);
-            text.zIndex(zIndex()+1);
+            text.zIndex(zIndex() + 1);
+            text.priority(EventManager.PRIORITY_IGNORE);
             add(text);
         }
     }
@@ -36,15 +37,11 @@ public class Button extends AbstractContainer {
         return new Builder(parent);
     }
 
-    public void onClick(BiConsumer<ClickEvent, AbstractWidget> onClick) {
-        this.onClick = onClick;
-    }
-
     @Override
     public void onClick(ClickEvent event) {
         super.onClick(event);
         if (event.cancelled()) return;
-        if (mouseOver(event.position()) && event.isLeftButton() && onClick != null && visible() && active() && !event.released()) {
+        if (mouseOver(event.position()) && event.isLeftButton() && onClick != null && visible() && active() && event.released()) {
             event.consumer(this);
             onClick.accept(event, this);
         }

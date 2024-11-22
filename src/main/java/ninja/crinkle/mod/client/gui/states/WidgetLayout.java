@@ -18,6 +18,10 @@ public final class WidgetLayout {
     }
 
     public WidgetLayout(Position position, Size size, Margin margin, Border border, Padding padding) {
+        this(position, size, margin, border, padding, null);
+    }
+
+    public WidgetLayout(Position position, Size size, Margin margin, Border border, Padding padding, AbstractWidget widget) {
         if (position == null) {
             throw new IllegalArgumentException("Position cannot be null");
         }
@@ -38,6 +42,7 @@ public final class WidgetLayout {
         this.margin = margin;
         this.border = border;
         this.padding = padding;
+        this.widget = widget;
     }
 
     public WidgetLayout(AbstractWidget.AbstractBuilder<?> builder) {

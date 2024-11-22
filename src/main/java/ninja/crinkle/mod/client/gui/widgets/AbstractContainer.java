@@ -13,6 +13,7 @@ import ninja.crinkle.mod.client.gui.managers.StateManager;
 import ninja.crinkle.mod.client.gui.properties.*;
 import ninja.crinkle.mod.client.gui.renderers.ThemeGraphics;
 import ninja.crinkle.mod.client.gui.states.references.StateStorageRef;
+import ninja.crinkle.mod.client.gui.states.references.ValueRef;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -30,12 +31,12 @@ public abstract class AbstractContainer extends AbstractWidget implements InputS
     private final List<AbstractWidget> children = new ArrayList<>();
     private final StateStorageRef stateStorage = StateManager.local();
     private final EventManager eventManager = EventManager.createLocal();
-    private Layout layoutManager;
+    private ValueRef<Layout> layoutManager;
     private boolean flex;
 
     protected AbstractContainer(@NotNull AbstractContainerBuilder<?> builder) {
         super(builder);
-        this.layoutManager = builder.layoutManager();
+        this.layoutManager = manager().stateStorage().createValue(Layout.class, builder.layoutManager());
     }
 
     public AbstractContainer() {
@@ -57,8 +58,8 @@ public abstract class AbstractContainer extends AbstractWidget implements InputS
         }
         children.add(widget);
         registerListener(widget);
-        if (widget.parent() != this && widget.parent() != null) {
-            widget.parent().remove(widget);
+        if (widget.parentOrThrow() != this && widget.parentOrThrow() != null) {
+            widget.parentOrThrow().remove(widget);
             widget.parent(this);
         }
         children.sort(Comparator.comparingInt(AbstractWidget::zIndex));
@@ -66,11 +67,11 @@ public abstract class AbstractContainer extends AbstractWidget implements InputS
     }
 
     public Button.Builder addButton() {
-        return new Button.Builder(this).zIndex(zIndex() + Z_STEP);
+        return new Button.Builder(this);
     }
 
     public Container.Builder addContainer() {
-        return new Container.Builder(this).zIndex(zIndex() + Z_STEP);
+        return new Container.Builder(this);
     }
 
     public List<AbstractWidget> children(Predicate<? super AbstractWidget> predicate) {
@@ -106,11 +107,15 @@ public abstract class AbstractContainer extends AbstractWidget implements InputS
     }
 
     public Optional<Layout> layoutManager() {
-        return Optional.ofNullable(layoutManager);
+        return Optional.ofNullable(layoutManager.get());
     }
 
     public void layoutManager(@Nullable Layout layout) {
-        this.layoutManager = layout;
+        this.layoutManager.set(layout);
+    }
+
+    public ValueRef<Layout> layoutManagerRef() {
+        return layoutManager;
     }
 
     @Override
@@ -146,6 +151,10 @@ public abstract class AbstractContainer extends AbstractWidget implements InputS
             return layoutManager().get().totalInnerWidth(this);
         }
         return children().stream().mapToInt(AbstractWidget::totalWidth).sum();
+    }
+
+    public boolean isRoot() {
+        return parent().isEmpty();
     }
 
     protected void registerListener(AbstractWidget widget) {
@@ -201,10 +210,13 @@ public abstract class AbstractContainer extends AbstractWidget implements InputS
     }
 
     public void updateLayout() {
-        if (layoutManager != null) {
-            LOGGER.debug("Updating layout for {}", this.name());
-            layoutManager.arrange(this);
+        if (layoutManager.get() != null) {
+            layoutManager.get().arrange(this);
         }
+        children().stream()
+                .filter(c -> c instanceof AbstractContainer)
+                .map(c -> (AbstractContainer) c)
+                .forEach(AbstractContainer::updateLayout);
     }
 
     public static abstract class AbstractContainerBuilder<T extends AbstractContainerBuilder<T>>

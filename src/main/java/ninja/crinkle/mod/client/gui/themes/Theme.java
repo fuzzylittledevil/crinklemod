@@ -5,6 +5,7 @@ import net.minecraft.resources.ResourceLocation;
 import ninja.crinkle.mod.client.color.Color;
 import ninja.crinkle.mod.client.gui.builders.GenericBuilder;
 import ninja.crinkle.mod.client.gui.properties.Size;
+import ninja.crinkle.mod.client.gui.textures.ColorFilters;
 import ninja.crinkle.mod.client.gui.textures.Texture;
 import ninja.crinkle.mod.client.gui.textures.ThemeAtlas;
 import ninja.crinkle.mod.client.gui.themes.loader.ThemeData;
@@ -26,7 +27,7 @@ public class Theme {
     private final String name;
     private final Map<String, Texture> textures = new HashMap<>();
     private final String version;
-    private final Map<String, WidgetTheme> widgetThemes = new HashMap<>();
+    private final Map<String, Style> widgetThemes = new HashMap<>();
 
 
     public Theme(String id, String name, String description, String version, List<String> authors) {
@@ -46,7 +47,7 @@ public class Theme {
         Theme theme = new Theme(config.id(), config.name(), config.description(), config.version(), config.authors());
         config.colors().forEach((key, value) -> theme.colors.put(key, Color.of(value)));
         config.textures().forEach(texture -> theme.textures.put(texture.id(), ThemeAtlas.getTextureLocation(theme.getId(), texture.location()).map(location -> new Texture(texture.id(), texture.location(), texture.slices(), theme)).orElse(Texture.EMPTY)));
-        config.widgets().forEach(widgetData -> theme.widgetThemes.put(widgetData.id(), WidgetTheme.fromConfig(widgetData, theme)));
+        config.styles().forEach(widgetData -> theme.widgetThemes.put(widgetData.id(), Style.fromConfig(widgetData, theme)));
         return theme;
     }
 
@@ -62,17 +63,23 @@ public class Theme {
         textures.put(texture.id(), texture);
     }
 
-    public void addWidgetTheme(WidgetTheme widgetTheme) {
-        widgetThemes.put(widgetTheme.id(), widgetTheme);
+    public void addWidgetTheme(Style style) {
+        widgetThemes.put(style.id(), style);
     }
 
-    public ResourceLocation generateTexture(Texture texture, Size size) {
-        String key = String.format("%s_%s_%dx%d", getId(), texture.id(), size.width(), size.height());
+    public ResourceLocation generateTexture(Texture texture, Size size, List<ColorFilters> colorFilters) {
+        StringBuilder filters = new StringBuilder();
+        for (var filter : colorFilters) {
+            if (filter == ColorFilters.NORMAL)
+                continue;
+            filters.append(filter.toString()).append("_");
+        }
+        String key = String.format("%s%s_%s_%dx%d", filters, getId(), texture.id(), size.width(), size.height());
         if (generatedTextures.containsKey(key)
                 && generatedTextures.get(key).getPath().equals(Texture.EMPTY.location())) {
             generatedTextures.remove(key);
         }
-        return generatedTextures.computeIfAbsent(key, k -> texture.generate(k, size, this));
+        return generatedTextures.computeIfAbsent(key, k -> texture.generate(k, size, this, colorFilters));
     }
 
     public List<String> getAuthors() {
@@ -109,15 +116,15 @@ public class Theme {
         return version;
     }
 
-    public WidgetTheme getWidgetTheme(String id) {
-        return getOrDefault(widgetThemes, id, WidgetTheme.EMPTY);
+    public Style getWidgetTheme(String id) {
+        return getOrDefault(widgetThemes, id, Style.EMPTY);
     }
 
     public static class Builder extends GenericBuilder<Builder, Theme> {
         private final Map<String, Color> colors = new HashMap<>();
         private final String id;
         private final List<Texture> textures = new ArrayList<>();
-        private final List<WidgetTheme> widgetThemes = new ArrayList<>();
+        private final List<Style> styles = new ArrayList<>();
         private List<String> authors;
         private String description;
         private String name;
@@ -137,8 +144,8 @@ public class Theme {
             return self();
         }
 
-        public Builder addWidgetTheme(WidgetTheme widgetTheme) {
-            widgetThemes.add(widgetTheme);
+        public Builder addWidgetTheme(Style style) {
+            styles.add(style);
             return self();
         }
 
@@ -152,7 +159,7 @@ public class Theme {
             var theme = new Theme(id, name, description, version, authors);
             colors.forEach(theme::addColor);
             textures.forEach(theme::addTexture);
-            widgetThemes.forEach(theme::addWidgetTheme);
+            styles.forEach(theme::addWidgetTheme);
             return theme;
         }
 

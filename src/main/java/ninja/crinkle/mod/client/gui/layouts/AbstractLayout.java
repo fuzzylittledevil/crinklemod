@@ -21,11 +21,11 @@ public abstract class AbstractLayout implements Layout {
         return alignment;
     }
 
-    public int calculateOffset(int total, int size) {
+    public double calculateOffset(double total, double size) {
         return switch (alignment()) {
             case CENTER -> (total - size) / 2;
             case RIGHT, BOTTOM -> total - size;
-            default -> 0;
+            default -> 0f;
         };
     }
 

@@ -28,8 +28,9 @@ public class ThemeLoader {
                         Config themeConfig = GSON.fromJson(resource.openAsReader(), Config.class);
                         if (themes.values().stream().anyMatch(config ->
                                 config.theme().id().equals(themeConfig.theme().id()))) {
-                            LOGGER.warn("Duplicate theme id '{}' will be replaced contents from '{}'",
-                                    themeConfig.theme().id(), location);
+                            // I will never get the hours back...
+                            throw new IllegalStateException("Duplicate theme id: " + themeConfig.theme().id()
+                                    + ", path: " + location);
                         }
                         themes.put(location, themeConfig);
                     } catch (Exception e) {

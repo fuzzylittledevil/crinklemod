@@ -18,6 +18,10 @@ public enum StateManager {
         managers.put(storage.reference(), storage);
     }
 
+    static {
+
+    }
+
     public static StateStorage global() {
         return GLOBAL.storage;
     }

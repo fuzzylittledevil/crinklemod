@@ -14,11 +14,12 @@ import ninja.crinkle.mod.client.gui.events.listeners.TabIndexListener;
 import ninja.crinkle.mod.client.gui.managers.*;
 import ninja.crinkle.mod.client.gui.events.sources.KeySource;
 import ninja.crinkle.mod.client.gui.events.sources.MouseSource;
+import ninja.crinkle.mod.client.gui.properties.ClickState;
 import ninja.crinkle.mod.client.gui.properties.ImmutablePoint;
-import ninja.crinkle.mod.client.gui.properties.MutablePoint;
 import ninja.crinkle.mod.client.gui.properties.Point;
 import ninja.crinkle.mod.client.gui.properties.Scope;
 import ninja.crinkle.mod.client.gui.states.references.StateStorageRef;
+import ninja.crinkle.mod.client.gui.states.references.ValueRef;
 import ninja.crinkle.mod.client.gui.states.storages.StateStorage;
 import ninja.crinkle.mod.client.gui.widgets.AbstractWidget;
 import ninja.crinkle.mod.client.gui.widgets.AbstractContainer;
@@ -37,6 +38,7 @@ public abstract class AbstractScreen extends Screen implements TabIndexListener,
     private final FocusManager focusManager = new FocusManager();
     private final DragManager dragManager = new DragManager(eventManager);
     private final StateStorageRef stateStorageRef = StateManager.screen();
+    private final ValueRef<ClickState> clickState;
     private final List<GuiEventListener> focusedElements = new ArrayList<>();
     private final AbstractContainer root;
     private boolean ready = false;
@@ -54,6 +56,7 @@ public abstract class AbstractScreen extends Screen implements TabIndexListener,
         addListener(root());
         addListener(focusManager());
         addListener(dragManager());
+        clickState = stateStorage().createValue(ClickState.class, new ClickState());
     }
 
     protected void addListener(InputListener inputListener) {
@@ -110,7 +113,7 @@ public abstract class AbstractScreen extends Screen implements TabIndexListener,
 
     @Override
     public boolean keyPressed(int pKeyCode, int pScanCode, int pModifiers) {
-        if (!ready) {
+        if (!ready()) {
             return super.keyPressed(pKeyCode, pScanCode, pModifiers);
         }
         Event event = new KeyEvent(Scope.Screen, this, pKeyCode, pScanCode, pModifiers, false);
@@ -126,63 +129,83 @@ public abstract class AbstractScreen extends Screen implements TabIndexListener,
 
     @Override
     public boolean mouseClicked(double pMouseX, double pMouseY, int pButton) {
-        if (!ready) {
+        if (!ready()) {
             return super.mouseClicked(pMouseX, pMouseY, pButton);
         }
-        List<EventListener> listeners = eventManager().map(m -> m.listeners(onlyHovered(pMouseX, pMouseY, 0)).stream().toList()).orElse(List.of());
-        Event clickEvent = new ClickEvent(Scope.Screen, this, pMouseX, pMouseY, pButton, false, listeners);
+        List<EventListener> listeners = eventManager()
+                .map(m -> m.listeners(onlyHovered(pMouseX, pMouseY, 0)).stream().toList())
+                .orElse(List.of());
+        // We want to prep to drag the top-most draggable parent container.
+        AbstractWidget topWidget = listeners.stream()
+                .filter(l -> l instanceof AbstractWidget)
+                .map(l -> (AbstractWidget) l)
+                .filter(c -> !c.equals(root()))
+                .filter(AbstractWidget::draggable)
+                .reduce((a, b) -> a.zIndex() > b.zIndex() ? a : b)
+                .orElse(null);
+        clickState.set(new ClickState(new ImmutablePoint(pMouseX, pMouseY), pButton, listeners));
+        if (topWidget != null && topWidget.draggable()) {
+            dragManager().current(topWidget);
+            dragManager().dragging(false); // Reset dragging state
+        }
         Event mousePressedEvent = new MousePressedEvent(Scope.Screen, this, pMouseX, pMouseY, pButton, listeners);
         eventManager().ifPresent(m -> m.dispatchEvent(mousePressedEvent));
-        eventManager().ifPresent(m -> m.dispatchEvent(clickEvent));
-        return mousePressedEvent.success() || clickEvent.success() || super.mouseClicked(pMouseX, pMouseY, pButton);
+        return mousePressedEvent.success() || super.mouseClicked(pMouseX, pMouseY, pButton);
+    }
+
+    public boolean ready() {
+        return ready;
     }
 
     @Override
     public boolean mouseReleased(double pMouseX, double pMouseY, int pButton) {
-        if (!ready) {
+        if (!ready()) {
             return super.mouseReleased(pMouseX, pMouseY, pButton);
         }
         if (dragManager().current() != null) {
-            Event event = new DragStoppedEvent(Scope.Screen, this, pMouseX, pMouseY, pButton,
-                    0, 0, dragManager().current());
-            eventManager().ifPresent(m -> m.dispatchEvent(event));
-            return event.success() || super.mouseReleased(pMouseX, pMouseY, pButton);
+            if (dragManager().dragging()) {
+                Event event = new DragStoppedEvent(Scope.Screen, this, pMouseX, pMouseY, pButton,
+                        0, 0, dragManager().current());
+                eventManager().ifPresent(m -> m.dispatchEvent(event));
+                dragManager().dragging(false);
+            }
+            dragManager().current(null);
         }
         List<EventListener> listeners = eventManager().map(m -> m.listeners(onlyHovered(pMouseX, pMouseY, 0)).stream().toList()).orElse(List.of());
         Event event = new MouseReleasedEvent(Scope.Screen, this, pMouseX, pMouseY, pButton, listeners);
         eventManager().ifPresent(m -> m.dispatchEvent(event));
+        ClickState state = clickState.get();
+        if (state.button() == pButton) {
+            List<EventListener> filteredListeners = listeners.stream()
+                    .filter(l -> state.listeners().contains(l))
+                    .toList();
+            Event clickEvent = new ClickEvent(Scope.Screen, this, pMouseX, pMouseY, pButton, true, filteredListeners);
+            eventManager().ifPresent(m -> m.dispatchEvent(clickEvent, l -> state.listeners().contains(l)));
+            return event.success() || clickEvent.success() || super.mouseReleased(pMouseX, pMouseY, pButton);
+        }
         return event.success() || super.mouseReleased(pMouseX, pMouseY, pButton);
     }
 
     @Override
     public boolean mouseDragged(double pMouseX, double pMouseY, int pButton, double pDragX, double pDragY) {
-        if (!ready) {
+        if (!ready()) {
             return super.mouseDragged(pMouseX, pMouseY, pButton, pDragX, pDragY);
         }
-        Event event;
-        if (dragManager().current() == null) {
-            AbstractWidget widget = eventManager().map(m -> m.listeners(onlyHovered(pMouseX, pMouseY, SCAN_OFFSET)).stream()
-                    .toList()).orElse(List.of()).stream()
-                    .filter(w -> w instanceof AbstractWidget)
-                    .map(w -> (AbstractWidget) w)
-                    .filter(AbstractWidget::draggable)
-                    .findFirst().orElse(null);
-            if (widget == null) {
-                return super.mouseDragged(pMouseX, pMouseY, pButton, pDragX, pDragY);
-            }
-            event = new DragStartedEvent(Scope.Screen, this, pMouseX, pMouseY, pButton, pDragX,
-                    pDragY, widget);
-        } else {
-            List<EventListener> listeners = eventManager().map(m -> m.listeners(onlyHovered(pMouseX, pMouseY, 0)).stream().toList()).orElse(List.of());
-            event = new DragEvent(Scope.Screen, this, pMouseX, pMouseY, pButton, pDragX, pDragY, listeners);
+        if (dragManager().current() != null && !dragManager().dragging()) {
+            dragManager().dragging(true);
+            Event event = new DragStartedEvent(Scope.Screen, this, pMouseX, pMouseY, pButton, pDragX,
+                    pDragY, dragManager().current());
+            eventManager().ifPresent(m -> m.dispatchEvent(event));
         }
+        List<EventListener> listeners = eventManager().map(m -> m.listeners(onlyHovered(pMouseX, pMouseY, 0)).stream().toList()).orElse(List.of());
+        Event event = new DragEvent(Scope.Screen, this, pMouseX, pMouseY, pButton, pDragX, pDragY, listeners);
         eventManager().ifPresent(m -> m.dispatchEvent(event));
         return event.success() || super.mouseDragged(pMouseX, pMouseY, pButton, pDragX, pDragY);
     }
 
     @Override
     public boolean mouseScrolled(double pMouseX, double pMouseY, double pDelta) {
-        if (!ready) {
+        if (!ready()) {
             return super.mouseScrolled(pMouseX, pMouseY, pDelta);
         }
         Event event = new ScrollEvent(Scope.Screen, this, pMouseX, pMouseY, pDelta);
@@ -192,7 +215,7 @@ public abstract class AbstractScreen extends Screen implements TabIndexListener,
 
     @Override
     public boolean keyReleased(int pKeyCode, int pScanCode, int pModifiers) {
-        if (!ready) {
+        if (!ready()) {
             return super.keyReleased(pKeyCode, pScanCode, pModifiers);
         }
         Event event = new KeyEvent(Scope.Screen, this, pKeyCode, pScanCode, pModifiers, true);
@@ -202,7 +225,7 @@ public abstract class AbstractScreen extends Screen implements TabIndexListener,
 
     @Override
     public boolean charTyped(char pCodePoint, int pModifiers) {
-        if (!ready) {
+        if (!ready()) {
             return super.charTyped(pCodePoint, pModifiers);
         }
         Event event = new CharTypedEvent(Scope.Screen, this, pCodePoint, pModifiers);
@@ -233,15 +256,15 @@ public abstract class AbstractScreen extends Screen implements TabIndexListener,
             throw new IllegalArgumentException("Offset must be greater than or equal to 0");
         }
         if (offset == 0) {
-            return (l) -> l instanceof AbstractWidget widget && widget.layout().boxes().rendered().box().contains(mouseX, mouseY);
+            return (l) -> l instanceof AbstractWidget widget && !l.equals(root()) && widget.layout().boxes().rendered().box().contains(mouseX, mouseY);
         }
-        return (l) -> l instanceof AbstractWidget widget &&
+        return (l) -> l instanceof AbstractWidget widget && !l.equals(root()) &&
                 widget.layout().boxes().rendered().box().add(-offset, -offset, offset * 2, offset * 2).contains(mouseX, mouseY);
     }
 
     @Override
     public void mouseMoved(double pMouseX, double pMouseY) {
-        if (!ready) {
+        if (!ready()) {
             super.mouseMoved(pMouseX, pMouseY);
             return;
         }
@@ -263,7 +286,7 @@ public abstract class AbstractScreen extends Screen implements TabIndexListener,
     }
 
     @Override
-    public StateStorageRef stateManagerRef() {
+    public StateStorageRef stateStorageRef() {
         return stateStorageRef;
     }
 

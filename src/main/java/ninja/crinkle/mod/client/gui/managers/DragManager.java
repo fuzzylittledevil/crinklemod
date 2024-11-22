@@ -20,9 +20,9 @@ public class DragManager implements MouseListener, MouseSource {
     public static final int Z_STEP = 10;
     public static final int Z_MIN = 0;
     public static final int Z_MAX = 5000;
-    public static final int PRIORITY_STEP = 10;
     private final EventManager eventManager;
     private AbstractWidget current;
+    private boolean dragging;
 
     public DragManager(EventManager eventManager) {
         this.eventManager = eventManager;
@@ -34,6 +34,14 @@ public class DragManager implements MouseListener, MouseSource {
 
     public void current(AbstractWidget current) {
         this.current = current;
+    }
+
+    public boolean dragging() {
+        return dragging;
+    }
+
+    public void dragging(boolean dragging) {
+        this.dragging = dragging;
     }
 
     @Override

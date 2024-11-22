@@ -71,6 +71,10 @@ public class ThemeGraphics extends GuiGraphics {
         pose().translate(0, 0, -zIndex);
     }
 
+    public int textHeight() {
+        return ClientUtil.getMinecraft().font.lineHeight;
+    }
+
     public int textWidth(String text) {
         return ClientUtil.getMinecraft().font.width(text);
     }

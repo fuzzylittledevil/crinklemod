@@ -1,5 +1,6 @@
 package ninja.crinkle.mod.client.gui.states.references;
 
+import ninja.crinkle.mod.client.gui.builders.GenericBuilder;
 import ninja.crinkle.mod.client.gui.managers.StateManager;
 import ninja.crinkle.mod.client.gui.properties.Scope;
 import ninja.crinkle.mod.client.gui.states.storages.StateStorage;
@@ -43,6 +44,17 @@ public class ValueRef<T> extends AbstractReference {
     }
 
     public void set(Object value) {
+        if (value == null) {
+            reset();
+            return;
+        }
+        if (value instanceof GenericBuilder<?,?> builder) {
+            set(builder.build());
+            return;
+        }
+        if (!type.isInstance(value)) {
+            throw new IllegalArgumentException("Value is not of type: " + type);
+        }
         storage().ifPresent(s -> s.setValue(this, value));
     }
 }

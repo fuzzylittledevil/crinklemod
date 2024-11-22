@@ -57,6 +57,10 @@ public class KeyEvent extends InputEvent {
         return modifiers;
     }
 
+    public boolean pressed() {
+        return !released();
+    }
+
     public boolean released() {
         return released;
     }

@@ -41,7 +41,7 @@ public interface GuiManager {
             }
 
             @Override
-            public StateStorageRef stateManagerRef() {
+            public StateStorageRef stateStorageRef() {
                 return stateManagerRef;
             }
 
@@ -60,7 +60,7 @@ public interface GuiManager {
 
     AbstractContainer root();
 
-    StateStorageRef stateManagerRef();
+    StateStorageRef stateStorageRef();
 
     StateStorage stateStorage();
 }

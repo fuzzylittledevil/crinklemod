@@ -5,7 +5,6 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import ninja.crinkle.mod.client.gui.layouts.Layout;
 import ninja.crinkle.mod.client.gui.properties.ImmutablePoint;
-import ninja.crinkle.mod.client.gui.properties.MutablePoint;
 import ninja.crinkle.mod.client.gui.widgets.AbstractContainer;
 import ninja.crinkle.mod.util.ClientUtil;
 import org.slf4j.Logger;
@@ -25,38 +24,38 @@ public class TestScreen extends AbstractScreen {
     @Override
     protected void init() {
         AbstractContainer vPanel = root().addContainer()
-                .name("window1")
+                .name("window0")
+          .relative(20, 20)
+                .size(300, 200)
                 .widgetTheme("panel")
                 .layoutManager(Layout.vertical().alignment(Layout.Alignment.CENTER).spacing(5))
                 .margin(10)
                 .padding(10)
-                .absolute(20, 20)
-                .size(300, 200)
-                .pushAndReturn();
-        AbstractContainer hPanel = vPanel.addContainer()
-                .name("window2")
-                .layoutManager(Layout.horizontal().alignment(Layout.Alignment.CENTER).spacing(5))
-                .margin(10)
-                .padding(10)
-                .size(vPanel.layout().boxes().contentBox().size())
-                .pushAndReturn();
-        AbstractContainer buttons = hPanel.addContainer()
-                .name("buttons")
-                .layoutManager(Layout.horizontal().alignment(Layout.Alignment.CENTER).spacing(5))
-                .size(hPanel.layout().boxes().contentBox().size())
+                .draggable(true)
                 .pushAndReturn();
 
-        int width = ClientUtil.getMinecraft().font.width("Button 0") + 10;
-        for (int i = 0; i < 3; i++) {
-            buttons.addButton()
-                    .name("button" + i)
-                    .widgetTheme("button")
-                    .text("Button " + i)
-                    .relative(ImmutablePoint.ZERO)
-                    .margin(2)
-                    .padding(3)
-                    .size(width, 20)
+        int height = ClientUtil.getMinecraft().font.lineHeight + 11;
+        for (int p = 0; p < 4; p++) {
+            AbstractContainer hPanel = vPanel.addContainer()
+                    .name("container" + p)
+                    .layoutManager(Layout.horizontal().alignment(Layout.Alignment.CENTER).spacing(5))
+                    .size(vPanel.layout().boxes().contentBox().size().width(), height)
                     .pushAndReturn();
+
+            int width = ClientUtil.getMinecraft().font.width("Button 00") + 10;
+            String[] themes = {"button_primary", "button_secondary", "button"};
+            for (int i = 0; i < 3; i++) {
+                hPanel.addButton()
+                        .name("button" + i+p)
+                        .widgetTheme(themes[i])
+                        .text("Button " + i+p)
+                        .onClick((event, widget) -> LOGGER.info("Button {} clicked", widget.name()))
+                        .relative(ImmutablePoint.ZERO)
+                        .margin(2)
+                        .padding(3, 3, 4, 3)
+                        .size(width, height)
+                        .pushAndReturn();
+            }
         }
         super.init();
     }

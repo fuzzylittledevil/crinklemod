@@ -1,6 +1,7 @@
 package ninja.crinkle.mod.client.gui.layouts;
 
 import com.mojang.logging.LogUtils;
+import ninja.crinkle.mod.client.gui.properties.Point;
 import ninja.crinkle.mod.client.gui.properties.Position;
 import ninja.crinkle.mod.client.gui.widgets.AbstractContainer;
 import ninja.crinkle.mod.client.gui.widgets.AbstractWidget;
@@ -28,33 +29,33 @@ public class Horizontal extends AbstractLayout {
         assert List.of(Layout.Alignment.LEFT, Layout.Alignment.CENTER, Layout.Alignment.RIGHT)
                 .contains(alignment()) : "Invalid alignment";
 
-        int xOffset = calculateOffset(width, totalWidth);
+        double xOffset = calculateOffset(width, totalWidth);
         List<AbstractWidget> widgets = container.children().stream()
                 .sorted(Comparator.comparingInt(AbstractWidget::zIndexOf).reversed()).toList();
 
-        for (Widget child : widgets) {
+        for (AbstractWidget child : widgets) {
             child.resetPosition();
             Position childPosition = child.position();
             if (childPosition.absolute()) {
-                LOGGER.debug("Skipping absolute positioned child: {}, position: {}", child.name(), childPosition);
+                // LOGGER.debug("Skipping absolute positioned child: {}, position: {}", child.name(), childPosition);
                 continue;
             }
             Position newPosition = childPosition.offsetBy(xOffset, 0);
             child.position(newPosition);
-            LOGGER.debug("[{}] Arranging child: {} from {} to {} (screen position: {})", alignment(), child.name(), childPosition, newPosition, child.renderedPosition());
+            // LOGGER.debug("[{}] Arranging child: {} from {} to {} (screen position: {})", alignment(), child.name(), childPosition, newPosition, child.renderedPosition());
             xOffset += child.layout().size().width() + spacing();
         }
     }
 
     @Override
     public int totalInnerHeight(AbstractContainer abstractContainer) {
-        return abstractContainer.children().stream().mapToInt(w -> w.layout().size().height())
+        return abstractContainer.children().stream().mapToInt(AbstractWidget::totalHeight)
                 .max().orElse(0);
     }
 
     @Override
     public int totalInnerWidth(AbstractContainer abstractContainer) {
-        return abstractContainer.children().stream().mapToInt(w -> w.layout().size().width()).sum() +
+        return abstractContainer.children().stream().mapToInt(AbstractWidget::totalWidth).sum() +
                 (abstractContainer.children().size() - 1) * spacing();
 
     }

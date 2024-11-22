@@ -10,6 +10,9 @@ import java.util.*;
 import java.util.function.Predicate;
 
 public class EventManager {
+    public static int PRIORITY_STEP = 10;
+    public static int PRIORITY_IGNORE = Integer.MAX_VALUE;
+    public static int PRIORITY_OVERRIDE = Integer.MIN_VALUE;
     private static final EventManager GLOBAL = new EventManager(Scope.Global);
     private static final Logger LOGGER = LogUtils.getLogger();
     private final List<EventListener> listeners = new ArrayList<>();
@@ -33,21 +36,19 @@ public class EventManager {
 
     public void addListener(EventListener listener) {
         assert listener != null;
-
         if (listeners.contains(listener)) {
             LOGGER.warn("Attempted to add duplicate listener: {}", listener);
             return;
         }
         listeners.add(listener);
-        sortListeners();
-    }
-
-    public void sortListeners() {
-        listeners.sort(Comparator.comparingInt(EventListener::priority));
     }
 
     private List<EventListener> listeners() {
         return listeners.stream().toList();
+    }
+
+    private List<EventListener> sortedListeners() {
+        return listeners.stream().filter(l -> l.priority() != PRIORITY_IGNORE).sorted(Comparator.comparingInt(EventListener::priority)).toList();
     }
 
     public void clear() {
@@ -65,7 +66,7 @@ public class EventManager {
             return;
         }
         event.dispatched(true);
-        listeners().stream().filter(predicate).forEach(listener -> {
+        sortedListeners().stream().filter(predicate).forEach(listener -> {
             if (event.propagate()) {
                 listener.onEvent(event);
             }
