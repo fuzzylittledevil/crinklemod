@@ -84,84 +84,180 @@
               "y": 0
             },
             "size": {
-              "width": 3,
-              "height": 3
+              "width": 4,
+              "height": 4
             }
           },
           "topRight": {
             "start": {
-              "x": 4,
+              "x": 5,
               "y": 0
             },
             "size": {
-              "width": 3,
-              "height": 3
+              "width": 4,
+              "height": 4
             }
           },
           "bottomLeft": {
             "start": {
               "x": 0,
-              "y": 4
+              "y": 5
             },
             "size": {
-              "width": 3,
-              "height": 4
+              "width": 4,
+              "height": 5
             }
           },
           "bottomRight": {
             "start": {
-              "x": 4,
-              "y": 4
+              "x": 5,
+              "y": 5
             },
             "size": {
-              "width": 3,
-              "height": 4
+              "width": 4,
+              "height": 5
             }
           },
           "top": {
             "start": {
-              "x": 3,
+              "x": 4,
               "y": 0
             },
             "size": {
               "width": 1,
-              "height": 3
+              "height": 4
             }
           },
           "right": {
             "start": {
-              "x": 4,
-              "y": 3
+              "x": 5,
+              "y": 4
             },
             "size": {
-              "width": 3,
+              "width": 4,
               "height": 1
             }
           },
           "bottom": {
             "start": {
-              "x": 3,
+              "x": 4,
+              "y": 5
+            },
+            "size": {
+              "width": 1,
+              "height": 5
+            }
+          },
+          "left": {
+            "start": {
+              "x": 0,
               "y": 4
+            },
+            "size": {
+              "width": 4,
+              "height": 1
+            }
+          },
+          "center": {
+            "start": {
+              "x": 4,
+              "y": 4
+            },
+            "size": {
+              "width": 1,
+              "height": 1
+            }
+          }
+        }
+      },
+      {
+        "id": "button_background_focused",
+        "location": "widgets/button_background_focused",
+        "slices": {
+          "topLeft": {
+            "start": {
+              "x": 0,
+              "y": 0
+            },
+            "size": {
+              "width": 4,
+              "height": 4
+            }
+          },
+          "topRight": {
+            "start": {
+              "x": 5,
+              "y": 0
+            },
+            "size": {
+              "width": 4,
+              "height": 4
+            }
+          },
+          "bottomLeft": {
+            "start": {
+              "x": 0,
+              "y": 5
+            },
+            "size": {
+              "width": 4,
+              "height": 5
+            }
+          },
+          "bottomRight": {
+            "start": {
+              "x": 5,
+              "y": 5
+            },
+            "size": {
+              "width": 4,
+              "height": 5
+            }
+          },
+          "top": {
+            "start": {
+              "x": 4,
+              "y": 0
             },
             "size": {
               "width": 1,
               "height": 4
             }
           },
+          "right": {
+            "start": {
+              "x": 5,
+              "y": 4
+            },
+            "size": {
+              "width": 4,
+              "height": 1
+            }
+          },
+          "bottom": {
+            "start": {
+              "x": 4,
+              "y": 5
+            },
+            "size": {
+              "width": 1,
+              "height": 5
+            }
+          },
           "left": {
             "start": {
               "x": 0,
-              "y": 3
+              "y": 4
             },
             "size": {
-              "width": 3,
+              "width": 4,
               "height": 1
             }
           },
           "center": {
             "start": {
-              "x": 3,
-              "y": 3
+              "x": 4,
+              "y": 4
             },
             "size": {
               "width": 1,
@@ -876,7 +972,7 @@
       {
         "id": "button",
         "variants": {
-          "active": {
+          "base": {
             "background": {
               "texture": "button_background",
               "color": "background"
@@ -885,9 +981,16 @@
               "color": "text"
             }
           },
+          "active": {
+            "background": {
+              "color": "background"
+            },
+            "foreground": {
+              "color": "text"
+            }
+          },
           "hover": {
             "background": {
-              "texture": "button_background",
               "color": "highlight"
             },
             "foreground": {
@@ -897,7 +1000,6 @@
           },
           "inactive": {
             "background": {
-              "texture": "button_background",
               "color": "inactive"
             },
             "foreground": {
@@ -906,7 +1008,6 @@
           },
           "pressed": {
             "background": {
-              "texture": "button_background",
               "color": "highlight",
               "filters": ["invert"]
             },
@@ -916,12 +1017,7 @@
           },
           "focused": {
             "background": {
-              "texture": "button_background",
-              "color": "accent"
-            },
-            "foreground": {
-              "color": "text",
-              "shadow": true
+              "texture": "button_background_focused"
             }
           }
         }

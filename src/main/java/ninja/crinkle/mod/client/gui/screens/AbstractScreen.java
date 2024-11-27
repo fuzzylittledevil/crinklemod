@@ -136,17 +136,35 @@ public abstract class AbstractScreen extends Screen implements TabIndexListener,
                 .map(m -> m.listeners(onlyHovered(pMouseX, pMouseY, 0)).stream().toList())
                 .orElse(List.of());
         // We want to prep to drag the top-most draggable parent container.
-        AbstractWidget topWidget = listeners.stream()
+        AbstractWidget topMost = listeners.stream()
                 .filter(l -> l instanceof AbstractWidget)
                 .map(l -> (AbstractWidget) l)
                 .filter(c -> !c.equals(root()))
-                .filter(AbstractWidget::draggable)
+                .reduce((a, b) -> a.zIndex() > b.zIndex() ? a : b)
+                .orElse(null);
+        AbstractWidget topDraggable = listeners.stream()
+                .filter(l -> l instanceof AbstractWidget)
+                .map(l -> (AbstractWidget) l)
+                .filter(c -> !c.equals(root()))
                 .reduce((a, b) -> a.zIndex() > b.zIndex() ? a : b)
                 .orElse(null);
         clickState.set(new ClickState(new ImmutablePoint(pMouseX, pMouseY), pButton, listeners));
-        if (topWidget != null && topWidget.draggable()) {
-            dragManager().current(topWidget);
+        if (topDraggable != null && topMost != null && topMost.draggable()) {
+            dragManager().current(topDraggable);
             dragManager().dragging(false); // Reset dragging state
+        }
+
+        AbstractWidget topFocusable = listeners.stream()
+                .filter(l -> l instanceof AbstractWidget)
+                .map(l -> (AbstractWidget) l)
+                .filter(c -> !c.equals(root()))
+                .filter(AbstractWidget::focusable)
+                .min(Comparator.comparingInt(AbstractWidget::priority))
+                .orElse(null);
+        if (topFocusable != null && topFocusable.focusable()) {
+            focusManager().currentFocus(topFocusable);
+        } else {
+            focusManager().currentFocus(null);
         }
         Event mousePressedEvent = new MousePressedEvent(Scope.Screen, this, pMouseX, pMouseY, pButton, listeners);
         eventManager().ifPresent(m -> m.dispatchEvent(mousePressedEvent));

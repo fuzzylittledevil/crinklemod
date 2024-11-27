@@ -24,7 +24,7 @@ class AbstractContainerAbsoluteTest {
     final WidgetDisplay display = new WidgetDisplay(true, 1.0f, 0);
     final WidgetLayout layout = new WidgetLayout(Position.absolute(0, 0), Size.of(100, 100), Margin.all(0),
             Border.all(0), Padding.all(0));
-    final WidgetBehavior behavior = new WidgetBehavior(false, false, false, false, false, true);
+    final WidgetBehavior behavior = new WidgetBehavior(false, false, false, false, false, true, false, false, false);
 
     @BeforeEach
     void setUp() {

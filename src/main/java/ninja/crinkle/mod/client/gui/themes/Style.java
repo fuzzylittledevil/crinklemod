@@ -18,6 +18,7 @@ import java.util.stream.Stream;
 public record Style(String id, Map<Variant, StyleVariant> appearances, Theme theme) {
     private static final Logger LOGGER = LogUtils.getLogger();
     public static final Style EMPTY = Style.builder("empty")
+            .addAppearance(Style.Variant.base, StyleVariant.EMPTY)
             .addAppearance(Style.Variant.active, StyleVariant.EMPTY)
             .addAppearance(Style.Variant.hover, StyleVariant.EMPTY)
             .addAppearance(Style.Variant.inactive, StyleVariant.EMPTY)
@@ -37,19 +38,19 @@ public record Style(String id, Map<Variant, StyleVariant> appearances, Theme the
             Texture background = Optional.ofNullable(appearance.background())
                     .filter(data -> data.texture() != null)
                     .map(data -> theme.getTexture(data.texture()))
-                    .orElse(Texture.EMPTY);
+                    .orElse(null);
             Texture foreground = Optional.ofNullable(appearance.foreground())
                     .filter(data -> data.texture() != null)
                     .map(data -> theme.getTexture(data.texture()))
-                    .orElse(Texture.EMPTY);
+                    .orElse(null);
             Color backgroundColor = Optional.ofNullable(appearance.background())
                     .filter(data -> data.color() != null)
                     .map(data -> theme.getColor(data.color()))
-                    .orElse(Color.RAINBOW);
+                    .orElse(null);
             Color foregroundColor = Optional.ofNullable(appearance.foreground())
                     .filter(data -> data.color() != null)
                     .map(data -> theme.getColor(data.color()))
-                    .orElse(Color.RAINBOW);
+                    .orElse(null);
             List<ColorFilters> foregroundColorFilters = Optional.ofNullable(appearance.foreground())
                     .map(StyleData.Variant.Data::colorFilters)
                     .orElse(List.of());
@@ -73,7 +74,7 @@ public record Style(String id, Map<Variant, StyleVariant> appearances, Theme the
     }
 
     public void render(ThemeGraphics graphics, Box pBox, AbstractWidget widget) {
-        StyleVariant styleVariant = appearances.get(widget.status());
+        StyleVariant styleVariant = widget.appearance();
         if (styleVariant == null) {
             styleVariant = appearances.get(Style.Variant.active);
         }
@@ -124,11 +125,12 @@ public record Style(String id, Map<Variant, StyleVariant> appearances, Theme the
     }
 
     public enum Variant {
-        active(AbstractWidget::active, 1),
-        inactive(widget -> !widget.active(), 0),
-        focused(AbstractWidget::focused, 2),
-        hover(AbstractWidget::hovered, 3),
-        pressed(AbstractWidget::pressed, 4);
+        base(variant -> true, 0),
+        active(AbstractWidget::active, 2),
+        inactive(widget -> !widget.active(), 1),
+        focused(w -> w.focusable() && w.focused(), 3),
+        hover(w -> w.behavior().hoverable() && w.hovered(), 4),
+        pressed(w -> w.behavior().pressable() && w.pressed(), 5);
 
         private final Predicate<AbstractWidget> predicate;
         private final int rank;
@@ -146,11 +148,11 @@ public record Style(String id, Map<Variant, StyleVariant> appearances, Theme the
             return rank;
         }
 
-        public static Variant from(AbstractWidget widget) {
+        public static List<Variant> from(AbstractWidget widget) {
             return Stream.of(values())
                     .filter(variant -> variant.matches(widget))
-                    .max(Comparator.comparingInt(Variant::rank))
-                    .orElse(inactive);
+                    .sorted(Comparator.comparingInt(Variant::rank))
+                    .toList();
         }
     }
 }

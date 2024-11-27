@@ -60,6 +60,7 @@ public class Label extends AbstractWidget {
 
         public Builder(AbstractContainer parent) {
             super(parent);
+            active(true);
         }
 
         public Builder color(Color color) {

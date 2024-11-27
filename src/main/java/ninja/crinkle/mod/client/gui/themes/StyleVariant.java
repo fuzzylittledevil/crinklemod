@@ -1,5 +1,6 @@
 package ninja.crinkle.mod.client.gui.themes;
 
+import com.mojang.logging.LogUtils;
 import ninja.crinkle.mod.client.color.Color;
 import ninja.crinkle.mod.client.gui.builders.GenericBuilder;
 import ninja.crinkle.mod.client.gui.properties.Box;
@@ -7,7 +8,8 @@ import ninja.crinkle.mod.client.gui.renderers.ThemeGraphics;
 import ninja.crinkle.mod.client.gui.textures.ColorFilters;
 import ninja.crinkle.mod.client.gui.textures.Texture;
 import ninja.crinkle.mod.client.gui.widgets.AbstractWidget;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,8 +17,8 @@ import java.util.Optional;
 import java.util.function.IntUnaryOperator;
 
 public class StyleVariant {
-    public static final StyleVariant EMPTY =
-            StyleVariant.builder().backgroundColor(Color.of("#cecece")).backgroundTexture(Texture.EMPTY).foregroundColor(Color.DEFAULT_TEXT).foregroundTexture(Texture.EMPTY).build();
+    public static final Logger LOGGER = LogUtils.getLogger();
+    public static final StyleVariant EMPTY = StyleVariant.builder().build();
     private final Color backgroundColor;
     private final List<ColorFilters> backgroundColorFilters = new ArrayList<>();
     private final Texture backgroundTexture;
@@ -53,24 +55,24 @@ public class StyleVariant {
         return foregroundColorFilters;
     }
 
-    public @NotNull Color getBackgroundColor() {
-        return backgroundColor != null ? backgroundColor : Color.RAINBOW;
+    public @Nullable Color getBackgroundColor() {
+        return backgroundColor;
     }
 
-    public @NotNull Texture getBackgroundTexture() {
-        return backgroundTexture != null ? backgroundTexture : Texture.EMPTY;
+    public Texture getBackgroundTexture() {
+        return backgroundTexture;
     }
 
     public List<IntUnaryOperator> getColorFilters() {
         return List.of();
     }
 
-    public @NotNull Color getForegroundColor() {
-        return foregroundColor != null ? foregroundColor : Color.RAINBOW;
+    public Color getForegroundColor() {
+        return foregroundColor;
     }
 
-    public @NotNull Texture getForegroundTexture() {
-        return foregroundTexture != null ? foregroundTexture : Texture.EMPTY;
+    public Texture getForegroundTexture() {
+        return foregroundTexture;
     }
 
     public boolean hasShadow() {
@@ -87,6 +89,37 @@ public class StyleVariant {
         if (foregroundTexture != null) {
             foregroundTexture.render(pGuiGraphics, widget, foregroundColorFilters);
         }
+    }
+
+    public StyleVariant coalesceWith(StyleVariant other) {
+        if (other == null) {
+            return this;
+        }
+        return new StyleVariant(
+                Optional.ofNullable(other.getBackgroundTexture()).orElse(getBackgroundTexture()),
+                Optional.ofNullable(other.getForegroundTexture()).orElse(getForegroundTexture()),
+                Optional.ofNullable(other.getBackgroundColor()).orElse(getBackgroundColor()),
+                Optional.ofNullable(other.getForegroundColor()).orElse(getForegroundColor()),
+                other.hasShadow() || shadow,
+                other.foregroundColorFilters.isEmpty() ? foregroundColorFilters : other.foregroundColorFilters,
+                other.backgroundColorFilters.isEmpty() ? backgroundColorFilters : other.backgroundColorFilters
+        );
+    }
+
+    public static StyleVariant coalesce(StyleVariant a, StyleVariant b) {
+        if (a == null) {
+            return b;
+        }
+        if (b == null) {
+            return a;
+        }
+        if (a == b) {
+            return a;
+        }
+
+        StyleVariant variant = a.coalesceWith(b);
+        LOGGER.debug("Coalesced {} with {} to {}", a, b, variant);
+        return variant;
     }
 
     @Override

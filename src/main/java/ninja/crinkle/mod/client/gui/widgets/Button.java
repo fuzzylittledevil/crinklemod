@@ -66,6 +66,11 @@ public class Button extends AbstractContainer {
 
         public Builder(AbstractContainer container) {
             super(container);
+            // Button defaults
+            hoverable(true);
+            focusable(true);
+            active(true);
+            pressable(true);
         }
 
         public Builder onClick(BiConsumer<ClickEvent, AbstractWidget> onClick) {
@@ -100,7 +105,7 @@ public class Button extends AbstractContainer {
         }
 
         public Builder text(String text) {
-            return text(Label.builder(parent()).text(text).build());
+            return text(Label.builder(parent()).text(text).focusable(false).build());
         }
 
         public Builder text(Label text) {

@@ -166,11 +166,11 @@ public record Texture(String id, String location, Map<Slice.Location, Slice> sli
         if (this == EMPTY) {
             return;
         }
-        StyleVariant styleVariant = widget.widgetTheme().getAppearance(widget.status());
+        StyleVariant styleVariant = widget.appearance();
         if (styleVariant == null) {
             styleVariant = widget.widgetTheme().getAppearance(Style.Variant.active);
         }
-        Color color = styleVariant.getBackgroundColor().get();
+        Color color = styleVariant.getBackgroundColor() == null ? Color.RAINBOW : styleVariant.getBackgroundColor();
         graphics.setColor((float) color.getRed(), (float) color.getGreen(), (float) color.getBlue(),
                 widget.alpha());
         RenderSystem.enableBlend();

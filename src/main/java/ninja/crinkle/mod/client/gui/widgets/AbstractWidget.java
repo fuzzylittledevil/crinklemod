@@ -92,6 +92,14 @@ public abstract class AbstractWidget implements BoxModel, Renderable, Layout.Wid
         return widget.zIndex();
     }
 
+    public boolean focusable() {
+        return behavior().focusable();
+    }
+
+    public void focusable(boolean focusable) {
+        behavior(behavior().withFocusable(focusable));
+    }
+
     public int zIndex() {
         return display().zIndex();
     }
@@ -183,6 +191,8 @@ public abstract class AbstractWidget implements BoxModel, Renderable, Layout.Wid
     }
 
     public void hovered(boolean hovered) {
+        if (!behavior().hoverable())
+            return;
         if (hovered != hovered()) {
             Point mouse = ClientUtil.getMousePosition();
             dispatchEvent(new HoverEvent(Scope.Local, this, mouse.x(), mouse.y(), hovered));
@@ -404,8 +414,7 @@ public abstract class AbstractWidget implements BoxModel, Renderable, Layout.Wid
                 AbstractWidget topMost =
                         (AbstractWidget) event.listeners().stream().min(Comparator.comparingInt(EventListener::priority)).filter(listener -> listener instanceof AbstractWidget).orElse(null);
                 if (topMost == this) {
-                    pressed(true);
-                    focused(true);
+                    if (pressable()) pressed(true);
                     if (draggable()) dragged(true);
                     event.consumer(this);
                 }
@@ -413,6 +422,14 @@ public abstract class AbstractWidget implements BoxModel, Renderable, Layout.Wid
         } else if (pressed()) {
             pressed(false);
         }
+    }
+
+    public boolean pressable() {
+        return behavior().pressable();
+    }
+
+    public void pressable(boolean pressable) {
+        behavior(behavior().withPressable(pressable));
     }
 
     @Override
@@ -426,8 +443,12 @@ public abstract class AbstractWidget implements BoxModel, Renderable, Layout.Wid
     @Override
     public void onMove(MoveEvent event) {
         if (event.cancelled()) return;
+        if (!hoverable()) return;
         AbstractWidget topMost =
-                (AbstractWidget) event.listeners().stream().min(Comparator.comparingInt(EventListener::priority)).filter(listener -> listener instanceof AbstractWidget).orElse(null);
+                (AbstractWidget) event.listeners().stream()
+                        .min(Comparator.comparingInt(EventListener::priority))
+                        .filter(listener -> listener instanceof AbstractWidget)
+                        .orElse(null);
         if (topMost != null && topMost != this) {
             hovered(false);
             return;
@@ -440,6 +461,14 @@ public abstract class AbstractWidget implements BoxModel, Renderable, Layout.Wid
         } else if (mouseOver(event.position())) {
             hovered(true);
         }
+    }
+
+    private boolean hoverable() {
+        return behavior().hoverable();
+    }
+
+    public void hoverable(boolean hoverable) {
+        behavior(behavior().withHoverable(hoverable));
     }
 
     public void pressed(boolean pressed) {
@@ -540,19 +569,24 @@ public abstract class AbstractWidget implements BoxModel, Renderable, Layout.Wid
     }
 
     public Border textureBorder() {
-        Size top = appearance().getBackgroundTexture().boundsOf(Texture.Slice.Location.top);
-        Size right = appearance().getBackgroundTexture().boundsOf(Texture.Slice.Location.right);
-        Size bottom = appearance().getBackgroundTexture().boundsOf(Texture.Slice.Location.bottom);
-        Size left = appearance().getBackgroundTexture().boundsOf(Texture.Slice.Location.left);
+        Size top = Optional.ofNullable(appearance().getBackgroundTexture()).orElse(Texture.EMPTY).boundsOf(Texture.Slice.Location.top);
+        Size right = Optional.ofNullable(appearance().getBackgroundTexture()).orElse(Texture.EMPTY).boundsOf(Texture.Slice.Location.right);
+        Size bottom = Optional.ofNullable(appearance().getBackgroundTexture()).orElse(Texture.EMPTY).boundsOf(Texture.Slice.Location.bottom);
+        Size left = Optional.ofNullable(appearance().getBackgroundTexture()).orElse(Texture.EMPTY).boundsOf(Texture.Slice.Location.left);
         return new Border(top.height(), right.width(), bottom.height(), left.width(), Color.BLACK);
     }
 
     public StyleVariant appearance() {
-        return Optional.ofNullable(style.appearances().get(status())).orElse(StyleVariant.getDefault(style.id()));
+        return Style.Variant.from(this).stream()
+                .sorted(Comparator.comparingInt(Style.Variant::rank))
+                .map(variant -> widgetTheme().getAppearance(variant))
+                .filter(Objects::nonNull)
+                .reduce(StyleVariant::coalesce)
+                .orElse(StyleVariant.EMPTY);
     }
 
     public Style.Variant status() {
-        return Style.Variant.from(this);
+        return Style.Variant.from(this).stream().max(Comparator.comparingInt(Style.Variant::rank)).orElse(Style.Variant.base);
     }
 
     protected void tick() {
@@ -660,6 +694,15 @@ public abstract class AbstractWidget implements BoxModel, Renderable, Layout.Wid
             return manager().stateStorage().createValue(WidgetBehavior.class, behavior);
         }
 
+        public boolean hoverable() {
+            return behavior.hoverable();
+        }
+
+        public T hoverable(boolean hoverable) {
+            behavior = behavior.withHoverable(hoverable);
+            return self();
+        }
+
         public GuiManager manager() {
             return manager;
         }
@@ -702,6 +745,15 @@ public abstract class AbstractWidget implements BoxModel, Renderable, Layout.Wid
         public T draggable(boolean draggable) {
             behavior = behavior.withDraggable(draggable);
             return self();
+        }
+
+        public T focusable(boolean focusable) {
+            behavior = behavior.withFocusable(focusable);
+            return self();
+        }
+
+        public boolean focusable() {
+            return behavior.focusable();
         }
 
         public ValueRef<WidgetLayout> layoutRef() {
@@ -765,6 +817,15 @@ public abstract class AbstractWidget implements BoxModel, Renderable, Layout.Wid
 
         public Position position() {
             return layout.position();
+        }
+
+        public boolean pressable() {
+            return behavior.pressable();
+        }
+
+        public T pressable(boolean pressable) {
+            behavior = behavior.withPressable(pressable);
+            return self();
         }
 
         public T priority(int priority) {

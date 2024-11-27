@@ -34,7 +34,7 @@ public class TestScreen extends AbstractScreen {
                 .draggable(true)
                 .pushAndReturn();
 
-        int height = ClientUtil.getMinecraft().font.lineHeight + 11;
+        int height = ClientUtil.getMinecraft().font.lineHeight + 14;
         for (int p = 0; p < 4; p++) {
             AbstractContainer hPanel = vPanel.addContainer()
                     .name("container" + p)
@@ -42,7 +42,7 @@ public class TestScreen extends AbstractScreen {
                     .size(vPanel.layout().boxes().contentBox().size().width(), height)
                     .pushAndReturn();
 
-            int width = ClientUtil.getMinecraft().font.width("Button 00") + 10;
+            int width = ClientUtil.getMinecraft().font.width("Button 00") + 12;
             String[] themes = {"button_primary", "button_secondary", "button"};
             for (int i = 0; i < 3; i++) {
                 hPanel.addButton()
@@ -52,7 +52,7 @@ public class TestScreen extends AbstractScreen {
                         .onClick((event, widget) -> LOGGER.info("Button {} clicked", widget.name()))
                         .relative(ImmutablePoint.ZERO)
                         .margin(2)
-                        .padding(3, 3, 4, 3)
+                        .padding(3, 3, 3, 3)
                         .size(width, height)
                         .pushAndReturn();
             }

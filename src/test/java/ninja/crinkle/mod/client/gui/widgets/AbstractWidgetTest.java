@@ -2,6 +2,8 @@ package ninja.crinkle.mod.client.gui.widgets;
 
 import ninja.crinkle.mod.client.color.Color;
 import ninja.crinkle.mod.client.gui.events.MoveEvent;
+import ninja.crinkle.mod.client.gui.managers.DragManager;
+import ninja.crinkle.mod.client.gui.managers.EventManager;
 import ninja.crinkle.mod.client.gui.managers.GuiManager;
 import ninja.crinkle.mod.client.gui.properties.*;
 import ninja.crinkle.mod.client.gui.states.WidgetBehavior;
@@ -30,9 +32,9 @@ class AbstractWidgetTest {
     @Mock
     GuiManager manager = spy(GuiManager.create());
     @Mock
-    AbstractContainer container = spy(Container.builder(manager).build());
+    AbstractContainer container = spy(Container.builder(manager).priority(EventManager.PRIORITY_IGNORE).build());
     @Mock
-    AbstractWidget widget = spy(Label.builder(container).build());
+    AbstractWidget widget = spy(Button.builder(container).priority(0).hoverable(true).build());
 
     @Test
     void calculateBoxes() {
@@ -90,7 +92,7 @@ class AbstractWidgetTest {
         WidgetDisplay display = new WidgetDisplay(true, 1.0f, 0);
         WidgetLayout layout = new WidgetLayout(Position.relative(0, 0), Size.of(100, 100), Margin.all(0),
                 Border.all(0), Padding.all(0), widget);
-        WidgetBehavior behavior = new WidgetBehavior(false, false, false, false, false, true);
+        WidgetBehavior behavior = new WidgetBehavior(false, false, false, false, false, true, true, true, true);
         doReturn(display).when(widget).display();
         doReturn(layout).when(widget).layout();
         doReturn(behavior).when(widget).behavior();
@@ -157,9 +159,10 @@ class AbstractWidgetTest {
     @Test
     void onMove() {
         doCallRealMethod().when(widget).onMove(any());
-        MoveEvent event = new MoveEvent(Scope.Screen, widget, 10, 10, List.of(widget));
+        Point moveTo = widget.layout().boxes().contentBox().start().add(2, 2);
+        MoveEvent event = new MoveEvent(Scope.Screen, widget, moveTo.xInt(), moveTo.yInt(), List.of(widget));
         try(var clientUtil = TestUtil.mockClientUtil()) {
-            clientUtil.when(ClientUtil::getMousePosition).thenReturn(Point.of(10, 10));
+            clientUtil.when(ClientUtil::getMousePosition).thenReturn(moveTo);
             widget.onMove(event);
         }
         // verify the widget saw the event

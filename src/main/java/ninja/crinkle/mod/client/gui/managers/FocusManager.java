@@ -9,7 +9,13 @@ public class FocusManager implements FocusListener {
     private FocusSource currentFocus;
 
     public void currentFocus(FocusSource currentFocus) {
+        if (this.currentFocus != null) {
+            this.currentFocus.focused(false);
+        }
         this.currentFocus = currentFocus;
+        if (currentFocus != null) {
+            currentFocus.focused(true);
+        }
     }
 
     public FocusSource currentFocus() {
@@ -27,15 +33,13 @@ public class FocusManager implements FocusListener {
             currentFocus.focused(false);
         }
         currentFocus = event.focusSource();
-        // This should be a no-op if the event originated from the current focus
         currentFocus.focused(true);
-        // Consume the event so that the focus doesn't change again
         event.consumer(this);
     }
 
     @Override
     public void onFocusLeft(FocusLeftEvent event) {
-        if (currentFocus == event.focusSource()) {
+        if (currentFocus == event.focusSource() && currentFocus != null) {
             currentFocus.focused(false);
             currentFocus = null;
             event.consumer(this);

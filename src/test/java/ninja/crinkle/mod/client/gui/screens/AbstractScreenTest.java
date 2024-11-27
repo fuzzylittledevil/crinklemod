@@ -78,7 +78,9 @@ class AbstractScreenTest {
 
         Button button = child.addButton()
                 .name("button")
+                .text("Button")
                 .size(50)
+                .focusable(true)
                 .build();
         Button spyButton = spy(button);
         child.add(spyButton);
@@ -131,6 +133,43 @@ class AbstractScreenTest {
     }
 
     @Test
+    void mouseClicked_withFocus() {
+        var widgets = setupWidgets();
+        doCallRealMethod().when(screen).mouseClicked(anyInt(), anyInt(), anyInt());
+        Point button = widgets.get("button").layout().boxes().rendered().box().start().add(2, 2);
+        screen.mouseClicked(button.x(), button.y(), 0);
+        verify(widgets.get("button"), times(1)).onMousePressed(any());
+        verify(widgets.get("button"), times(0)).onDragStarted(any());
+        verify(widgets.get("parent"), times(0)).onDragStarted(any());
+        verify(widgets.get("child"), times(0)).onDragStarted(any());
+        assertFalse(screen.dragManager().dragging(), "Expected not dragging");
+        assertTrue(widgets.get("button").pressed(), "Expected button to be pressed");
+        assertTrue(widgets.get("button").focused(), "Expected button to be focused");
+
+        // Click away to unfocus
+        Point parent = widgets.get("parent").layout().boxes().rendered().box().bottomRight().add(2, 2);
+        screen.mouseClicked(parent.x(), parent.y(), 0);
+        assertFalse(widgets.get("button").focused(), "Expected button to not be focused");
+    }
+
+    @Test
+    void mouseClicked_notFocusable() {
+        var widgets = setupWidgets();
+        Button button = (Button) widgets.get("button");
+        button.focusable(false);
+        doCallRealMethod().when(screen).mouseClicked(anyInt(), anyInt(), anyInt());
+        Point buttonStart = button.layout().boxes().rendered().contentBox().start().add(2, 2);
+        screen.mouseClicked(buttonStart.xInt(), buttonStart.yInt(), 0);
+        verify(button, times(1)).onMousePressed(any());
+        verify(button, times(0)).onDragStarted(any());
+        verify(widgets.get("parent"), times(0)).onDragStarted(any());
+        verify(widgets.get("child"), times(0)).onDragStarted(any());
+        assertFalse(screen.dragManager().dragging(), "Expected not dragging");
+        assertTrue(button.pressed(), "Expected button to be pressed");
+        assertFalse(button.focused(), "Expected button to not be focused");
+    }
+
+    @Test
     void mouseClicked_withDragging() {
         Map<String, AbstractWidget> widgets = setupWidgets();
         Container parent = (Container) widgets.get("parent");
@@ -143,8 +182,8 @@ class AbstractScreenTest {
         screen.addListener(listener);
         assert screen.eventManager().isPresent() && screen.eventManager().get()
                 .listeners(l -> widgets.containsKey(l.name())).size() == 3 : "Expected listeners for all widgets";
-        Point start = button.layout().boxes().rendered().box().start();
-        screen.mouseClicked(start.xInt() + 2, start.yInt() + 2, 0);
+        Point clickPoint = parent.layout().boxes().rendered().box().bottomRight().subtract(2, 2);
+        screen.mouseClicked(clickPoint.xInt(), clickPoint.yInt(), 0);
         assertEquals(parent.name(), screen.dragManager().current().name(),
                 "Expected " + parent.name() + " to be current, instead got "
                         + screen.dragManager().current().name());
@@ -185,13 +224,13 @@ class AbstractScreenTest {
         doCallRealMethod().when(screen).mouseReleased(anyInt(), anyInt(), anyInt());
         doCallRealMethod().when(screen).mouseClicked(anyInt(), anyInt(), anyInt());
         doCallRealMethod().when(screen).mouseDragged(anyDouble(), anyDouble(), anyInt(), anyDouble(), anyDouble());
-        Point buttonStart = button.layout().boxes().rendered().contentBox().start();
-        screen.mouseClicked(buttonStart.xInt() + 2, buttonStart.yInt() + 2, 0);
+        Point clickPoint = parent.layout().boxes().rendered().box().bottomRight().subtract(2, 2);
+        screen.mouseClicked(clickPoint.xInt(), clickPoint.yInt(), 0);
         assertEquals(parent.name(), screen.dragManager().current().name(),
                 "Expected " + parent.name() + " to be current, instead got "
                         + screen.dragManager().current().name());
         assertFalse(screen.dragManager().dragging(), "Expected not dragging");
-        screen.mouseDragged(buttonStart.xInt() + 10, buttonStart.yInt() + 10, 0, 10, 10);
+        screen.mouseDragged(clickPoint.xInt() + 10, clickPoint.yInt() + 10, 0, 10, 10);
         assertTrue(screen.dragManager().dragging(), "Expected dragging");
         Point buttonEnd = button.layout().boxes().rendered().box().start();
         doAnswer(consumeEvent()).when(parent).onMouseReleased(any());
@@ -212,13 +251,14 @@ class AbstractScreenTest {
         Point parentStart = parent.layout().boxes().rendered().box().start();
         Point childStart = child.layout().boxes().rendered().box().start();
         Point buttonStart = button.layout().boxes().rendered().box().start();
-        screen.mouseClicked(buttonStart.xInt() + 2, buttonStart.yInt() + 2, 0);
+        Point clickPoint = parent.layout().boxes().rendered().box().bottomRight().subtract(2, 2);
+        screen.mouseClicked(clickPoint.xInt() + 2, clickPoint.yInt() + 2, 0);
         assertEquals(parent.name(), screen.dragManager().current().name(),
                 "Expected " + parent.name() + " to be current, instead got "
                         + screen.dragManager().current().name());
         assertFalse(screen.dragManager().dragging(), "Expected not dragging");
         int dragOffset = 10;
-        Point dragTo = buttonStart.add(dragOffset, dragOffset);
+        Point dragTo = clickPoint.add(dragOffset, dragOffset);
         screen.mouseDragged(dragTo.x(), dragTo.y(), 0, dragOffset, dragOffset);
         assertTrue(screen.dragManager().dragging(), "Expected dragging");
         verify(parent, times(1)).onDragStarted(any());

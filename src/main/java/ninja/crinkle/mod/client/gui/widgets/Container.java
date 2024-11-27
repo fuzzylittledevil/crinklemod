@@ -24,10 +24,12 @@ public class Container extends AbstractContainer {
 
         public Builder(AbstractContainer container) {
             super(container);
+            active(true);
         }
 
         public Builder(GuiManager manager) {
             super(manager);
+            active(true);
         }
 
         @Override
