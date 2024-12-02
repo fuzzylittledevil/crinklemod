@@ -39,7 +39,7 @@ public class Label extends AbstractWidget {
         Point topLeft = renderedBox.topLeft();
         int xOffset = (int) Math.ceil((double) (renderedBox.size().width() - graphics.textWidth(text())) / 2);
         int yOffset = (int) Math.ceil((double) (renderedBox.size().height() - graphics.textHeight()) / 2);
-        graphics.text(text(), topLeft.add(xOffset, yOffset), zIndex(), color());
+        graphics.text(text(), topLeft.add(xOffset, yOffset), zIndex(), color(), appearance().hasShadow());
     }
 
     public String text() {

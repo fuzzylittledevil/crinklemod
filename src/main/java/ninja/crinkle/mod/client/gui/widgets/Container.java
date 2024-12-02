@@ -20,6 +20,10 @@ public class Container extends AbstractContainer {
         return new Builder(manager);
     }
 
+    public TextBox.Builder addTextBox() {
+        return TextBox.builder(this);
+    }
+
     public static class Builder extends AbstractContainerBuilder<Builder> {
 
         public Builder(AbstractContainer container) {

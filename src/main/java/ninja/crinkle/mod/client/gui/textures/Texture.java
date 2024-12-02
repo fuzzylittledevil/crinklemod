@@ -155,6 +155,9 @@ public record Texture(String id, String location, Map<Slice.Location, Slice> sli
         }
         // We can't close the new image or the sprite contents or Minecraft will lose reference to them
         original.close();
+        for (var filter : colorFilters) {
+            image.applyToAllPixels(filter.filter());
+        }
         return ThemeAtlas.register(key, new DynamicTexture(image));
     }
 
@@ -171,6 +174,9 @@ public record Texture(String id, String location, Map<Slice.Location, Slice> sli
             styleVariant = widget.widgetTheme().getAppearance(Style.Variant.active);
         }
         Color color = styleVariant.getBackgroundColor() == null ? Color.RAINBOW : styleVariant.getBackgroundColor();
+        for (var filter : styleVariant.backgroundColorFilters()) {
+            color = Color.of(filter.filter().applyAsInt(color.color()));
+        }
         graphics.setColor((float) color.getRed(), (float) color.getGreen(), (float) color.getBlue(),
                 widget.alpha());
         RenderSystem.enableBlend();

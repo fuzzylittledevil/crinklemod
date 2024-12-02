@@ -15,7 +15,8 @@
       "accent": "#6A9EB0",
       "text": "#333333",
       "inactiveText": "#C8DDE1",
-      "highlightText": "#F5F5F5"
+      "highlightText": "#F5F5F5",
+      "white": "#FFFFFF"
     },
     "textures": [
       {
@@ -267,8 +268,8 @@
         }
       },
       {
-        "id": "button_background_inverted",
-        "location": "widgets/button_background_inverted",
+        "id": "textbox_background",
+        "location": "widgets/textbox_background",
         "slices": {
           "topLeft": {
             "start": {
@@ -276,84 +277,84 @@
               "y": 0
             },
             "size": {
-              "width": 1,
-              "height": 1
+              "width": 5,
+              "height": 5
             }
           },
           "topRight": {
             "start": {
-              "x": 2,
+              "x": 6,
               "y": 0
             },
             "size": {
-              "width": 1,
-              "height": 1
+              "width": 5,
+              "height": 5
             }
           },
           "bottomLeft": {
             "start": {
               "x": 0,
-              "y": 2
+              "y": 6
             },
             "size": {
-              "width": 1,
-              "height": 1
+              "width": 5,
+              "height": 6
             }
           },
           "bottomRight": {
             "start": {
-              "x": 2,
-              "y": 2
+              "x": 6,
+              "y": 6
             },
             "size": {
-              "width": 1,
-              "height": 1
+              "width": 5,
+              "height": 6
             }
           },
           "top": {
             "start": {
-              "x": 1,
+              "x": 5,
               "y": 0
             },
             "size": {
               "width": 1,
-              "height": 1
+              "height": 5
             }
           },
           "right": {
             "start": {
-              "x": 2,
-              "y": 1
+              "x": 6,
+              "y": 5
             },
             "size": {
-              "width": 1,
+              "width": 5,
               "height": 1
             }
           },
           "bottom": {
             "start": {
-              "x": 1,
-              "y": 2
+              "x": 5,
+              "y": 6
             },
             "size": {
               "width": 1,
-              "height": 1
+              "height": 6
             }
           },
           "left": {
             "start": {
               "x": 0,
-              "y": 1
+              "y": 5
             },
             "size": {
-              "width": 1,
+              "width": 5,
               "height": 1
             }
           },
           "center": {
             "start": {
-              "x": 1,
-              "y": 1
+              "x": 5,
+              "y": 5
             },
             "size": {
               "width": 1,
@@ -363,8 +364,8 @@
         }
       },
       {
-        "id": "checkbox_background",
-        "location": "widgets/checkbox_background",
+        "id": "textbox_background_focused",
+        "location": "widgets/textbox_background_focused",
         "slices": {
           "topLeft": {
             "start": {
@@ -372,84 +373,84 @@
               "y": 0
             },
             "size": {
-              "width": 1,
-              "height": 1
+              "width": 5,
+              "height": 5
             }
           },
           "topRight": {
             "start": {
-              "x": 2,
+              "x": 6,
               "y": 0
             },
             "size": {
-              "width": 1,
-              "height": 1
+              "width": 5,
+              "height": 5
             }
           },
           "bottomLeft": {
             "start": {
               "x": 0,
-              "y": 2
+              "y": 6
             },
             "size": {
-              "width": 1,
-              "height": 1
+              "width": 5,
+              "height": 6
             }
           },
           "bottomRight": {
             "start": {
-              "x": 2,
-              "y": 2
+              "x": 6,
+              "y": 6
             },
             "size": {
-              "width": 1,
-              "height": 1
+              "width": 5,
+              "height": 6
             }
           },
           "top": {
             "start": {
-              "x": 1,
+              "x": 5,
               "y": 0
             },
             "size": {
               "width": 1,
-              "height": 1
+              "height": 5
             }
           },
           "right": {
             "start": {
-              "x": 2,
-              "y": 1
+              "x": 6,
+              "y": 5
             },
             "size": {
-              "width": 1,
+              "width": 5,
               "height": 1
             }
           },
           "bottom": {
             "start": {
-              "x": 1,
-              "y": 2
+              "x": 5,
+              "y": 6
             },
             "size": {
               "width": 1,
-              "height": 1
+              "height": 6
             }
           },
           "left": {
             "start": {
               "x": 0,
-              "y": 1
+              "y": 5
             },
             "size": {
-              "width": 1,
+              "width": 5,
               "height": 1
             }
           },
           "center": {
             "start": {
-              "x": 1,
-              "y": 1
+              "x": 5,
+              "y": 5
             },
             "size": {
               "width": 1,
@@ -553,422 +554,9 @@
             }
           }
         }
-      },
-      {
-        "id": "slider_thumb",
-        "location": "widgets/slider_thumb",
-        "slices": {
-          "topLeft": {
-            "start": {
-              "x": 0,
-              "y": 0
-            },
-            "size": {
-              "width": 1,
-              "height": 1
-            }
-          },
-          "topRight": {
-            "start": {
-              "x": 2,
-              "y": 0
-            },
-            "size": {
-              "width": 1,
-              "height": 1
-            }
-          },
-          "bottomLeft": {
-            "start": {
-              "x": 0,
-              "y": 2
-            },
-            "size": {
-              "width": 1,
-              "height": 1
-            }
-          },
-          "bottomRight": {
-            "start": {
-              "x": 2,
-              "y": 2
-            },
-            "size": {
-              "width": 1,
-              "height": 1
-            }
-          },
-          "top": {
-            "start": {
-              "x": 1,
-              "y": 0
-            },
-            "size": {
-              "width": 1,
-              "height": 1
-            }
-          },
-          "right": {
-            "start": {
-              "x": 2,
-              "y": 1
-            },
-            "size": {
-              "width": 1,
-              "height": 1
-            }
-          },
-          "bottom": {
-            "start": {
-              "x": 1,
-              "y": 2
-            },
-            "size": {
-              "width": 1,
-              "height": 1
-            }
-          },
-          "left": {
-            "start": {
-              "x": 0,
-              "y": 1
-            },
-            "size": {
-              "width": 1,
-              "height": 1
-            }
-          },
-          "center": {
-            "start": {
-              "x": 1,
-              "y": 1
-            },
-            "size": {
-              "width": 1,
-              "height": 1
-            }
-          }
-        }
-      },
-      {
-        "id": "slider_track",
-        "location": "widgets/slider_track",
-        "slices": {
-          "topLeft": {
-            "start": {
-              "x": 0,
-              "y": 0
-            },
-            "size": {
-              "width": 1,
-              "height": 1
-            }
-          },
-          "topRight": {
-            "start": {
-              "x": 2,
-              "y": 0
-            },
-            "size": {
-              "width": 1,
-              "height": 1
-            }
-          },
-          "bottomLeft": {
-            "start": {
-              "x": 0,
-              "y": 2
-            },
-            "size": {
-              "width": 1,
-              "height": 1
-            }
-          },
-          "bottomRight": {
-            "start": {
-              "x": 2,
-              "y": 2
-            },
-            "size": {
-              "width": 1,
-              "height": 1
-            }
-          },
-          "top": {
-            "start": {
-              "x": 1,
-              "y": 0
-            },
-            "size": {
-              "width": 1,
-              "height": 1
-            }
-          },
-          "right": {
-            "start": {
-              "x": 2,
-              "y": 1
-            },
-            "size": {
-              "width": 1,
-              "height": 1
-            }
-          },
-          "bottom": {
-            "start": {
-              "x": 1,
-              "y": 2
-            },
-            "size": {
-              "width": 1,
-              "height": 1
-            }
-          },
-          "left": {
-            "start": {
-              "x": 0,
-              "y": 1
-            },
-            "size": {
-              "width": 1,
-              "height": 1
-            }
-          },
-          "center": {
-            "start": {
-              "x": 1,
-              "y": 1
-            },
-            "size": {
-              "width": 1,
-              "height": 1
-            }
-          }
-        }
       }
     ],
     "styles": [
-      {
-        "id": "default",
-        "variants": {
-          "active": {
-            "background": {
-              "color": "background"
-            },
-            "foreground": {
-              "color": "text"
-            }
-          },
-          "hover": {
-            "background": {
-              "color": "highlight"
-            },
-            "foreground": {
-              "color": "highlightText",
-              "shadow": true
-            }
-          },
-          "inactive": {
-            "background": {
-              "color": "inactive"
-            },
-            "foreground": {
-              "color": "inactiveText",
-              "shadow": true
-            }
-          },
-          "pressed": {
-            "background": {
-              "color": "accent"
-            },
-            "foreground": {
-              "color": "highlightText"
-            }
-          },
-          "focused": {
-            "background": {
-              "color": "accent"
-            },
-            "foreground": {
-              "color": "text",
-              "shadow": true
-            }
-          }
-        }
-      },
-      {
-        "id": "checkbox_unchecked",
-        "variants": {
-          "active": {
-            "background": {
-              "texture": "checkbox_background",
-              "color": "primary"
-            },
-            "foreground": {
-              "color": "text"
-            }
-          },
-          "hover": {
-            "background": {
-              "texture": "checkbox_background",
-              "color": "highlight"
-            },
-            "foreground": {
-              "color": "highlightText"
-            }
-          },
-          "inactive": {
-            "background": {
-              "texture": "checkbox_background",
-              "color": "inactive"
-            },
-            "foreground": {
-              "color": "inactiveText"
-            }
-          },
-          "pressed": {
-            "background": {
-              "texture": "checkbox_background",
-              "color": "accent"
-            },
-            "foreground": {
-              "color": "highlightText"
-            }
-          }
-        }
-      },
-      {
-        "id": "checkbox_checked",
-        "variants": {
-          "active": {
-            "background": {
-              "texture": "checkbox_background",
-              "color": "primary"
-            },
-            "foreground": {
-              "texture": "icons/checkmark",
-              "color": "text"
-            }
-          },
-          "hover": {
-            "background": {
-              "texture": "checkbox_background",
-              "color": "highlight"
-            },
-            "foreground": {
-              "texture": "icons/checkmark",
-              "color": "highlightText"
-            }
-          },
-          "inactive": {
-            "background": {
-              "texture": "checkbox_background",
-              "color": "inactive"
-            },
-            "foreground": {
-              "texture": "icons/checkmark",
-              "color": "inactiveText"
-            }
-          },
-          "pressed": {
-            "background": {
-              "texture": "checkbox_background",
-              "color": "accent"
-            },
-            "foreground": {
-              "texture": "icons/checkmark",
-              "color": "highlightText"
-            }
-          }
-        }
-      },
-      {
-        "id": "button_primary",
-        "variants": {
-          "active": {
-            "background": {
-              "texture": "button_background",
-              "color": "primary"
-            },
-            "foreground": {
-              "color": "text"
-            }
-          },
-          "hover": {
-            "background": {
-              "texture": "button_background",
-              "color": "highlight"
-            },
-            "foreground": {
-              "color": "highlightText",
-              "shadow": true
-            }
-          },
-          "inactive": {
-            "background": {
-              "texture": "button_background",
-              "color": "inactive"
-            },
-            "foreground": {
-              "color": "inactiveText",
-              "shadow": true
-            }
-          },
-          "pressed": {
-            "background": {
-              "texture": "button_background",
-              "color": "accent"
-            },
-            "foreground": {
-              "color": "highlightText"
-            }
-          }
-        }
-      },
-      {
-        "id": "button_secondary",
-        "variants": {
-          "active": {
-            "background": {
-              "texture": "button_background",
-              "color": "secondary"
-            },
-            "foreground": {
-              "color": "text"
-            }
-          },
-          "hover": {
-            "background": {
-              "texture": "button_background",
-              "color": "highlight"
-            },
-            "foreground": {
-              "color": "highlightText",
-              "shadow": true
-            }
-          },
-          "inactive": {
-            "background": {
-              "texture": "button_background",
-              "color": "inactive"
-            },
-            "foreground": {
-              "color": "inactiveText",
-              "shadow": true
-            }
-          },
-          "pressed": {
-            "background": {
-              "texture": "button_background",
-              "color": "accent",
-                "filters": ["invert"]
-            },
-            "foreground": {
-              "color": "highlightText"
-            }
-          }
-        }
-      },
       {
         "id": "button",
         "variants": {
@@ -1023,6 +611,60 @@
         }
       },
       {
+        "id": "button_primary",
+        "parent": "button",
+        "variants": {
+          "active": {
+            "background": {
+              "color": "primary"
+            }
+          }
+        }
+      },
+      {
+        "id": "button_secondary",
+        "parent": "button",
+        "variants": {
+          "active": {
+            "background": {
+              "color": "secondary"
+            }
+          }
+        }
+      },
+      {
+        "id": "textbox",
+        "variants": {
+          "base": {
+            "background": {
+              "texture": "textbox_background",
+              "color": "background"
+            },
+            "foreground": {
+              "color": "white"
+            }
+          },
+          "active": {
+            "background": {
+              "color": "background"
+            }
+          },
+          "inactive": {
+            "background": {
+              "color": "inactive"
+            },
+            "foreground": {
+              "color": "inactiveText"
+            }
+          },
+          "focused": {
+            "background": {
+              "texture": "textbox_background_focused"
+            }
+          }
+        }
+      },
+      {
         "id": "panel",
         "variants": {
           "active": {
@@ -1033,46 +675,6 @@
             "foreground": {
               "color": "text",
               "shadow": true
-            }
-          }
-        }
-      },
-      {
-        "id": "slider_track",
-        "variants": {
-          "active": {
-            "background": {
-              "texture": "slider_track",
-              "color": "background"
-            }
-          }
-        }
-      },
-      {
-        "id": "slider_thumb",
-        "variants": {
-          "active": {
-            "background": {
-              "texture": "slider_thumb",
-              "color": "primary"
-            }
-          },
-          "hover": {
-            "background": {
-              "texture": "slider_thumb",
-              "color": "highlight"
-            }
-          },
-          "inactive": {
-            "background": {
-              "texture": "slider_thumb",
-              "color": "inactive"
-            }
-          },
-          "pressed": {
-            "background": {
-              "texture": "slider_thumb",
-              "color": "accent"
             }
           }
         }

@@ -27,7 +27,6 @@ import java.util.stream.Collectors;
 
 public abstract class AbstractContainer extends AbstractWidget implements InputSource {
     private static final Logger LOGGER = LogUtils.getLogger();
-    private static final int Z_STEP = 5;
     private final List<AbstractWidget> children = new ArrayList<>();
     private final StateStorageRef stateStorage = StateManager.local();
     private final EventManager eventManager = EventManager.createLocal();
@@ -62,7 +61,6 @@ public abstract class AbstractContainer extends AbstractWidget implements InputS
             widget.parentOrThrow().remove(widget);
             widget.parent(this);
         }
-        children.sort(Comparator.comparingInt(AbstractWidget::zIndex));
         return this;
     }
 

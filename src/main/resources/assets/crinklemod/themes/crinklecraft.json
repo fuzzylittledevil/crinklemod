@@ -1,9 +1,9 @@
 {
   "version": 1,
   "theme": {
-    "id": "crinkle-craft",
-    "name": "Default",
-    "description": "The default GUI theme for CrinkleMod",
+    "id": "crinklecraft",
+    "name": "CrinkleCraft",
+    "description": "A Minecraft-themed theme for CrinkleMod.",
     "version": "1.0.0",
     "author": "Galen & Vahn",
     "colors": {
@@ -651,7 +651,7 @@
         }
       }
     ],
-    "widgets": [
+    "styles": [
       {
         "id": "default",
         "variants": {

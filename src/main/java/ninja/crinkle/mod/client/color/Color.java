@@ -100,6 +100,14 @@ public class Color {
         return (color >> 24 & 0xFF) / 255.0;
     }
 
+    public Color halftone() {
+        return new Color((color & 0xFF000000) | ((color >> 1) & 0x7F7F7F));
+    }
+
+    public Color inverted() {
+        return new Color((color & 0xFF000000) | (~color & 0xFFFFFF));
+    }
+
     @Contract("_ -> new")
     public @NotNull Color withAlpha(double alpha) {
         int a = (int) (alpha * 255);

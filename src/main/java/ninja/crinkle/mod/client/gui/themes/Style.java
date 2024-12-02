@@ -15,7 +15,7 @@ import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-public record Style(String id, Map<Variant, StyleVariant> appearances, Theme theme) {
+public record Style(String id, Map<Variant, StyleVariant> appearances, Theme theme, Style parent) {
     private static final Logger LOGGER = LogUtils.getLogger();
     public static final Style EMPTY = Style.builder("empty")
             .addAppearance(Style.Variant.base, StyleVariant.EMPTY)
@@ -32,9 +32,21 @@ public record Style(String id, Map<Variant, StyleVariant> appearances, Theme the
 
     public static Style fromConfig(StyleData styleData, Theme theme) {
         Map<Variant, StyleVariant> appearances = new HashMap<>();
+        Style parent = Optional.ofNullable(styleData.parent())
+                .map(theme::getWidgetTheme)
+                .orElse(null);
+        if (parent != null) {
+            LOGGER.info("Loading style '{}' with parent '{}'", styleData.id(), parent.id());
+            appearances.putAll(parent.appearances());
+        } else {
+            LOGGER.info("Loading style '{}' with no parent", styleData.id());
+        }
         for (var entry : styleData.variants().entrySet()) {
             Variant variant = entry.getKey();
             StyleData.Variant appearance = entry.getValue();
+            StyleVariant parentAppearance = Optional.ofNullable(parent)
+                    .map(p -> p.getAppearance(variant))
+                    .orElse(null);
             Texture background = Optional.ofNullable(appearance.background())
                     .filter(data -> data.texture() != null)
                     .map(data -> theme.getTexture(data.texture()))
@@ -52,17 +64,18 @@ public record Style(String id, Map<Variant, StyleVariant> appearances, Theme the
                     .map(data -> theme.getColor(data.color()))
                     .orElse(null);
             List<ColorFilters> foregroundColorFilters = Optional.ofNullable(appearance.foreground())
-                    .map(StyleData.Variant.Data::colorFilters)
+                    .map(StyleData.Variant.Data::getFilters)
                     .orElse(List.of());
             List<ColorFilters> backgroundColorFilters = Optional.ofNullable(appearance.background())
-                    .map(StyleData.Variant.Data::colorFilters)
+                    .map(StyleData.Variant.Data::getFilters)
                     .orElse(List.of());
             StyleVariant styleVariant = new StyleVariant(background, foreground, backgroundColor,
                     foregroundColor, appearance.foreground() != null && appearance.foreground().shadow(),
-                    foregroundColorFilters, backgroundColorFilters);
+                    foregroundColorFilters, backgroundColorFilters, parentAppearance);
+            LOGGER.info("Adding appearance '{}' to style '{}'", variant, styleVariant);
             appearances.put(variant, styleVariant);
         }
-        return new Style(styleData.id(), appearances, theme);
+        return new Style(styleData.id(), appearances, theme, parent);
     }
 
     public static Style getDefault() {
@@ -97,6 +110,7 @@ public record Style(String id, Map<Variant, StyleVariant> appearances, Theme the
     public static class Builder extends GenericBuilder<Builder, Style> {
         private final Map<Variant, StyleVariant> appearances = new HashMap<>();
         private final String id;
+        private Style parent;
         private Theme theme;
 
         public Builder(String id) {
@@ -110,7 +124,12 @@ public record Style(String id, Map<Variant, StyleVariant> appearances, Theme the
 
         @Override
         public Style build() {
-            return new Style(id, appearances, theme);
+            return new Style(id, appearances, theme, parent);
+        }
+
+        public Builder parent(Style parent) {
+            this.parent = parent;
+            return self();
         }
 
         @Override

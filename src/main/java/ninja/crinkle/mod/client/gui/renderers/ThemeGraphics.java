@@ -65,9 +65,9 @@ public class ThemeGraphics extends GuiGraphics {
         return graphics;
     }
 
-    public void text(String text, Point point, int zIndex, Color color) {
+    public void text(String text, Point point, int zIndex, Color color, boolean shadow) {
         pose().translate(0, 0, zIndex);
-        drawString(ClientUtil.getMinecraft().font, text, point.xInt(), point.yInt(), color.color());
+        drawString(ClientUtil.getMinecraft().font, text, point.xInt(), point.yInt(), color.color(), shadow);
         pose().translate(0, 0, -zIndex);
     }
 

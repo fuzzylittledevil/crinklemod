@@ -162,9 +162,11 @@ public abstract class AbstractScreen extends Screen implements TabIndexListener,
                 .min(Comparator.comparingInt(AbstractWidget::priority))
                 .orElse(null);
         if (topFocusable != null && topFocusable.focusable()) {
-            focusManager().currentFocus(topFocusable);
+            Event event = new FocusEnteredEvent(Scope.Screen, this, true, topFocusable);
+            eventManager().ifPresent(m -> m.dispatchEvent(event));
         } else {
-            focusManager().currentFocus(null);
+            Event event = new FocusLeftEvent(Scope.Screen, this, false, null);
+            eventManager().ifPresent(m -> m.dispatchEvent(event));
         }
         Event mousePressedEvent = new MousePressedEvent(Scope.Screen, this, pMouseX, pMouseY, pButton, listeners);
         eventManager().ifPresent(m -> m.dispatchEvent(mousePressedEvent));

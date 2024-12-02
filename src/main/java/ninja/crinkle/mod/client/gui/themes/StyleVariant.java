@@ -1,6 +1,8 @@
 package ninja.crinkle.mod.client.gui.themes;
 
 import com.mojang.logging.LogUtils;
+import net.minecraft.client.gui.Font;
+import ninja.crinkle.mod.client.animations.Sprite;
 import ninja.crinkle.mod.client.color.Color;
 import ninja.crinkle.mod.client.gui.builders.GenericBuilder;
 import ninja.crinkle.mod.client.gui.properties.Box;
@@ -8,6 +10,7 @@ import ninja.crinkle.mod.client.gui.renderers.ThemeGraphics;
 import ninja.crinkle.mod.client.gui.textures.ColorFilters;
 import ninja.crinkle.mod.client.gui.textures.Texture;
 import ninja.crinkle.mod.client.gui.widgets.AbstractWidget;
+import ninja.crinkle.mod.util.ClientUtil;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
@@ -26,15 +29,17 @@ public class StyleVariant {
     private final List<ColorFilters> foregroundColorFilters = new ArrayList<>();
     private final Texture foregroundTexture;
     private final boolean shadow;
+    private final StyleVariant parent;
 
     public StyleVariant(Texture backgroundTexture, Texture foregroundTexture, Color backgroundColor,
                         Color foregroundColor, boolean shadow, List<ColorFilters> foregroundColorFilters,
-                        List<ColorFilters> backgroundColorFilters) {
+                        List<ColorFilters> backgroundColorFilters, StyleVariant parent) {
         this.backgroundTexture = backgroundTexture;
         this.foregroundTexture = foregroundTexture;
         this.backgroundColor = backgroundColor;
         this.foregroundColor = foregroundColor;
         this.shadow = shadow;
+        this.parent = parent;
         this.foregroundColorFilters.addAll(foregroundColorFilters);
         this.backgroundColorFilters.addAll(backgroundColorFilters);
     }
@@ -49,6 +54,10 @@ public class StyleVariant {
 
     public List<ColorFilters> backgroundColorFilters() {
         return backgroundColorFilters;
+    }
+
+    public Font font() {
+        return ClientUtil.getMinecraft().font;
     }
 
     public List<ColorFilters> foregroundColorFilters() {
@@ -79,6 +88,10 @@ public class StyleVariant {
         return shadow;
     }
 
+    public StyleVariant parent() {
+        return parent;
+    }
+
     public void render(ThemeGraphics pGuiGraphics, Box pBox, AbstractWidget widget) {
         if (backgroundTexture != null) {
             backgroundTexture.render(pGuiGraphics, widget, backgroundColorFilters);
@@ -95,14 +108,18 @@ public class StyleVariant {
         if (other == null) {
             return this;
         }
+        StyleVariant b = other.parent() != null && other.parent() != this ? other.parent().coalesceWith(other) : other;
+        StyleVariant a = parent() != null && parent() != other ? parent().coalesceWith(this) : this;
+
         return new StyleVariant(
-                Optional.ofNullable(other.getBackgroundTexture()).orElse(getBackgroundTexture()),
-                Optional.ofNullable(other.getForegroundTexture()).orElse(getForegroundTexture()),
-                Optional.ofNullable(other.getBackgroundColor()).orElse(getBackgroundColor()),
-                Optional.ofNullable(other.getForegroundColor()).orElse(getForegroundColor()),
-                other.hasShadow() || shadow,
-                other.foregroundColorFilters.isEmpty() ? foregroundColorFilters : other.foregroundColorFilters,
-                other.backgroundColorFilters.isEmpty() ? backgroundColorFilters : other.backgroundColorFilters
+                Optional.ofNullable(b.getBackgroundTexture()).orElse(a.getBackgroundTexture()),
+                Optional.ofNullable(b.getForegroundTexture()).orElse(a.getForegroundTexture()),
+                Optional.ofNullable(b.getBackgroundColor()).orElse(a.getBackgroundColor()),
+                Optional.ofNullable(b.getForegroundColor()).orElse(a.getForegroundColor()),
+                b.hasShadow() || a.shadow,
+                b.foregroundColorFilters.isEmpty() ? a.foregroundColorFilters : b.foregroundColorFilters,
+                b.backgroundColorFilters.isEmpty() ? a.backgroundColorFilters : b.backgroundColorFilters,
+                Optional.ofNullable(b.parent()).orElse(a.parent())
         );
     }
 
@@ -116,15 +133,20 @@ public class StyleVariant {
         if (a == b) {
             return a;
         }
-
-        StyleVariant variant = a.coalesceWith(b);
-        LOGGER.debug("Coalesced {} with {} to {}", a, b, variant);
-        return variant;
+        return a.coalesceWith(b);
     }
 
     @Override
     public String toString() {
-        return "StyleVariant{" + "backgroundColor=" + backgroundColor + ", backgroundTexture=" + backgroundTexture + ", foregroundColor=" + foregroundColor + ", foregroundTexture=" + foregroundTexture + ", shadow=" + shadow + '}';
+        return "StyleVariant{"
+                + "backgroundColor=" + backgroundColor
+                + ", backgroundTexture=" + backgroundTexture
+                + ", foregroundColor=" + foregroundColor
+                + ", foregroundTexture=" + foregroundTexture
+                + ", shadow=" + shadow
+                + ", foregroundColorFilters=" + String.join(",", foregroundColorFilters.stream().map(ColorFilters::toString).toList())
+                + ", backgroundColorFilters=" + String.join(",", backgroundColorFilters.stream().map(ColorFilters::toString).toList())
+                + '}';
     }
 
     public static class Builder extends GenericBuilder<Builder, StyleVariant> {
@@ -135,6 +157,7 @@ public class StyleVariant {
         private Color foregroundColor;
         private Texture foregroundTexture;
         private boolean shadow;
+        private StyleVariant parent;
 
         public Builder addForegroundColorFilter(ColorFilters filter) {
             foregroundColorFilters.add(filter);
@@ -168,7 +191,16 @@ public class StyleVariant {
 
         public StyleVariant build() {
             return new StyleVariant(backgroundTexture, foregroundTexture, backgroundColor, foregroundColor,
-                    shadow, foregroundColorFilters, backgroundColorFilters);
+                    shadow, foregroundColorFilters, backgroundColorFilters, parent);
+        }
+
+        public StyleVariant parent() {
+            return parent;
+        }
+
+        public Builder parent(StyleVariant parent) {
+            this.parent = parent;
+            return self();
         }
 
         @Override
