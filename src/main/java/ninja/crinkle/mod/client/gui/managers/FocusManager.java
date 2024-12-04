@@ -33,10 +33,12 @@ public class FocusManager implements FocusListener {
             currentFocus.focused(false);
         }
         currentFocus = event.focusSource();
-        currentFocus.focused(true);
+        if (currentFocus != null) {
+            currentFocus.focused(true);
+        }
         event.consumer(this);
     }
-
+    
     @Override
     public void onFocusLeft(FocusLeftEvent event) {
         if ((currentFocus == event.focusSource() || event.focusSource() == null) && currentFocus != null) {

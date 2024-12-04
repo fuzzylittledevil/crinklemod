@@ -60,10 +60,6 @@ public interface EventListener {
                 if (this instanceof MouseListener listener)
                     listener.onHover((HoverEvent) event);
             }
-            case Focus -> {
-                if (this instanceof FocusListener listener)
-                    listener.onFocus((FocusEvent) event);
-            }
             case Narrate -> {
                 if (this instanceof NarrateListener listener)
                     listener.onNarrateEvent((NarrateEvent) event);
@@ -79,6 +75,10 @@ public interface EventListener {
             case FocusLeft -> {
                 if (this instanceof FocusListener listener)
                     listener.onFocusLeft((FocusLeftEvent) event);
+            }
+            case Focus -> {
+                if (this instanceof FocusListener listener)
+                    listener.onFocus((FocusEvent) event);
             }
             default -> throw new IllegalStateException("Unexpected event type: " + event.type());
         }

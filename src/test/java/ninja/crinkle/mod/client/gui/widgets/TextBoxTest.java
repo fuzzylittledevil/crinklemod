@@ -1,10 +1,9 @@
 package ninja.crinkle.mod.client.gui.widgets;
 
 import com.mojang.blaze3d.platform.InputConstants;
-import ninja.crinkle.mod.client.gui.events.CharTypedEvent;
-import ninja.crinkle.mod.client.gui.events.Event;
-import ninja.crinkle.mod.client.gui.events.KeyEvent;
+import ninja.crinkle.mod.client.gui.events.*;
 import ninja.crinkle.mod.client.gui.managers.GuiManager;
+import ninja.crinkle.mod.client.gui.properties.Point;
 import ninja.crinkle.mod.client.gui.properties.Scope;
 import ninja.crinkle.mod.util.ClientUtil;
 import ninja.crinkle.mod.util.TestUtil;
@@ -12,6 +11,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -137,6 +138,41 @@ class TextBoxTest {
         try(MockedStatic<ClientUtil> ignored = TestUtil.mockClientUtil()) {
             KeyEvent event = new KeyEvent(Scope.Screen, textBox, InputConstants.KEY_RIGHT, 262, 0, false);
             textBox.onKey(event);
+            assertEquals(textBox.text().length(), textBox.cursorPos());
+        }
+    }
+
+    @Test
+    void onClick_leftEnd() {
+        when(textBox.active()).thenReturn(true);
+        try (MockedStatic<ClientUtil> ignored = TestUtil.mockClientUtil()) {
+            Point mouse = Point.of(0, 0);
+            ClickEvent event = new ClickEvent(Scope.Screen, textBox, mouse.xInt(), mouse.yInt(), 0, true, List.of(textBox));
+            textBox.onClick(event);
+            assertEquals(0, textBox.cursorPos());
+        }
+    }
+
+    @Test
+    void onClick_Middle() {
+        when(textBox.active()).thenReturn(true);
+        try (MockedStatic<ClientUtil> ignored = TestUtil.mockClientUtil()) {
+            textBox.text("diaper");
+            int xPos = ClientUtil.getMinecraft().font.width("dia");
+            ClickEvent event = new ClickEvent(Scope.Screen, textBox, xPos, 0, 0, true, List.of(textBox));
+            textBox.onClick(event);
+            assertEquals(3, textBox.cursorPos());
+        }
+    }
+
+    @Test
+    void onClick_rightEnd() {
+        when(textBox.active()).thenReturn(true);
+        try (MockedStatic<ClientUtil> ignored = TestUtil.mockClientUtil()) {
+            textBox.text("diaper");
+            int xPos = ClientUtil.getMinecraft().font.width("diaper");
+            ClickEvent event = new ClickEvent(Scope.Screen, textBox, xPos, 0, 0, true, List.of(textBox));
+            textBox.onClick(event);
             assertEquals(textBox.text().length(), textBox.cursorPos());
         }
     }

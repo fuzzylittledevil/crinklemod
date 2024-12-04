@@ -142,18 +142,11 @@ public abstract class AbstractScreen extends Screen implements TabIndexListener,
                 .filter(c -> !c.equals(root()))
                 .reduce((a, b) -> a.zIndex() > b.zIndex() ? a : b)
                 .orElse(null);
-        AbstractWidget topDraggable = listeners.stream()
-                .filter(l -> l instanceof AbstractWidget)
-                .map(l -> (AbstractWidget) l)
-                .filter(c -> !c.equals(root()))
-                .reduce((a, b) -> a.zIndex() > b.zIndex() ? a : b)
-                .orElse(null);
         clickState.set(new ClickState(new ImmutablePoint(pMouseX, pMouseY), pButton, listeners));
-        if (topDraggable != null && topMost != null && topMost.draggable()) {
-            dragManager().current(topDraggable);
+        if (topMost != null && topMost.draggable()) {
+            dragManager().current(topMost);
             dragManager().dragging(false); // Reset dragging state
         }
-
         AbstractWidget topFocusable = listeners.stream()
                 .filter(l -> l instanceof AbstractWidget)
                 .map(l -> (AbstractWidget) l)

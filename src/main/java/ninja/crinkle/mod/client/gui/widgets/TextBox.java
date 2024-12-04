@@ -43,7 +43,7 @@ public class TextBox extends AbstractWidget implements KeyListener, MouseListene
     }
 
     private void handleInsert(int index, char c) {
-        if (index == text().length()) {
+        if (index == text().length() || index == -1) {
             text(text() + c);
         } else {
             text(text().substring(0, index) + c + text().substring(index));

@@ -1,6 +1,8 @@
 package ninja.crinkle.mod.util;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.font.FontManager;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -12,7 +14,10 @@ import ninja.crinkle.mod.client.gui.textures.ThemeAtlas;
 import ninja.crinkle.mod.client.gui.themes.StyleVariant;
 import ninja.crinkle.mod.client.gui.themes.Theme;
 import ninja.crinkle.mod.client.gui.themes.Style;
+import org.junit.platform.commons.util.ReflectionUtils;
 import org.mockito.MockedStatic;
+
+import java.lang.reflect.Field;
 
 import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.when;
@@ -67,6 +72,25 @@ public class TestUtil {
 
     public static MockedStatic<ClientUtil> mockClientUtil() {
         var minecraft = mock(Minecraft.class);
+        Field field = ReflectionUtils.findFields(Minecraft.class, f -> f.getName().equals("font"), ReflectionUtils.HierarchyTraversalMode.TOP_DOWN).get(0);
+        ReflectionUtils.makeAccessible(field);
+        var font = mock(Font.class);
+        try {
+            field.set(minecraft, font);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+        when(minecraft.font.width(anyString())).thenAnswer(invocation -> {
+            String text = invocation.getArgument(0);
+            return text.length() * 5;
+        });
+        Field lineHeightField = ReflectionUtils.findFields(Font.class, f -> f.getName().equals("lineHeight"), ReflectionUtils.HierarchyTraversalMode.TOP_DOWN).get(0);
+        ReflectionUtils.makeAccessible(lineHeightField);
+        try {
+            lineHeightField.set(font, 10);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
         var textureManager = mock(TextureManager.class);
         var resourceManager = mock(ResourceManager.class);
         when(minecraft.getResourceManager()).thenReturn(resourceManager);

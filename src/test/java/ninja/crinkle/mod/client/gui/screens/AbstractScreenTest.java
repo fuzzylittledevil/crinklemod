@@ -9,6 +9,7 @@ import ninja.crinkle.mod.client.gui.events.listeners.MouseListener;
 import ninja.crinkle.mod.client.gui.layouts.Layout;
 import ninja.crinkle.mod.client.gui.managers.DragManager;
 import ninja.crinkle.mod.client.gui.managers.EventManager;
+import ninja.crinkle.mod.client.gui.managers.FocusManager;
 import ninja.crinkle.mod.client.gui.managers.StateManager;
 import ninja.crinkle.mod.client.gui.properties.Point;
 import ninja.crinkle.mod.client.gui.themes.Style;
@@ -33,8 +34,6 @@ import static org.mockito.Mockito.*;
 
 class AbstractScreenTest {
     @Mock AbstractScreen screen;
-    @Spy EventManager eventManager;
-    @Spy DragManager dragManager;
 
     @BeforeEach
     void setUp() {
@@ -44,10 +43,6 @@ class AbstractScreenTest {
                 return "testScreen";
             }
         });
-        eventManager = spy(EventManager.createScreen());
-        dragManager = spy(new DragManager(eventManager));
-        doReturn(Optional.of(eventManager)).when(screen).eventManager();
-        doReturn(dragManager).when(screen).dragManager();
         doReturn(StateManager.screen()).when(screen).stateStorageRef();
         doReturn(spy(StateManager.get(screen.stateStorageRef()))).when(screen).stateStorage();
         Container root = spy(Container.builder(screen)
@@ -56,7 +51,6 @@ class AbstractScreenTest {
                 .build());
         doReturn(root).when(screen).root();
         doReturn(true).when(screen).ready();
-        doCallRealMethod().when(screen).addListener(any(InputListener.class));
     }
 
     private Map<String, AbstractWidget> setupWidgets() {
@@ -81,6 +75,7 @@ class AbstractScreenTest {
                 .text("Button")
                 .size(50)
                 .focusable(true)
+                .pressable(true)
                 .build();
         Button spyButton = spy(button);
         child.add(spyButton);
@@ -143,6 +138,8 @@ class AbstractScreenTest {
         verify(widgets.get("parent"), times(0)).onDragStarted(any());
         verify(widgets.get("child"), times(0)).onDragStarted(any());
         assertFalse(screen.dragManager().dragging(), "Expected not dragging");
+        assertNotNull(screen.focusManager().currentFocus());
+        assertEquals(screen.focusManager().currentFocus(), widgets.get("button"), "Expected button to be focused");
         assertTrue(widgets.get("button").pressed(), "Expected button to be pressed");
         assertTrue(widgets.get("button").focused(), "Expected button to be focused");
 

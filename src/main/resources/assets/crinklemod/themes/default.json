@@ -596,8 +596,7 @@
           },
           "pressed": {
             "background": {
-              "color": "highlight",
-              "filters": ["invert"]
+              "filters": ["grayscale","invert"]
             },
             "foreground": {
               "color": "highlightText"
