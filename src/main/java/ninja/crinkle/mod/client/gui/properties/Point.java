@@ -11,6 +11,10 @@ public interface Point {
         return new ImmutablePoint(x, y);
     }
 
+    static Point of(double x, double y) {
+        return new ImmutablePoint(x, y);
+    }
+
     Point add(Point point);
 
     Point add(Size size);

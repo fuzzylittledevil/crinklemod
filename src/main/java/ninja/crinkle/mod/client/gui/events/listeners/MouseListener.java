@@ -5,6 +5,8 @@ import ninja.crinkle.mod.client.gui.events.*;
 public interface MouseListener extends InputListener {
     default void onClick(ClickEvent event) {}
 
+    default void onDoubleClick(DoubleClickEvent event) {}
+
     default void onDrag(DragEvent event) {}
 
     default void onDragStarted(DragStartedEvent event) {}

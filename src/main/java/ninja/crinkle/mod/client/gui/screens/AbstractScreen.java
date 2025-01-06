@@ -34,6 +34,7 @@ import java.util.function.Predicate;
 
 public abstract class AbstractScreen extends Screen implements TabIndexListener, KeySource, MouseSource, GuiManager {
     private static final int SCAN_OFFSET = 10;
+    private static final int DOUBLE_CLICK_TIME = 300;
     private final EventManager eventManager = EventManager.createScreen();
     private final FocusManager focusManager = new FocusManager();
     private final DragManager dragManager = new DragManager(eventManager);
@@ -132,6 +133,16 @@ public abstract class AbstractScreen extends Screen implements TabIndexListener,
         if (!ready()) {
             return super.mouseClicked(pMouseX, pMouseY, pButton);
         }
+        ClickState state = clickState.get();
+        if (state.button() == pButton && System.currentTimeMillis() - state.clickTime() < DOUBLE_CLICK_TIME) {
+            List<EventListener> listeners = eventManager()
+                    .map(m -> m.listeners(onlyHovered(pMouseX, pMouseY, 0)).stream().toList())
+                    .orElse(List.of());
+            Event event = new DoubleClickEvent(Scope.Screen, this, pMouseX, pMouseY, pButton, listeners);
+            eventManager().ifPresent(m -> m.dispatchEvent(event, l -> state.listeners().contains(l)));
+            clickState.set(new ClickState(ImmutablePoint.ZERO, -1, 0, List.of()));
+            return event.success() || super.mouseClicked(pMouseX, pMouseY, pButton);
+        }
         List<EventListener> listeners = eventManager()
                 .map(m -> m.listeners(onlyHovered(pMouseX, pMouseY, 0)).stream().toList())
                 .orElse(List.of());
@@ -142,7 +153,7 @@ public abstract class AbstractScreen extends Screen implements TabIndexListener,
                 .filter(c -> !c.equals(root()))
                 .reduce((a, b) -> a.zIndex() > b.zIndex() ? a : b)
                 .orElse(null);
-        clickState.set(new ClickState(new ImmutablePoint(pMouseX, pMouseY), pButton, listeners));
+        clickState.set(new ClickState(new ImmutablePoint(pMouseX, pMouseY), pButton, System.currentTimeMillis(), listeners));
         if (topMost != null && topMost.draggable()) {
             dragManager().current(topMost);
             dragManager().dragging(false); // Reset dragging state

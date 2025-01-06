@@ -1,8 +1,9 @@
 package ninja.crinkle.mod.util;
 
+import com.mojang.blaze3d.platform.Window;
+import net.minecraft.client.KeyboardHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.font.FontManager;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -70,32 +71,33 @@ public class TestUtil {
         return b.build();
     }
 
+    public static int DEFAULT_FONT_WIDTH = 5;
     public static MockedStatic<ClientUtil> mockClientUtil() {
         var minecraft = mock(Minecraft.class);
-        Field field = ReflectionUtils.findFields(Minecraft.class, f -> f.getName().equals("font"), ReflectionUtils.HierarchyTraversalMode.TOP_DOWN).get(0);
-        ReflectionUtils.makeAccessible(field);
         var font = mock(Font.class);
-        try {
-            field.set(minecraft, font);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
+        mockField(Minecraft.class, "font", minecraft, font);
         when(minecraft.font.width(anyString())).thenAnswer(invocation -> {
             String text = invocation.getArgument(0);
-            return text.length() * 5;
+            return text.length() * DEFAULT_FONT_WIDTH;
         });
-        Field lineHeightField = ReflectionUtils.findFields(Font.class, f -> f.getName().equals("lineHeight"), ReflectionUtils.HierarchyTraversalMode.TOP_DOWN).get(0);
-        ReflectionUtils.makeAccessible(lineHeightField);
-        try {
-            lineHeightField.set(font, 10);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
+        mockField(Font.class, "lineHeight", font, 10);
+        var keyboardHandler = mock(KeyboardHandler.class);
+        mockField(Minecraft.class, "keyboardHandler", minecraft, keyboardHandler);
         var textureManager = mock(TextureManager.class);
         var resourceManager = mock(ResourceManager.class);
         when(minecraft.getResourceManager()).thenReturn(resourceManager);
         when(minecraft.getTextureManager()).thenReturn(textureManager);
         return mockClientUtil(minecraft);
+    }
+
+    private static <T> void mockField(Class<T> type, String name, T target, Object value) {
+        Field field = ReflectionUtils.findFields(type, f -> f.getName().equals(name), ReflectionUtils.HierarchyTraversalMode.TOP_DOWN).get(0);
+        ReflectionUtils.makeAccessible(field);
+        try {
+            field.set(target, value);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public static MockedStatic<ClientUtil> mockClientUtil(Minecraft mockedMinecraft) {

@@ -8,13 +8,19 @@ public interface EventListener {
             return;
         }
         switch (event.type()) {
+            case DoubleClick -> {
+                if (this instanceof MouseListener listener) {
+                    listener.onDoubleClick((DoubleClickEvent) event);
+                }
+            }
             case Click -> {
                 if (this instanceof MouseListener listener)
                     listener.onClick((ClickEvent) event);
             }
             case MousePressed -> {
-                if (this instanceof MouseListener listener)
+                if (this instanceof MouseListener listener) {
                     listener.onMousePressed((MousePressedEvent) event);
+                }
             }
             case MouseReleased -> {
                 if (this instanceof MouseListener listener)

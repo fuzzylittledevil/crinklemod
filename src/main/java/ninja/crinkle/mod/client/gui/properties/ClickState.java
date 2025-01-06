@@ -4,7 +4,7 @@ import ninja.crinkle.mod.client.gui.events.listeners.EventListener;
 
 import java.util.List;
 
-public record ClickState(Point position, int button, List<EventListener> listeners) {
+public record ClickState(Point position, int button, long clickTime, List<EventListener> listeners) {
     public ClickState {
         if (position == null) {
             throw new IllegalArgumentException("Position cannot be null");
@@ -13,6 +13,6 @@ public record ClickState(Point position, int button, List<EventListener> listene
     }
 
     public ClickState() {
-        this(ImmutablePoint.ZERO, 0, List.of());
+        this(ImmutablePoint.ZERO, 0, 0, List.of());
     }
 }

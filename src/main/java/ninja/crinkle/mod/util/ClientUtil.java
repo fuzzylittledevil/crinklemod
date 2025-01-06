@@ -32,4 +32,12 @@ public class ClientUtil {
     public static Point getMousePosition() {
         return new ImmutablePoint(getMinecraft().mouseHandler.xpos(), getMinecraft().mouseHandler.ypos());
     }
+
+    public static void setClipboard(String text) {
+        getMinecraft().keyboardHandler.setClipboard(text);
+    }
+
+    public static String getClipboard() {
+        return getMinecraft().keyboardHandler.getClipboard();
+    }
 }

@@ -30,23 +30,19 @@ public class KeyEvent extends InputEvent {
     }
 
     public boolean isAltDown() {
-        return java.awt.event.InputEvent.ALT_DOWN_MASK == (modifiers & java.awt.event.InputEvent.ALT_DOWN_MASK);
-    }
-
-    public boolean isAltGraphDown() {
-        return java.awt.event.InputEvent.ALT_GRAPH_DOWN_MASK == (modifiers & java.awt.event.InputEvent.ALT_GRAPH_DOWN_MASK);
+        return Modifier.Alt.mask() == (modifiers & Modifier.Alt.mask());
     }
 
     public boolean isControlDown() {
-        return java.awt.event.InputEvent.CTRL_DOWN_MASK == (modifiers & java.awt.event.InputEvent.CTRL_DOWN_MASK);
+        return Modifier.Control.mask() == (modifiers & Modifier.Control.mask());
     }
 
     public boolean isMetaDown() {
-        return java.awt.event.InputEvent.META_DOWN_MASK == (modifiers & java.awt.event.InputEvent.META_DOWN_MASK);
+        return Modifier.Meta.mask() == (modifiers & Modifier.Meta.mask());
     }
 
     public boolean isShiftDown() {
-        return java.awt.event.InputEvent.SHIFT_DOWN_MASK == (modifiers & java.awt.event.InputEvent.SHIFT_DOWN_MASK);
+        return Modifier.Shift.mask() == (modifiers & Modifier.Shift.mask());
     }
 
     public int keyCode() {
@@ -67,6 +63,23 @@ public class KeyEvent extends InputEvent {
 
     public int scanCode() {
         return scanCode;
+    }
+
+    public enum Modifier {
+        Alt(8),
+        Meta(4),
+        Control(2),
+        Shift(1);
+
+        private final int mask;
+
+        Modifier(int mask) {
+            this.mask = mask;
+        }
+
+        public int mask() {
+            return mask;
+        }
     }
 
     @Override
